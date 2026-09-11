@@ -5,12 +5,12 @@ import { CodeContainer, CodeHighlighter, Extension, PostExtension } from '../typ
 import { codeblockTransformer } from './codeblock.js'
 import { containerTransformer } from './container.js'
 import { directiveTransformer, parseYAML } from './directive.js'
-import { extensionsTransform, hoistToParentExtension } from './extensions.js'
+import { extensionsTransform } from './extensions.js'
 import { imageTransformer } from './image.js'
 import { PAGE_BREAK_KEY, pageBreakTransformer } from './page-break.js'
 import { extractScriptTransformer } from './script.js'
 
-export { PAGE_BREAK_KEY, parseYAML, hoistToParentExtension }
+export { PAGE_BREAK_KEY, parseYAML }
 
 export interface TransformOptions {
 	codeHighlighter?: CodeHighlighter

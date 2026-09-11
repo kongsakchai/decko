@@ -10,12 +10,9 @@ import {
 	PAGE_BREAK_KEY,
 	TransformOptions,
 	applyTransformers,
-	hoistToParentExtension,
 	parseYAML
 } from './transformers/index.js'
 import type { Directive, SlideContext, SlideInfo, SlideResult } from './types.js'
-
-export { hoistToParentExtension }
 
 export interface Options extends TransformOptions {}
 

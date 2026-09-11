@@ -1,4 +1,4 @@
-import { BlockContent, Node, Parent, Root, RootContent } from 'mdast'
+import { Node, Parent, Root } from 'mdast'
 import type { Transformer } from 'unified'
 import { visitParents } from 'unist-util-visit-parents'
 
@@ -47,23 +47,5 @@ export function extensionsTransform(opt?: ExtensionOptions): Transformer {
 		for (const post of postQueue) {
 			post.apply(post.ctx)
 		}
-	}
-}
-
-export function hoistToParentExtension(ctx: ExtensionContext) {
-	if (ctx.parents.length < 2) return
-
-	const parent = ctx.parents[ctx.parents.length - 1] as Parent
-	const grand = ctx.parents[ctx.parents.length - 2] as Parent
-
-	const index = (parent.children as Node[]).indexOf(ctx.node)
-	const grandIndex = (grand.children as Node[]).indexOf(parent)
-	if (index === -1 || grandIndex === -1) return
-
-	parent.children.splice(index, 1)
-	grand.children.splice(grandIndex, 0, ctx.node as BlockContent)
-	if (parent.children.length === 0) {
-		const emptyIndex = grand.children.indexOf(parent as RootContent)
-		grand.children.splice(emptyIndex, 1)
 	}
 }

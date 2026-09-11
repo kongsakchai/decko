@@ -1,5 +1,7 @@
 import type { ElementContent, Root as HRoot, RootContent as HRootContent } from 'hast'
-import type { Node, Parent, Root } from 'mdast'
+import type { Node, Parent, Root, RootContent } from 'mdast'
+
+export type { Node, Parent, Root, RootContent }
 
 export type Attribute = Record<string, string | number | boolean | (string | number)[] | null | undefined>
 

@@ -18,7 +18,7 @@ export const virtualSlide: VirtualModule = {
 			`<svelte:head>`,
 			`<title>{slide.title}</title>`,
 			`</svelte:head>`,
-			`<main class="h-full w-full rounded-sm">`,
+			`<main class="h-full w-full">`,
 			`<SlidePlayer slide={Slide} data={slide} />`,
 			`</main>`
 		].join('\n')

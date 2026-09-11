@@ -39,7 +39,15 @@
 <svelte:head>
 	<title>{slide.title}</title>
 </svelte:head>
-<main class="h-full w-75">
-	<!-- <SlidePlayer slide={Slide} data={slide} /> -->
+<main class="bg-background h-dvh box-border w-full pt-1 px-6 overflow-y-scroll">
+	<h1>Decko</h1>
+
 	<Explorer files={data} />
 </main>
+
+<style lang="postcss">
+	main {
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border) transparent;
+	}
+</style>

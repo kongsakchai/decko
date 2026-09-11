@@ -6,14 +6,11 @@ export const virtualDirectory: VirtualModule = {
 		const markdowns = [...this.markdowns]
 		return [
 			`<script lang="ts">`,
+			`import { Explorer } from '@decko/decko/components'`,
 			`const contents: string[] = ${JSON.stringify(markdowns)}`,
 			`</script>`,
 			`<main class="h-full w-full p-6">`,
-			`<ul class="flex flex-col gap-2">`,
-			`{#each contents as content}`,
-			`<li><a class="text-blue-500 underline" href="/{content}">{content}</a></li>`,
-			`{/each}`,
-			`</ul>`,
+			`<Explorer files={contents} />`,
 			`</main>`
 		].join('\n')
 	}
