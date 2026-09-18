@@ -1,6 +1,6 @@
-import { createSlideLoader } from '@/plugin/loader'
+import { createSlideLoader } from '@/vite/loaders'
+import { decko } from '@decko/decko';
 
-import { decko } from '@decko/decko'
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 
@@ -35,6 +35,6 @@ export async function createServer(root: string, opt?: Options) {
 	await server.listen()
 
 	const resolved = server.resolvedUrls?.local[0] ?? `http://localhost:${server.config.server.port}`
-	console.log(resolved)
+	console.log(`[DEV] Start server listened at ${resolved}`)
 	return server
 }

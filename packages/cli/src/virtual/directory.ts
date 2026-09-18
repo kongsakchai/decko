@@ -1,7 +1,7 @@
 import { VirtualModule } from './types'
 
-export const virtualSlides: VirtualModule = {
-	id: '@slide:slides.svelte',
+export const virtualDirectory: VirtualModule = {
+	id: 'decko:directory.svelte',
 	content() {
 		const markdowns = [...this.markdowns]
 		return [

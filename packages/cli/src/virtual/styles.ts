@@ -1,7 +1,7 @@
 import { VirtualModule } from './types'
 
 export const virtualAppCSS: VirtualModule = {
-	id: '@slide:app.css',
+	id: 'decko:app.css',
 	content() {
 		return [
 			`@import 'tailwindcss';`,
