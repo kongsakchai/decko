@@ -6,7 +6,7 @@
 	import { untrack } from 'svelte'
 
 	import Container from './container.svelte'
-	import NavigationBar from './navigation-bar.svelte'
+	import Controller from './controller.svelte'
 	import StepProgress from './step-progress.svelte'
 	import ZoomLayout from './zoom-layout.svelte'
 
@@ -43,6 +43,6 @@
 	<StepProgress />
 
 	{#snippet outside()}
-		<NavigationBar />
+		<Controller />
 	{/snippet}
 </Container>

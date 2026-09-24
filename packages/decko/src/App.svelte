@@ -2,6 +2,7 @@
 	import { Explorer, SlidePlayer } from '@decko/decko/components'
 
 	import Slide, { slide } from './example/svelte-101.svelte.md'
+	import SwitchThemeBtn from './lib/components/switch-theme-btn.svelte'
 
 	const data = [
 		'03-resource/linux-check-port.md',
@@ -39,10 +40,17 @@
 <svelte:head>
 	<title>{slide.title}</title>
 </svelte:head>
-<main class="bg-background h-dvh box-border w-full pt-1 px-6 overflow-y-scroll">
-	<h1>Decko</h1>
+<!-- <main class="bg-background box-border h-dvh w-full overflow-y-scroll px-6 pt-1">
+	<section class="flex justify-between items-center">
+		<h1>Decko</h1>
+		<SwitchThemeBtn class="text-foreground"/>
+	</section>
 
 	<Explorer files={data} />
+</main> -->
+
+<main class="w-full h-full">
+	<SlidePlayer slide={Slide} data={slide} />
 </main>
 
 <style lang="postcss">
