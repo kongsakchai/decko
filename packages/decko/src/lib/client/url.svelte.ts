@@ -1,4 +1,4 @@
-import { useSlideContext } from '../state'
+import { useSlideContext } from '../context'
 
 export function useURLState() {
 	const ctx = useSlideContext()

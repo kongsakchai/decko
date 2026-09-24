@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { flip } from 'svelte/animate'
 	import { backIn, backOut } from 'svelte/easing'
-	import { SvelteMap } from 'svelte/reactivity'
 	import { slide } from 'svelte/transition'
 
 	interface Props {
@@ -104,7 +102,7 @@
 	{#if root}
 		{@render list(root)}
 	{/if}
-	<div class="w-full h-6"></div>
+	<div class="h-6 w-full"></div>
 </section>
 
 <style>

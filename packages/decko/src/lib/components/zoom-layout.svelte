@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useViewContext } from '@decko/decko/state'
+	import { useViewContext } from '@decko/decko/context'
 
 	import { type Snippet } from 'svelte'
 

@@ -7,15 +7,12 @@ tags:
     - slide
 ---
 
-<!--
-style: "place-content: start;"
-split: 2
--->
-
 # Hello markdown
 
-```js step at=3
-console.log("Hello Markdown")
->>>>>
-console.log("Hello")
+```ts
+console.log('Not focused')
+console.log('Focused') // [!code focus]
+console.log('Not focused')
 ```
+
+<button class="btn">Click</button>

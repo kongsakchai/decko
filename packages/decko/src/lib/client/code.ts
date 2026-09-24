@@ -4,7 +4,7 @@ export function initCopyCode() {
 		const pre = button.parentNode?.querySelector('pre')
 		if (!pre) return
 
-		navigator.clipboard.writeText(pre.innerText)
+		navigator.clipboard.writeText(pre.textContent)
 		button.classList.add('copied')
 		setTimeout(() => {
 			button.classList.remove('copied')

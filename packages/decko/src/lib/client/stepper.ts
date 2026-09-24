@@ -1,4 +1,4 @@
-import { Action, useSlideContext } from '../state'
+import { Action, useSlideContext } from '../context'
 import type { Step, Stepper } from '../step'
 
 const next = (node: HTMLElement, stepper: Stepper, step: number) => {

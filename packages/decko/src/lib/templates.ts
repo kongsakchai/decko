@@ -60,7 +60,7 @@ export function scriptContent(opt: ScriptOptions) {
 		`import { stepper } from '@decko/decko/client/stepper'`,
 		'import { initCopyCode } from "@decko/decko/client/code"',
 		'import { mermaidRender } from "@decko/decko/client/mermaid"',
-		`import { CodeStepBlock } from "@decko/decko/builtin"`
+		`import CodeStepBlock from "@decko/decko/components/code-step-block.svelte"`
 	)
 
 	if (opt.features.has(Feature.Code)) runs.push('initCopyCode()')

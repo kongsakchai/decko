@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useViewContext } from '@decko/decko/state'
+	import { useViewContext } from '@decko/decko/context'
 
 	import type { Snippet } from 'svelte'
 
@@ -14,7 +14,7 @@
 </script>
 
 <section
-	class="relative h-full w-full content-center overflow-hidden bg-black"
+	class="relative h-full w-full content-center overflow-hidden bg-[#242424] transition-all dark:bg-[#121212]"
 	bind:clientWidth={viewContext.viewportWidth}
 	bind:clientHeight={viewContext.viewportHeight}
 >
@@ -37,5 +37,8 @@
 <style lang="postcss">
 	#slide-container {
 		transform: translate(-50%, -50%) scale(var(--slide-scale));
+		transition:
+			background 300ms ease-in-out,
+			color 300ms ease-in-out;
 	}
 </style>

@@ -1,1 +1,2 @@
-export { default as CodeStepBlock } from './code-step-block.svelte'
+export { default as LightOrDark } from './light-or-dark.svelte'
+export { default as SwitchTheme } from './switch-theme.svelte'

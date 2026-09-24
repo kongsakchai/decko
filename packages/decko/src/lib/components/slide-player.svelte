@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { useURLState } from '@decko/decko/client/url.svelte'
-	import { createSlideContext, createViewContext } from '@decko/decko/state'
+	import { createSlideContext, createViewContext } from '@decko/decko/context'
 	import type { SlideComponent, SlideData } from '@decko/decko/types'
 
 	import { untrack } from 'svelte'
 
 	import Container from './container.svelte'
-	import NavigationBar from './navigation-bar.svelte'
+	import SlideControl from './slide-control.svelte'
 	import StepProgress from './step-progress.svelte'
 	import ZoomLayout from './zoom-layout.svelte'
 
@@ -43,6 +43,6 @@
 	<StepProgress />
 
 	{#snippet outside()}
-		<NavigationBar />
+		<SlideControl />
 	{/snippet}
 </Container>

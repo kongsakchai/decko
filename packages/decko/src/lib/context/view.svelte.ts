@@ -11,10 +11,6 @@ export interface ViewContext {
 	readonly scale: number
 }
 
-const [useViewContext, setViewContext] = createContext<ViewContext>()
-
-export { useViewContext }
-
 class Context implements ViewContext {
 	width = $state<number>(1280)
 	height = $state<number>(720)
@@ -47,6 +43,10 @@ class Context implements ViewContext {
 		return (finalWidth / this.width) * this.size
 	}
 }
+
+const [useViewContext, setViewContext] = createContext<ViewContext>()
+
+export { useViewContext }
 
 export function createViewContext(source?: Partial<ViewContext>): ViewContext {
 	return setViewContext(new Context(source))

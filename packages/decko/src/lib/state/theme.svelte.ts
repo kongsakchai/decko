@@ -1,8 +1,6 @@
-import { untrack } from 'svelte'
-
 function createThemeState() {
 	let mode = $state(localStorage.getItem('decko.mode') || 'light')
-	if (untrack(() => mode === 'dark') && !document.documentElement.classList.contains('dark')) {
+	if (mode === 'dark' && !document.documentElement.classList.contains('dark')) {
 		document.documentElement.classList.add('dark')
 	}
 
@@ -13,8 +11,8 @@ function createThemeState() {
 	}
 
 	return {
-		get mode() {
-			return mode
+		get isDark() {
+			return mode === 'dark'
 		},
 		toggleMode
 	}

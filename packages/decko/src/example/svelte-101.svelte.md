@@ -39,6 +39,16 @@ Svelte คือ UI Frameworks ที่มีจุดประสงค์ใ�
 - No virtual DOM
 - Truly reactive
 
+<input type="range">
+
+:::main
+
+<button class="btn">Default</button>
+<button class="btn primary">Primary</button>
+<button class="btn secondary">Secondary</button>
+
+:::
+
 ---
 
 ### Write less code

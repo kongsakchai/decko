@@ -18,6 +18,7 @@ interface SlideContext {
 	readonly action: number
 	readonly totalPage: number
 	readonly maxStep: number
+
 	getStep(page?: number): number
 	goto(page: number, step?: number, action?: Action): void
 	next(): void

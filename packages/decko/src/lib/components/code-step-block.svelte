@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useSlideContext, useViewContext } from '@decko/decko/state'
+	import { useSlideContext, useViewContext } from '@decko/decko/context'
 	import '@shikijs/magic-move/style.css'
 	import { ShikiMagicMovePrecompiled } from '@shikijs/magic-move/svelte'
 
