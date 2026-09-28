@@ -14,7 +14,7 @@
 </script>
 
 <section
-	class="relative h-full w-full content-center overflow-hidden bg-[#242424] transition-all dark:bg-[#121212]"
+	class="relative h-full w-full content-center overflow-hidden bg-[#242424] transition-all dark:bg-black"
 	bind:clientWidth={viewContext.viewportWidth}
 	bind:clientHeight={viewContext.viewportHeight}
 >

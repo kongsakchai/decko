@@ -7,6 +7,11 @@ tags:
     - slide
 ---
 
+> Default
+
+> [!unknow]
+> Unknow alert
+
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
 
