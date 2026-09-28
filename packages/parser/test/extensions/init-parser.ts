@@ -26,35 +26,3 @@ export const parse = async (str: string) => {
 	const file = await parser.process(str)
 	return file.value.toString()
 }
-
-// describe('basic syntax', () => {
-// 	basicSyntaxTestcase(parse)
-// })
-
-// describe('extended syntax', () => {
-// 	extendedSyntaxTestcase(parse)
-// })
-
-// describe('svelte syntax', () => {
-// 	svelteTestcase(parse)
-// })
-
-// describe('html syntax', () => {
-// 	htmlTestcase(parse)
-// })
-
-// describe('container syntax', () => {
-// 	containerTestcase(parse)
-// })
-
-// describe('attribute block syntax', () => {
-// 	attributeTestcase(parse)
-// })
-
-// describe('more', () => {
-// 	moreTestcase()
-// })
-
-// describe('image', () => {
-// 	imageTestcase(parse)
-// })

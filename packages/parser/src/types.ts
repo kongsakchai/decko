@@ -77,3 +77,13 @@ export interface ExtensionOptions {
 export interface ContainerOptions {
 	customContainer?: string[]
 }
+
+export interface Alert {
+	title: string
+	icon?: string
+	color?: string
+}
+
+export interface AlertOptions {
+	customAlerts?: Record<string, Alert>
+}

@@ -1,7 +1,8 @@
 import type { Root as MRoot } from 'mdast'
 import type { Processor } from 'unified'
 
-import { CodeContainer, CodeHighlighter, Extension, PostExtension } from '../types.js'
+import { Alert, CodeContainer, CodeHighlighter, Extension, PostExtension } from '../types.js'
+import { alertTransformer } from './alert.js'
 import { codeblockTransformer } from './codeblock.js'
 import { containerTransformer } from './container.js'
 import { directiveTransformer, parseYAML } from './directive.js'
@@ -18,6 +19,7 @@ export interface TransformOptions {
 	customContainer?: string[]
 	extensions?: Extension[]
 	postExtension?: PostExtension[]
+	customAlerts?: Record<string, Alert>
 }
 
 export function applyTransformers(
@@ -29,6 +31,7 @@ export function applyTransformers(
 	process.use(extractScriptTransformer)
 	process.use(directiveTransformer)
 	process.use(imageTransformer)
+	process.use(alertTransformer, { customAlerts: options?.customAlerts })
 	process.use(containerTransformer, { customContainer: options?.customContainer })
-	process.use(extensionsTransform, { extensions: options?.extensions, postExtensions: options?.postExtension })
+	process.use(extensionsTransform, { extensions: options?.extensions, postExtensions: options?.postExtension }) // should to be last
 }

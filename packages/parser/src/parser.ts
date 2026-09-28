@@ -6,12 +6,7 @@ import remark2Rehype from 'remark-rehype'
 import { unified } from 'unified'
 
 import { deckoExtension } from './extensions/index.js'
-import {
-	PAGE_BREAK_KEY,
-	TransformOptions,
-	applyTransformers,
-	parseYAML
-} from './transformers/index.js'
+import { PAGE_BREAK_KEY, TransformOptions, applyTransformers, parseYAML } from './transformers/index.js'
 import type { Directive, SlideContext, SlideInfo, SlideResult } from './types.js'
 
 export interface Options extends TransformOptions {}
@@ -23,13 +18,7 @@ function setupProcessor(options?: Options) {
 		.use(remarkGfm, { singleTilde: false })
 		.use(deckoExtension)
 
-	applyTransformers(mdastTransform, {
-		codeContainer: options?.codeContainer,
-		codeHighlighter: options?.codeHighlighter,
-		customContainer: options?.customContainer,
-		extensions: options?.extensions,
-		postExtension: options?.postExtension
-	})
+	applyTransformers(mdastTransform, { ...options })
 
 	const hastTransform = mdastTransform.use(remark2Rehype, {
 		allowDangerousHtml: true
