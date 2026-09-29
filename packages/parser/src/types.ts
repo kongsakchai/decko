@@ -81,7 +81,6 @@ export interface ContainerOptions {
 export interface Alert {
 	title: string
 	icon?: string
-	color?: string
 }
 
 export interface AlertOptions {

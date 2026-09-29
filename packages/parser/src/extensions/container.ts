@@ -32,6 +32,9 @@ const partialAttributeTokenizer: Construct = {
 
 const containerTokenizer: Construct = {
 	name: 'container',
+	// Content lines are re-parsed as nested documents via chunkDocument, so no
+	// outer container (`>`, lists) may interrupt this tokenizer and steal lines.
+	concrete: true,
 	tokenize(this: TokenizeContext, effects: Effects, ok, nok) {
 		let previous: Token | undefined
 		let subContainer = 0

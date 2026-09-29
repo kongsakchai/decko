@@ -1,13 +1,8 @@
 import type { Attribute } from '@decko/parser'
 
-import { asNumber, asString } from './utils'
+import { asNumber, asString } from '../utils'
 
 export const STEP_ATTR_PATTERN = /^step-(\d+)(?:-(\d+))?$/
-
-export interface Stepper {
-	index: number
-	steps: Step[]
-}
 
 export type Step = [number, StepAction[]]
 

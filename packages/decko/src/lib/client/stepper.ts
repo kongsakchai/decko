@@ -1,5 +1,10 @@
-import { Action, useSlideContext } from '../context'
-import type { Step, Stepper } from '../step'
+import { Action, useSlideContext } from '@decko/decko/context'
+import type { Step } from '@decko/decko/extensions/step'
+
+export interface Stepper {
+	index: number
+	steps: Step[]
+}
 
 const next = (node: HTMLElement, stepper: Stepper, step: number) => {
 	const steps = stepper.steps

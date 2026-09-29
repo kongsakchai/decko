@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { useViewContext } from '@decko/decko/context'
+	import BurgerIcon from '@decko/decko/icons/burger-icon.svelte'
+	import MoonIcon from '@decko/decko/icons/moon-icon.svelte'
+	import ResetIcon from '@decko/decko/icons/reset-icon.svelte'
+	import SunIcon from '@decko/decko/icons/sun-icon.svelte'
 	import { themeState } from '@decko/decko/state'
 
 	import { fly } from 'svelte/transition'
 
-	import BurgerIcon from '../icons/burger-icon.svelte'
-	import MoonIcon from '../icons/moon-icon.svelte'
-	import ResetIcon from '../icons/reset-icon.svelte'
-	import SunIcon from '../icons/sun-icon.svelte'
 	import Popover from './popover.svelte'
 
 	const viewContext = useViewContext()

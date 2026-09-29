@@ -14,9 +14,9 @@ import lz from 'lz-string'
 import { type SpecialLanguage, createHighlighter } from 'shiki'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
-import { compresseAttribute } from './extension'
+import { asString } from '../utils'
 import { Feature, getFeatures } from './feature'
-import { asString } from './utils'
+import { compresseAttribute } from './strings'
 
 export const CODE_SPLIT_REGEX = /^>>>>>$/gm
 

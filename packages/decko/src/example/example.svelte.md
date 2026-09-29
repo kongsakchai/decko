@@ -7,10 +7,14 @@ tags:
     - slide
 ---
 
-> Default
+<!--
+split: 2
+split-gap: 16px
+-->
 
-> [!unknow]
-> Unknow alert
+:::div
+
+> Default
 
 > [!NOTE]
 > Useful information that users should know, even when skimming content.
@@ -26,3 +30,21 @@ tags:
 
 > [!CAUTION]
 > Advises about risks or negative outcomes of certain actions.
+
+:::
+
+:::div
+
+> [!unknow]
+> Unknow alert
+
+> [!Info]
+> Useful information that users should know, even when skimming content.
+
+> [!Example]
+> Helpful advice for doing things better or more easily.
+
+> [!Bug]
+> Key information users need to know to achieve their goal.
+
+:::

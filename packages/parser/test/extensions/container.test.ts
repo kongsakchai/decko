@@ -80,6 +80,41 @@ describe('container syntax', () => {
 				title: 'should return container with svelte attribute',
 				value: ':::div style:position="relative"\n:::\n:::div\n:::',
 				expected: '<div style:position="relative"></div>\n<div></div>'
+			},
+			{
+				title: 'should return container with blockquote',
+				value: ':::div\n> hello world\n:::',
+				expected: '<div><blockquote>\n<p>hello world</p>\n</blockquote></div>'
+			},
+			{
+				title: 'should return container with multi-line blockquote',
+				value: ':::div\n> hello\n> world\n:::',
+				expected: '<div><blockquote>\n<p>hello\nworld</p>\n</blockquote></div>'
+			},
+			{
+				title: 'should return container with list',
+				value: ':::div\n- a\n- b\n:::',
+				expected: '<div><ul>\n<li>a</li>\n<li>b</li>\n</ul></div>'
+			},
+			{
+				title: 'should return container with heading and blockquote',
+				value: ':::div\n# h\n> q\n:::',
+				expected: '<div><h1>h</h1><blockquote>\n<p>q</p>\n</blockquote></div>'
+			},
+			{
+				title: 'should return container with blockquote in sub container',
+				value: ':::div\n:::sub\n> q\n:::\nplain\n:::',
+				expected: '<div><sub><blockquote>\n<p>q</p>\n</blockquote></sub><p>plain</p></div>'
+			},
+			{
+				title: 'should return blockquote with container',
+				value: '> :::div\n> hi\n> :::',
+				expected: '<blockquote>\n<div><p>hi</p></div>\n</blockquote>'
+			},
+			{
+				title: 'should return container with lazy blockquote continuation',
+				value: ':::div\n> lazy a\nlazy b\n:::',
+				expected: '<div><blockquote>\n<p>lazy a\nlazy b</p>\n</blockquote></div>'
 			}
 		]
 

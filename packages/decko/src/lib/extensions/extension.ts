@@ -1,10 +1,9 @@
-import { type Attribute, type Extension, type Node, type PostExtension, type RootContent } from '@decko/parser'
+import { type Extension, type PostExtension, type RootContent } from '@decko/parser'
 
-import lz from 'lz-string'
-
+import { asNumber, asString } from '../utils'
 import { toSplitStyles } from './directive'
 import { extractSteps } from './step'
-import { asNumber, asString } from './utils'
+import { compresseAttribute } from './strings'
 
 export const splitContainerExtension: Extension = (ctx) => {
 	if (ctx.node.type !== 'container' || !ctx.attribute.split) return
@@ -42,8 +41,8 @@ export const hoistExtension: PostExtension = {
 		const parent = ctx.parents[ctx.parents.length - 1]
 		const grand = ctx.parents[ctx.parents.length - 2]
 
-		const index = (parent.children).indexOf(node)
-		const grandIndex = (grand.children).indexOf(parent as RootContent)
+		const index = parent.children.indexOf(node)
+		const grandIndex = grand.children.indexOf(parent as RootContent)
 		if (index === -1 || grandIndex === -1) return
 
 		parent.children.splice(index, 1)
@@ -53,17 +52,4 @@ export const hoistExtension: PostExtension = {
 			grand.children.splice(emptyIndex, 1)
 		}
 	}
-}
-
-export function compresseAttribute(attrs: Attribute, ...add: string[]) {
-	const compressed = add.map((s) => lz.compressToBase64(s))
-	attrs['@compressed'] = [asString(attrs['@compressed'], ''), ...compressed].filter(Boolean).join(' ')
-}
-
-export function decompresseContent(content: string) {
-	for (const match of content.matchAll(/@compressed="(.*?)"/g)) {
-		const decompress = match[1].split(' ').map((s) => lz.decompressFromBase64(s))
-		content = content.replaceAll(match[0], decompress.join(' '))
-	}
-	return content
 }

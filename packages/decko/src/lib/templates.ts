@@ -1,5 +1,5 @@
-import { decompresseContent } from './extension'
-import { Feature } from './feature'
+import { Feature } from './extensions/feature'
+import { decompresseContent } from './extensions/strings'
 import type { SlideData } from './types'
 
 export interface PageOptions {

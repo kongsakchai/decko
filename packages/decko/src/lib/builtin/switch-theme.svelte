@@ -1,10 +1,9 @@
 <script lang="ts">
+	import MoonIcon from '@decko/decko/icons/moon-icon.svelte'
+	import SunIcon from '@decko/decko/icons/sun-icon.svelte'
 	import { themeState } from '@decko/decko/state'
 
 	import { fly } from 'svelte/transition'
-
-	import MoonIcon from '../icons/moon-icon.svelte'
-	import SunIcon from '../icons/sun-icon.svelte'
 
 	interface Props {
 		class?: string

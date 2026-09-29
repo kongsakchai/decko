@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { useSlideContext } from '@decko/decko/context'
-
-	import ArrowLeftIcon from '../icons/arrow-left-icon.svelte'
-	import ArrowRightIcon from '../icons/arrow-right-icon.svelte'
+	import ArrowLeftIcon from '@decko/decko/icons/arrow-left-icon.svelte'
+	import ArrowRightIcon from '@decko/decko/icons/arrow-right-icon.svelte'
 
 	const slideCtx = useSlideContext()
 </script>

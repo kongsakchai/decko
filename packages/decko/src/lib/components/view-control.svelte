@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { useViewContext } from '@decko/decko/context'
+	import FullscreenIcon from '@decko/decko/icons/fullscreen-icon.svelte'
+	import NormalscreenIcon from '@decko/decko/icons/normalscreen-icon.svelte'
+	import ZoomIcon from '@decko/decko/icons/zoom-icon.svelte'
 
 	import { scale } from 'svelte/transition'
 
-	import FullscreenIcon from '../icons/fullscreen-icon.svelte'
-	import NormalscreenIcon from '../icons/normalscreen-icon.svelte'
-	import ZoomIcon from '../icons/zoom-icon.svelte'
 	import Popover from './popover.svelte'
 
 	let fullscreen = $state(!!document.fullscreenElement)

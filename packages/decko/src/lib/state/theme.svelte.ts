@@ -1,20 +1,20 @@
 function createThemeState() {
-	let mode = $state(localStorage.getItem('decko.mode') || 'light')
+	let mode = $state(localStorage.getItem('decko.schema') || 'light')
 	if (mode === 'dark' && !document.documentElement.classList.contains('dark')) {
 		document.documentElement.classList.add('dark')
 	}
 
-	function toggleMode() {
+	function toggleDark() {
 		document.documentElement.classList.toggle('dark')
 		mode = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-		localStorage.setItem('decko.mode', mode)
+		localStorage.setItem('decko.schema', mode)
 	}
 
 	return {
 		get isDark() {
 			return mode === 'dark'
 		},
-		toggleMode
+		toggleMode: toggleDark
 	}
 }
 
