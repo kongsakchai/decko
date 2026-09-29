@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { useSlideContext, useViewContext } from '@decko/decko/context'
 	import '@shikijs/magic-move/style.css'
 	import { ShikiMagicMovePrecompiled } from '@shikijs/magic-move/svelte'
 
 	import lz from 'lz-string'
+
+	import { useSlideContext, useViewContext } from '../context'
 
 	interface Props {
 		code: string

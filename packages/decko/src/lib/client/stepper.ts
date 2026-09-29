@@ -1,5 +1,5 @@
-import { Action, useSlideContext } from '@decko/decko/context'
-import type { Step } from '@decko/decko/extensions/step'
+import { Action, useSlideContext } from '../context'
+import type { Step } from '../extensions/step'
 
 export interface Stepper {
 	index: number

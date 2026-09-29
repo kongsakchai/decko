@@ -12,7 +12,7 @@
 
 <style lang="postcss">
 	@reference "tailwindcss";
-	@reference "@decko/decko/themes/decko.css";
+	@reference "../themes/decko.css";
 
 	.control :global {
 		.menu {

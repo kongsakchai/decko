@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { useViewContext } from '@decko/decko/context'
-
 	import type { Snippet } from 'svelte'
+
+	import { useViewContext } from '../context'
 
 	interface Props {
 		outside?: Snippet

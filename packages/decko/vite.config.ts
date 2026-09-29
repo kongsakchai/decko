@@ -1,7 +1,6 @@
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 
-import path from 'node:path'
 import { defineConfig } from 'vite'
 
 import { decko } from './src/lib'
@@ -14,10 +13,5 @@ export default defineConfig({
 			extensions: ['.svelte', '.svelte.md'],
 			preprocess: [decko(), vitePreprocess()]
 		})
-	],
-	resolve: {
-		alias: {
-			'@decko/decko': path.resolve(__dirname, './src/lib')
-		}
-	}
+	]
 })

@@ -1,4 +1,4 @@
-import { useSlideContext } from '@decko/decko/context'
+import { useSlideContext } from '../context'
 
 export function useURLState() {
 	const ctx = useSlideContext()

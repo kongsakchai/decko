@@ -1,2 +1,2 @@
-export * from './slide.svelte'
-export * from './view.svelte'
+export * from './slide.svelte.js'
+export * from './view.svelte.js'

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { useURLState } from '@decko/decko/client/url.svelte'
-	import { createSlideContext, createViewContext } from '@decko/decko/context'
-	import type { SlideComponent, SlideData } from '@decko/decko/types'
-
 	import { untrack } from 'svelte'
 
+	import { useURLState } from '../client/url.svelte'
+	import { createSlideContext, createViewContext } from '../context'
+	import type { SlideComponent, SlideData } from '../types'
 	import Container from './container.svelte'
 	import SlideControl from './slide-control.svelte'
 	import StepProgress from './step-progress.svelte'

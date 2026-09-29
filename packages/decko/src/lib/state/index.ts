@@ -1,1 +1,1 @@
-export * from './theme.svelte'
+export * from './theme.svelte.js'

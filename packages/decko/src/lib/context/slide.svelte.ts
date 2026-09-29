@@ -1,6 +1,6 @@
-import type { SlideData } from '@decko/decko/types'
-
 import { createContext } from 'svelte'
+
+import type { SlideData } from '../types'
 
 export enum Action {
 	NEXT,

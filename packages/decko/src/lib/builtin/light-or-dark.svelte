@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { themeState } from '@decko/decko/state'
-
 	import type { Snippet } from 'svelte'
+
+	import { themeState } from '../state'
 
 	interface Props {
 		light: Snippet

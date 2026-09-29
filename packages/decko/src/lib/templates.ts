@@ -19,7 +19,7 @@ export function pageContent(content: string, page: number, opt: PageOptions = {}
 	content = decompresseContent(content)
 	const pages = [
 		`{#if page === ${page}}`,
-		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade>`,
+		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
 		opt.background ? `<div class='slide-background' style='${opt.background}'></div>` : '',
 		opt.pageNumber ? `<div class="slide-page-number">${opt.pageNumber}</div>` : '',
 		opt.split ? `<div class="split" style="${opt.split}">${content}</div>` : content,
@@ -36,7 +36,7 @@ export function styleContent(styleTag: string[] = []) {
 	const styles = [
 		'<style lang="postcss">',
 		'@reference "tailwindcss";',
-		'@reference "@decko/decko/themes/decko.css";',
+		'@reference "../themes/decko.css";',
 		...styleTag,
 		'</style>'
 	]
@@ -60,7 +60,7 @@ export function scriptContent(opt: ScriptOptions) {
 		`import { stepper } from '@decko/decko/client/stepper'`,
 		'import { initCopyCode } from "@decko/decko/client/code"',
 		'import { mermaidRender } from "@decko/decko/client/mermaid"',
-		`import CodeStepBlock from "@decko/decko/components/code-step-block.svelte"`
+		`import { CodeStepBlock } from "@decko/decko/components"`
 	)
 
 	if (opt.features.has(Feature.Code)) runs.push('initCopyCode()')

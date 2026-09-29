@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useSlideContext } from '@decko/decko/context'
+	import { useSlideContext } from '../context'
 
 	const slideCtx = useSlideContext()
 

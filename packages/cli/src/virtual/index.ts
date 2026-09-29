@@ -7,4 +7,4 @@ export * from './slide'
 export * from './styles'
 export * from './types'
 
-export const virtualModules = [virtualDirectory, virtualAppCSS, virtualSlide,virtualMarkdown]
+export const virtualModules = [virtualDirectory, virtualAppCSS, virtualSlide, virtualMarkdown]

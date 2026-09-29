@@ -1,6 +1,6 @@
 import { createSlideLoader } from '@/vite/loaders'
-import { decko } from '@decko/decko';
 
+import { decko } from '@decko/decko'
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 
