@@ -12,15 +12,10 @@ export const virtualSlide: VirtualModule = {
 		const src = this.id.replaceAll(/^decko:slide\/|\.svelte$/g, '')
 		return [
 			`<script lang="ts">`,
-			`import { SlidePlayer } from '@decko/decko/components'`,
+			`import { SlidePlayer } from '@decko/decko/page'`,
 			`import Slide, { slide } from '${resolveMarkdownId(src)}'`,
 			`</script>`,
-			`<svelte:head>`,
-			`<title>{slide.title}</title>`,
-			`</svelte:head>`,
-			`<main class="h-full w-full">`,
-			`<SlidePlayer slide={Slide} data={slide} />`,
-			`</main>`
+			`<SlidePlayer slide={Slide} data={slide} />`
 		].join('\n')
 	}
 }

@@ -1,5 +1,5 @@
 import { findMarkdowns, readMarkdown } from '@/content'
-import { resolveSlideId, virtualDirectory, virtualModules } from '@/virtual'
+import { resolveSlideId, virtualExplorer, virtualModules } from '@/virtual'
 
 import { existsSync, statSync } from 'node:fs'
 import type { IncomingMessage, ServerResponse } from 'node:http'
@@ -34,7 +34,7 @@ export function createSlideLoader(root: string): Plugin {
 
 				const stat = statSync(absolutePath)
 				if (stat.isDirectory()) {
-					return sendHTML(res, 200, url, virtualDirectory.id as string)
+					return sendHTML(res, 200, url, virtualExplorer.id as string)
 				}
 				const isNavigation = req.headers['sec-fetch-dest'] === 'document'
 				if (!absolutePath.endsWith('.md') || !isNavigation) {

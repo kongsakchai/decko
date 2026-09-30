@@ -2,12 +2,9 @@
 	import { untrack } from 'svelte'
 
 	import { useURLState } from '../client/url.svelte'
+	import { Container, SlideControl, StepProgress, ZoomLayout } from '../components'
 	import { createSlideContext, createViewContext } from '../context'
 	import type { SlideComponent, SlideData } from '../types'
-	import Container from './container.svelte'
-	import SlideControl from './slide-control.svelte'
-	import StepProgress from './step-progress.svelte'
-	import ZoomLayout from './zoom-layout.svelte'
 
 	interface Props {
 		data: SlideData
@@ -34,14 +31,27 @@
 	})
 </script>
 
-<Container>
-	<ZoomLayout>
-		<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
-	</ZoomLayout>
+<svelte:head>
+	<title>{data.title}</title>
+</svelte:head>
 
-	<StepProgress />
+<main class="h-full w-full">
+	<Container>
+		<ZoomLayout>
+			<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
+		</ZoomLayout>
 
-	{#snippet outside()}
-		<SlideControl />
-	{/snippet}
-</Container>
+		<StepProgress />
+
+		{#snippet outside()}
+			<SlideControl />
+		{/snippet}
+	</Container>
+</main>
+
+<style lang="postcss">
+	main {
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border) transparent;
+	}
+</style>

@@ -1,32 +1,15 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition'
-
 	import { useViewContext } from '../context'
 	import BurgerIcon from '../icons/burger-icon.svelte'
-	import MoonIcon from '../icons/moon-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
-	import SunIcon from '../icons/sun-icon.svelte'
-	import { themeState } from '../state'
 	import Popover from './popover.svelte'
+	import SwitchTheme from './switch-theme.svelte'
 
 	const viewContext = useViewContext()
 </script>
 
 <div class="menu">
-	<button onclick={themeState.toggleMode} title="switch-theme" class="menu-btn relative rounded-l-sm">
-		{#if themeState.isDark}
-			<span class="absolute top-0 left-0 h-full w-full content-center" transition:fly={{ duration: 300, y: 300 }}>
-				<MoonIcon />
-			</span>
-		{:else}
-			<span
-				class="absolute top-0 left-0 h-full w-full content-center"
-				transition:fly={{ duration: 300, y: -300 }}
-			>
-				<SunIcon />
-			</span>
-		{/if}
-	</button>
+	<SwitchTheme class="menu-btn rounded-l-sm" />
 
 	<div class=" border-border border-l"></div>
 

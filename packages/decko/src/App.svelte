@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Slide, { slide } from './example/example.svelte.md'
-	import SlidePlayer from './lib/components/slide-player.svelte'
+	import { Explorer } from './lib/page'
 
 	const data = [
 		'03-resource/linux-check-port.md',
@@ -33,28 +33,14 @@
 		'node_modules/tsconfck/types/index.d.ts.map',
 		'node_modules/tsconfck/LICENSE'
 	]
+
+	console.log(Slide, slide)
 </script>
 
 <svelte:head>
 	<title>{slide.title}</title>
 </svelte:head>
-<!-- <main class="bg-background box-border h-dvh w-full overflow-y-scroll px-6 pt-1 transition-all duration-500">
-	<section class="flex items-center justify-between">
-		<h1>Decko</h1>
 
-		<SwitchTheme />
-	</section>
+<Explorer title="decko" files={data} />
 
-	<Explorer files={data} />
-</main> -->
-
-<main class="h-full w-full">
-	<SlidePlayer slide={Slide} data={slide} />
-</main>
-
-<style lang="postcss">
-	main {
-		scrollbar-width: thin;
-		scrollbar-color: var(--color-border) transparent;
-	}
-</style>
+<!-- <SlidePlayer slide={Slide} data={slide} /> -->

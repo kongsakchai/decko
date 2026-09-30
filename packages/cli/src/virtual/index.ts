@@ -1,10 +1,10 @@
-import { virtualDirectory } from './directory'
+import { virtualExplorer } from './explorer'
 import { virtualMarkdown, virtualSlide } from './slide'
 import { virtualAppCSS } from './styles'
 
-export * from './directory'
+export * from './explorer'
 export * from './slide'
 export * from './styles'
 export * from './types'
 
-export const virtualModules = [virtualDirectory, virtualAppCSS, virtualSlide, virtualMarkdown]
+export const virtualModules = [virtualExplorer, virtualAppCSS, virtualSlide, virtualMarkdown]
