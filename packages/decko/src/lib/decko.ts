@@ -6,7 +6,7 @@ import type { PreprocessorGroup } from 'svelte/compiler'
 import { alerts } from './extensions/alerts'
 import { codeContainer, codeHighlighter } from './extensions/code'
 import { resolvePaginate, toBackgroundStyles, toSplitStyles } from './extensions/directive'
-import { hoistExtension, splitContainerExtension, stepExtension } from './extensions/extension'
+import { assetsLinkExtension, hoistExtension, splitContainerExtension, stepExtension } from './extensions/extension'
 import { getFeatures } from './extensions/feature'
 import { pageContent, scriptContent, styleContent } from './templates'
 import type { Options, SlideData } from './types'
@@ -16,7 +16,7 @@ export function decko(options?: Options): PreprocessorGroup {
 	const parser = createSlideParser({
 		codeContainer: codeContainer,
 		codeHighlighter: codeHighlighter,
-		extensions: [stepExtension, splitContainerExtension],
+		extensions: [stepExtension, splitContainerExtension, assetsLinkExtension],
 		postExtension: [hoistExtension],
 		customAlerts: alerts
 	})
@@ -55,6 +55,7 @@ export function decko(options?: Options): PreprocessorGroup {
 		const script = scriptContent({
 			data: slideData,
 			scripts: slide.script,
+			assets: Object.entries((slide.extra.assets ?? {}) as Record<string, string>),
 			features: getFeatures(slide.extra)
 		})
 

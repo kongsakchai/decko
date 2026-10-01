@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Slide, { slide } from './example/example.svelte.md'
-	import { Explorer } from './lib/page'
+	import { SlidePlayer } from './lib/page'
 
 	const data = [
 		'03-resource/linux-check-port.md',
@@ -41,6 +41,6 @@
 	<title>{slide.title}</title>
 </svelte:head>
 
-<Explorer title="decko" files={data} />
+<!-- <Explorer title="decko" files={data} /> -->
 
-<!-- <SlidePlayer slide={Slide} data={slide} /> -->
+<SlidePlayer slide={Slide} data={slide} />

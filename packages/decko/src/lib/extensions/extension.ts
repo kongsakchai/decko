@@ -21,7 +21,7 @@ export const stepExtension: Extension = (ctx) => {
 	const stepData = extractSteps(ctx.attribute)
 	if (stepData.steps.length === 0) return
 
-	if (!ctx.currentSlide.local) ctx.currentSlide.local = {}
+	ctx.currentSlide.local ??= {}
 	ctx.currentSlide.local.step = Math.max(asNumber(ctx.currentSlide.local?.step, 0), stepData.maxStep)
 
 	const stepEntries = JSON.stringify(stepData.steps)
@@ -59,32 +59,36 @@ export const hoistExtension: PostExtension = {
 const HTTP_REGEX = /^(https?:)?\/\//
 const HTML_SRC_REGEX = /<(?:img|video|source)\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/
 
+const resolveURL = (assets: Record<string, string>, counter: number, url: string): string => {
+	if (!url || HTTP_REGEX.test(url)) return url
+	if (!assets[url]) {
+		assets[url] = `__assets${counter}`
+	}
+	return `{${assets[url]}}`
+}
+
 export const assetsLinkExtension: Extension = (ctx) => {
-	const assets = (ctx.slideCtx.extra.assets ?? {}) as Record<string, string>
-	const counter = (ctx.slideCtx.extra.assetCounter ?? 0) as number
+	const extra = ctx.slideCtx.extra
+	const assets = (extra.assets ?? {}) as Record<string, string>
+	const counter = (extra.assetCounter ?? 0) as number
 
-	let updateAssets = false
-	if (ctx.node.type === 'image') {
-		const image = ctx.node as Image
-		if (HTTP_REGEX.test(image.url)) return
-		if (!assets[image.url]) {
-			assets[image.url] = `__assets${counter}`
+	switch (ctx.node.type) {
+		case 'image': {
+			const image = ctx.node as Image
+			image.url = `${resolveURL(assets, counter, image.url)}`
+			ctx.slideCtx.extra.assetCounter = counter + 1
+			break
 		}
-		image.url = assets[image.url]
-		updateAssets = true
-	} else if (ctx.node.type === 'html') {
-		const html = ctx.node as Html
-		const match = HTML_SRC_REGEX.exec(html.value)
-		if (!match || HTTP_REGEX.test(match[1])) return
-		if (!assets[match[1]]) {
-			assets[match[1]] = `__assets${counter}`
+		case 'html': {
+			const html = ctx.node as Html
+			const match = HTML_SRC_REGEX.exec(html.value)
+			if (!match) return
+			html.value = html.value.replace(match[1], `${resolveURL(assets, counter, match[1])}`)
+			ctx.slideCtx.extra.assetCounter = counter + 1
+			break
 		}
-		html.value = html.value.replace(match[1], assets[match[1]])
-		updateAssets = true
+		default:
+			return
 	}
-
-	if (updateAssets) {
-		ctx.slideCtx.extra.assets = assets
-		ctx.slideCtx.extra.assetCounter = counter + 1
-	}
+	ctx.slideCtx.extra.assets = assets
 }

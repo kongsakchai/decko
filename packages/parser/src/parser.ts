@@ -6,6 +6,7 @@ import remark2Rehype from 'remark-rehype'
 import { unified } from 'unified'
 
 import { deckoExtension } from './extensions/index.js'
+import { imageHandler, linkHandler } from './handler/index.js'
 import { PAGE_BREAK_KEY, TransformOptions, applyTransformers, parseYAML } from './transformers/index.js'
 import type { Directive, SlideContext, SlideInfo, SlideResult } from './types.js'
 
@@ -21,7 +22,8 @@ function setupProcessor(options?: Options) {
 	applyTransformers(mdastTransform, { ...options })
 
 	const hastTransform = mdastTransform.use(remark2Rehype, {
-		allowDangerousHtml: true
+		allowDangerousHtml: true,
+		handlers: { image: imageHandler, link: linkHandler }
 	})
 
 	return hastTransform.use(stringify, {

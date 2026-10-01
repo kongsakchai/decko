@@ -129,7 +129,7 @@ export const codeHighlighter: CodeHighlighter = async (ctx) => {
 	const codeTokenInfo = JSON.stringify(codeSteps.map((code) => magicMove.commit(code.trim()).current))
 
 	const start = Number.parseInt(asString(ctx.attrs.at, '0'), 10) || 0
-	if (!ctx.slide.local) ctx.slide.local = {}
+	ctx.slide.local ??= {}
 	ctx.slide.local.step = start + codeSteps.length - 1
 
 	return {
