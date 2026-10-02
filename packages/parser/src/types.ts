@@ -59,7 +59,7 @@ export interface ExtensionContext {
 
 	attribute: Attribute
 	slideCtx: SlideContext
-	slideData: SlideData
+	currentSlide: SlideData
 }
 
 export type Extension = (ctx: ExtensionContext) => Promise<void> | void

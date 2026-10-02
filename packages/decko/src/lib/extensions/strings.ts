@@ -16,3 +16,7 @@ export function decompresseContent(content: string) {
 	}
 	return content
 }
+
+export function decodeAssets(content: string) {
+	return content.replace(/%7B(__assets\d+)%7D/gi, '{$1}')
+}

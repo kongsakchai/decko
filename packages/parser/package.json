@@ -29,6 +29,7 @@
 		"@types/hast": "^3.0.4",
 		"@types/mdast": "^4.0.4",
 		"mdast-util-from-markdown": "^2.0.3",
+		"mdast-util-to-hast": "^13.2.1",
 		"micromark-util-character": "^2.1.1",
 		"micromark-util-classify-character": "^2.0.1",
 		"micromark-util-html-tag-name": "^2.0.1",

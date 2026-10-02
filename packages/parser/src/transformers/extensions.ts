@@ -15,7 +15,7 @@ function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent
 
 		attribute,
 		slideCtx: ctx,
-		slideData: ctx.slides[node.indexGroup ?? 0]
+		currentSlide: ctx.slides[node.indexGroup ?? 0]
 	}
 }
 

@@ -48,6 +48,7 @@ interface ScriptOptions {
 	data: SlideData
 	scripts: string[]
 	features: Set<Feature>
+	assets: [string, string][]
 }
 
 export function scriptContent(opt: ScriptOptions) {
@@ -63,6 +64,7 @@ export function scriptContent(opt: ScriptOptions) {
 		`import { CodeStepBlock } from "@decko/decko/components"`
 	)
 
+	if (opt.assets.length > 0) runs.push(...opt.assets.map(([p, v]) => `import ${v} from '${p}'`))
 	if (opt.features.has(Feature.Code)) runs.push('initCopyCode()')
 
 	const scripts = [
