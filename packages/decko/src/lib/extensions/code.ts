@@ -16,7 +16,6 @@ import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
 import { asString } from '../utils'
 import { Feature, getFeatures } from './feature'
-import { compresseAttribute } from './strings'
 
 export const CODE_SPLIT_REGEX = /^>>>>>$/gm
 
@@ -47,7 +46,9 @@ export const codeContainer: CodeContainer = async (ctx) => {
 	if (ctx.lang === 'mermaid') {
 		ctx.attrs.class = asString(ctx.attrs.class, '').replace('language-mermaid', 'mermaid-container')
 		ctx.attrs.name = 'mermaid'
-		compresseAttribute(ctx.attrs, '{@attach mermaidRender}')
+		ctx.attrs.svelteExpression ??= []
+		const exp = ctx.attrs.svelteExpression as string[]
+		exp.push('{@attach mermaidRender}')
 
 		return {
 			type: 'container',

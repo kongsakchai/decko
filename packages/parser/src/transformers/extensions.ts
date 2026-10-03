@@ -5,15 +5,15 @@ import { visitParents } from 'unist-util-visit-parents'
 import { Attribute, Extension, ExtensionContext, ExtensionOptions, PostExtension, SlideContext } from '../types.js'
 
 function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent[]): ExtensionContext | undefined {
-	let attribute = node.data?.hProperties as Attribute | undefined
-	if (!attribute) attribute = {}
+	node.data ??= { hProperties: {} }
+	node.data.hProperties ??= {}
 
 	return {
 		root,
 		node,
 		parents: parent,
 
-		attribute,
+		attrs: node.data.hProperties as Attribute,
 		slideCtx: ctx,
 		currentSlide: ctx.slides[node.indexGroup ?? 0]
 	}

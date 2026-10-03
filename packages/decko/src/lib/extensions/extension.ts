@@ -2,38 +2,39 @@ import { type Extension, type PostExtension, type RootContent } from '@decko/par
 
 import type { Html, Image } from 'mdast'
 
-import { asNumber, asString } from '../utils'
+import { asNumber, asString, mergeStr } from '../utils'
 import { toSplitStyles } from './directive'
 import { extractSteps } from './step'
-import { compresseAttribute } from './strings'
 
 export const splitContainerExtension: Extension = (ctx) => {
-	if (ctx.node.type !== 'container' || !ctx.attribute.split) return
+	if (ctx.node.type !== 'container' || !ctx.attrs.split) return
 
-	const split = toSplitStyles(ctx.attribute)
+	const split = toSplitStyles(ctx.attrs)
 	if (!split) return
 
-	ctx.attribute.style = [split, ctx.attribute.style].filter(Boolean).join(';')
-	delete ctx.attribute.split
+	ctx.attrs.style = mergeStr('; ', split, ctx.attrs.style)
+	delete ctx.attrs.split
 }
 
 export const stepExtension: Extension = (ctx) => {
-	const stepData = extractSteps(ctx.attribute)
+	const stepData = extractSteps(ctx.attrs)
 	if (stepData.steps.length === 0) return
 
 	ctx.currentSlide.local ??= {}
 	ctx.currentSlide.local.step = Math.max(asNumber(ctx.currentSlide.local?.step, 0), stepData.maxStep)
 
 	const stepEntries = JSON.stringify(stepData.steps)
-	compresseAttribute(ctx.attribute, `{@attach stepper(page,${stepEntries})}`)
+	ctx.attrs.svelteExpression ??= []
+	const exp = ctx.attrs.svelteExpression as string[]
+	exp.push(`{@attach stepper(page,${stepEntries})}`)
 }
 
 export const hoistExtension: PostExtension = {
 	when: (ctx) => {
 		return (
-			ctx.attribute.bg !== undefined ||
-			!!asString(ctx.attribute.class)?.includes('absolute') ||
-			!!asString(ctx.attribute.style)?.includes('absolute')
+			ctx.attrs.bg != undefined ||
+			!!asString(ctx.attrs.class)?.includes('absolute') ||
+			!!asString(ctx.attrs.style)?.includes('absolute')
 		)
 	},
 	extension: (ctx) => {

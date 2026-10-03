@@ -21,13 +21,13 @@ class Context implements ViewContext {
 	size = $state<number>(1)
 
 	constructor(source?: Partial<ViewContext>) {
-		this.width = source?.width ?? 1280
-		this.height = source?.height ?? 720
-		this.viewportWidth = source?.viewportWidth ?? 1280
-		this.viewportHeight = source?.viewportHeight ?? 720
-		this.fontSize = source?.fontSize ?? 16
-		this.zoom = source?.zoom ?? 1
-		this.size = source?.size ?? 1
+		this.width = source?.width || 1280
+		this.height = source?.height || 720
+		this.viewportWidth = source?.viewportWidth || 1280
+		this.viewportHeight = source?.viewportHeight || 720
+		this.fontSize = source?.fontSize || 16
+		this.zoom = source?.zoom || 1
+		this.size = source?.size || 1
 	}
 
 	get scale() {

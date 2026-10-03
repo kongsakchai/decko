@@ -1,6 +1,6 @@
 import { Feature } from './extensions/feature'
-import { decompresseContent } from './extensions/strings'
 import type { SlideData } from './types'
+import { mergeStr } from './utils'
 
 export interface PageOptions {
 	layout?: string
@@ -16,7 +16,6 @@ export function pageContent(content: string, page: number, opt: PageOptions = {}
 	const style = opt.style ? `style="${opt.style}"` : ''
 	const layout = opt.layout || 'default'
 
-	content = decompresseContent(content)
 	const pages = [
 		`{#if page === ${page}}`,
 		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
@@ -27,7 +26,7 @@ export function pageContent(content: string, page: number, opt: PageOptions = {}
 		`{/if}`
 	]
 
-	return pages.filter(Boolean).join('\n')
+	return mergeStr('\n', ...pages)
 }
 
 export function styleContent(styleTag: string[] = []) {
@@ -41,7 +40,7 @@ export function styleContent(styleTag: string[] = []) {
 		'</style>'
 	]
 
-	return styles.filter(Boolean).join('\n')
+	return mergeStr('\n', ...styles)
 }
 
 interface ScriptOptions {
@@ -80,5 +79,5 @@ export function scriptContent(opt: ScriptOptions) {
 		'</script>'
 	]
 
-	return scripts.filter(Boolean).join('\n')
+	return mergeStr('\n', ...scripts)
 }

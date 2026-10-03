@@ -1,8 +1,6 @@
 declare module '*.md' {
-	import type { SlideComponent, SlideData } from '@decko/decko/types'
+	export const slide: import('./lib/types').SlideData
 
-	export const slide: SlideData
-
-	const Component: SlideComponent
+	const Component: import('./lib/types').SlideComponent
 	export default Component
 }

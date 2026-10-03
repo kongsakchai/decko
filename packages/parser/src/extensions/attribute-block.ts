@@ -66,11 +66,17 @@ function exitAttributeBlock(this: CompileContext, token: Token) {
 
 	if (node?.type === 'attributeBlock') {
 		node.attr = this.data.attr
+		if (this.data.class.length > 0) node.attr.class = this.data.class
+		if (this.data.id.length > 0) node.attr.id = this.data.id
+		if (this.data.exp.length > 0) node.attr.svelteExpression = this.data.exp
 
-		const parent = this.stack.at(-2) as { data: { hProperties: Properties } } | undefined
+		const parent = this.stack.at(-2) as { data?: { hProperties: Properties } } | undefined
 		if (parent) {
 			parent.data ??= { hProperties: {} }
-			parent.data.hProperties = { ...parent.data.hProperties, ...this.data.attr }
+			parent.data.hProperties = {
+				...parent.data.hProperties,
+				...this.data.attr
+			}
 		}
 	}
 

@@ -10,5 +10,3 @@ tags:
 # Hello
 
 ![svelte logo](./svelte-logo.png)
-
-<img src="./svelte-logo.png" />

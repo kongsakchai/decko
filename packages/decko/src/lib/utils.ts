@@ -9,3 +9,7 @@ export function asString(v: unknown, defaultVal?: undefined): string | undefined
 export function asString(v: unknown, defaultVal?: string): string | undefined {
 	return typeof v === 'string' ? v : defaultVal
 }
+
+export function mergeStr(separator: string, ...v: unknown[]): string {
+	return v.filter(Boolean).join(separator)
+}

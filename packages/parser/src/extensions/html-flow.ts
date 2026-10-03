@@ -154,7 +154,16 @@ const htmlFlowTokenizer: Construct = {
 			} else {
 				tagType = constants.htmlComplete
 
-				// Do not support complete HTML when interrupting.
+				// Do not support complete HTML when interrupting (CommonMark 4.6 "HTML blocks"):
+				// types 1–6 may interrupt a paragraph, but type 7 (a complete tag like
+				// `<span>`, `<Component />`) may not.
+				// e.g. `hello, markdown\n<span>text</span>` stays inside the paragraph:
+				//   <p>hello, markdown\n<span>text</span></p>
+				// Exception per 5.1/5.2 "Laziness": laziness only applies to paragraph
+				// continuation text, so on a lazy line (no `>` / list marker) the complete
+				// tag can interrupt and becomes its own HTML block:
+				// e.g. `> hello, markdown\n<span>text</span>`:
+				//   <blockquote>\n<p>hello, markdown</p>\n</blockquote>\n<span>text</span>
 				if (isInterrupt() && !isLazy()) return nok(code)
 			}
 

@@ -7,6 +7,7 @@ import { unified } from 'unified'
 
 import { deckoExtension } from './extensions/index.js'
 import { imageHandler, linkHandler } from './handler/index.js'
+import { svelteExpressionTransformer } from './html/index.js'
 import { PAGE_BREAK_KEY, TransformOptions, applyTransformers, parseYAML } from './transformers/index.js'
 import type { Directive, SlideContext, SlideInfo, SlideResult } from './types.js'
 
@@ -26,7 +27,7 @@ function setupProcessor(options?: Options) {
 		handlers: { image: imageHandler, link: linkHandler }
 	})
 
-	return hastTransform.use(stringify, {
+	return hastTransform.use(svelteExpressionTransformer).use(stringify, {
 		allowDangerousHtml: true,
 		allowDangerousCharacters: true,
 		collapseEmptyAttributes: true

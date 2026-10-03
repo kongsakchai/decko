@@ -1,5 +1,7 @@
 import { type Directive } from '@decko/parser'
 
+import { mergeStr } from '../utils'
+
 const BACKGROUND_PROPS = {
 	bg: 'background',
 	'bg-color': 'background-color',
@@ -35,7 +37,7 @@ export function toSplitStyles(directive: Directive): string | undefined {
 
 	if (typeof split === 'number') {
 		const colStyle = `--split-col: repeat(${split},1fr)`
-		return [directive.style, colStyle, gap].filter(Boolean).join('; ') || undefined
+		return mergeStr('; ', directive.style, colStyle, gap) || undefined
 	}
 
 	if (typeof split === 'string') {
@@ -44,7 +46,7 @@ export function toSplitStyles(directive: Directive): string | undefined {
 		const colStyle = colRaw?.trim() ? `--split-col: ${toSplitValue(colRaw)}` : ''
 		const rowStyle = rowRaw?.trim() ? `--split-row: ${toSplitValue(rowRaw)}` : ''
 
-		const styles = [directive.style, colStyle, rowStyle, gap].filter(Boolean).join('; ')
+		const styles = mergeStr('; ', directive.style, colStyle, rowStyle, gap)
 		return styles || undefined
 	}
 

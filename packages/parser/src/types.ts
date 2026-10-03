@@ -57,12 +57,12 @@ export interface ExtensionContext {
 	node: Node
 	parents: Parent[]
 
-	attribute: Attribute
+	attrs: Attribute
 	slideCtx: SlideContext
 	currentSlide: SlideData
 }
 
-export type Extension = (ctx: ExtensionContext) => Promise<void> | void
+export type Extension = (ctx: ExtensionContext) => void
 
 export interface PostExtension {
 	when: (ctx: ExtensionContext) => boolean

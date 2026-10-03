@@ -24,7 +24,7 @@ export async function createServer(root: string, opt?: Options) {
 		],
 		server: {
 			port: opt?.port,
-			strictPort: opt?.port !== undefined,
+			strictPort: opt?.port != undefined,
 			fs: { allow: [searchForWorkspaceRoot(process.cwd()), root] }
 		},
 		logLevel: 'error',

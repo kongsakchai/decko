@@ -32,8 +32,9 @@ declare module 'micromark-util-types' {
 		attributeKey: 'attributeKey'
 		attributeValue: 'attributeValue'
 		attributeClass: 'attributeClass'
-		attributeID: 'attributeID'
-		attributeEqual: 'attributeEqual'
+		attributeId: 'attributeId'
+		attributeMarker: 'attributeMarker'
+		attributeExpression: 'attributeExpression'
 
 		attributeImage: 'attributeImage'
 	}
@@ -43,6 +44,11 @@ declare module 'mdast' {
 	interface Node {
 		indexGroup?: number
 	}
+
+	// interface Data {
+	// 	hExpression?: string[]
+	// }
+
 	interface RootContentMap {
 		highlight: Node & {
 			type: 'highlight'
@@ -91,7 +97,9 @@ declare module 'mdast' {
 declare module 'mdast-util-from-markdown' {
 	interface CompileData {
 		attr: Attribute
-		attributeKey?: string
-		attributeValue?: string
+		exp: string[]
+		class: string[]
+		id: string[]
+		key?: string
 	}
 }
