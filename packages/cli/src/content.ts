@@ -1,13 +1,19 @@
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { Dirent, existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
 
-const HIDDEN_FILE_REGEX = /\/\.|^\./g
+const filterMarkdown = (d: Dirent<string>) => {
+	return d.isFile() && d.name.endsWith('.md')
+}
 
-export const isHiddenFile = (src: string) => HIDDEN_FILE_REGEX.test(src)
+const filterNonHiddenFile = (p: string) => {
+	return !p.split(path.sep).some((part) => part.startsWith('.'))
+}
 
-export const findMarkdowns = (src: string): string[] => {
-	const entries = readdirSync(src, { recursive: true, encoding: 'utf-8' })
-	return entries.filter((p) => p.endsWith('.md') && !isHiddenFile(p))
+export function findMarkdowns(root: string) {
+	return readdirSync(root, { recursive: true, encoding: 'utf-8', withFileTypes: true })
+		.filter(filterMarkdown)
+		.map((e) => e.name)
+		.filter(filterNonHiddenFile)
 }
 
 export const readMarkdown = (src: string): string | undefined => {

@@ -32,6 +32,10 @@ class Context implements SlideContext {
 	#step = $state(0)
 	#action = $state<Action>(Action.NEXT)
 
+	constructor(slide: SlideData) {
+		this.slide = slide
+	}
+
 	get page() {
 		return this.#page
 	}
@@ -46,10 +50,6 @@ class Context implements SlideContext {
 	}
 	get maxStep() {
 		return this.getStep()
-	}
-
-	constructor(slide: SlideData) {
-		this.slide = slide
 	}
 
 	getStep(page = this.page) {

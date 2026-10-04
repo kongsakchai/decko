@@ -1,115 +1,58 @@
-// import { resolveRoot } from '@/content'
-// import { createDeckoPlugin } from '@/plugin'
-// import { resolve } from '@/utils'
+import { createExternalContext } from '@/context'
+import { slideLoaderPlugin } from '@/vite/loaders'
 
-// import { decko } from '@decko/decko'
-// import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
-// import tailwindcss from '@tailwindcss/vite'
+import { decko } from '@decko/decko'
+import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import tailwindcss from '@tailwindcss/vite'
 
-// import { mkdir, writeFile } from 'node:fs/promises'
-// import path from 'node:path'
-// import type { InlineConfig, Plugin } from 'vite'
-// import { build as viteBuild } from 'vite'
+import path from 'node:path'
+import type { InlineConfig } from 'vite'
+import { searchForWorkspaceRoot, build as viteBuild } from 'vite'
 
-// export interface BuildOptions {
-// 	out?: string
-// }
+export async function build(root: string) {
+	const external = createExternalContext(root)
+	if (external.markdowns().length === 0) {
+		console.log('markdown file not found!')
+		return
+	}
 
-// interface Entry {
-// 	name: string
-// 	module: string
-// }
+	const output = path.resolve(path.join(root, 'dist'))
+	const input = external.markdowns().map((m) => [m, path.join(m, 'index.html')])
 
-// /** A virtual module per route that mounts the page component into `#app`. */
-// function entryPlugin(entries: Entry[]): Plugin {
-// 	const sources = new Map<string, string>()
-// 	for (const entry of entries) {
-// 		const id = `decko:entry:${entry.name}`
-// 		sources.set(
-// 			id,
-// 			[
-// 				`import { mount } from 'svelte'`,
-// 				`import 'decko:app.css'`,
-// 				`import App from '${entry.module}'`,
-// 				`const el = document.getElementById('app')`,
-// 				`if (el) mount(App, { target: el })`
-// 			].join('\n')
-// 		)
-// 	}
+	const inlineConfig: InlineConfig = {
+		configFile: false,
+		plugins: [
+			slideLoaderPlugin({ external }),
+			tailwindcss(),
+			svelte({
+				extensions: ['.svelte', '.md'],
+				preprocess: [decko({ extension: '.md' }), vitePreprocess()]
+			})
+		],
+		server: {
+			// Keep the same file access scope as the dev server
+			fs: { allow: [searchForWorkspaceRoot(process.cwd()), root] }
+		},
+		build: {
+			outDir: output,
+			emptyOutDir: true,
+			rolldownOptions: {
+				input: Object.fromEntries(input)
+			}
+		},
+		logLevel: 'error',
+		clearScreen: false
+	}
 
-// 	return {
-// 		name: 'decko:entry',
-// 		resolveId(id) {
-// 			if (sources.has(id)) return id
-// 		},
-// 		load(id) {
-// 			if (sources.has(id)) return sources.get(id)
-// 		}
-// 	}
-// }
+	console.log('[BUILD] Building...')
+	const start = performance.now()
 
-// function renderEntryHTML(script: string): string {
-// 	return [
-// 		`<!doctype html>`,
-// 		`<html lang="en">`,
-// 		`<head>`,
-// 		`<meta charset="UTF-8" />`,
-// 		`<meta name="viewport" content="width=device-width, initial-scale=1.0" />`,
-// 		`<title>decko</title>`,
-// 		`</head>`,
-// 		`<body>`,
-// 		`<div id="app"></div>`,
-// 		`<script type="module" src="${script}"></script>`,
-// 		`</body>`,
-// 		`</html>`
-// 	].join('\n')
-// }
-
-// export async function build(root: string, options: BuildOptions = {}): Promise<void> {
-// 	const src = resolveRoot(root)
-// 	const outDir = path.resolve(options.out ?? 'dist')
-// 	const plugin = createDeckoPlugin(src, { watch: false })
-
-// 	const entries: Entry[] = []
-// 	for (const [route, moduleId] of plugin.routes) {
-// 		const name = route === '' ? 'index' : resolve(route)
-// 		entries.push({ name, module: moduleId })
-// 	}
-
-// 	const input = Object.fromEntries(entries.map((e) => [e.name, `decko:entry:${e.name}`]))
-
-// 	const inlineConfig: InlineConfig = {
-// 		configFile: false,
-// 		plugins: [
-// 			plugin,
-// 			entryPlugin(entries),
-// 			tailwindcss(),
-// 			svelte({
-// 				extensions: ['.svelte', '.md'],
-// 				preprocess: [decko({ extension: '.md' }), vitePreprocess()]
-// 			})
-// 		],
-// 		build: {
-// 			outDir,
-// 			emptyOutDir: true,
-// 			rollupOptions: { input }
-// 		},
-// 		logLevel: 'warn'
-// 	}
-
-// 	const result = (await viteBuild(inlineConfig)) as unknown as
-// 		| { output: Array<{ type: string; name?: string; fileName: string; isEntry?: boolean }> }
-// 		| Array<{ output: Array<{ type: string; name?: string; fileName: string; isEntry?: boolean }> }>
-// 	const outputs = Array.isArray(result) ? result.flatMap((r) => r.output) : result.output
-
-// 	await mkdir(outDir, { recursive: true })
-// 	for (const entry of entries) {
-// 		const chunk = outputs.find((o) => o.type === 'chunk' && o.isEntry && o.name === entry.name)
-// 		if (!chunk) {
-// 			throw new Error(`Build did not produce an entry chunk for "${entry.name}"`)
-// 		}
-// 		await writeFile(path.join(outDir, `${entry.name}.html`), renderEntryHTML(`/${chunk.fileName}`), 'utf-8')
-// 	}
-
-// 	console.log(`built ${entries.length} slide(s) → ${outDir}`)
-// }
+	try {
+		await viteBuild(inlineConfig)
+		const seconds = ((performance.now() - start) / 1000).toFixed(2)
+		console.log(`[BUILD] Done in ${seconds}s -> ${inlineConfig.build!.outDir}`)
+	} catch (err) {
+		console.error('[BUILD] Failed:', err)
+		throw err
+	}
+}

@@ -1,6 +1,6 @@
 import { type Extension, type PostExtension, type RootContent } from '@decko/parser'
 
-import type { Html, Image } from 'mdast'
+import type { Html, Image, Link } from 'mdast'
 
 import { asNumber, asString, mergeStr } from '../utils'
 import { toSplitStyles } from './directive'
@@ -59,13 +59,15 @@ export const hoistExtension: PostExtension = {
 
 const HTTP_REGEX = /^(https?:)?\/\//
 const HTML_SRC_REGEX = /<(?:img|video|source)\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/
+const HTML_HREF_REGEX = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/
 
-const resolveURL = (assets: Record<string, string>, counter: number, url: string): string => {
-	if (!url || HTTP_REGEX.test(url)) return url
+const resolveURL = (assets: Record<string, string>, counter: number, url: string): [string, number] => {
+	if (!url || HTTP_REGEX.test(url) || url.endsWith('.md')) return [url, counter]
 	if (!assets[url]) {
 		assets[url] = `__assets${counter}`
+		counter++
 	}
-	return `{${assets[url]}}`
+	return [`{${assets[url]}}`, counter]
 }
 
 export const assetsLinkExtension: Extension = (ctx) => {
@@ -76,17 +78,34 @@ export const assetsLinkExtension: Extension = (ctx) => {
 	switch (ctx.node.type) {
 		case 'image': {
 			const image = ctx.node as Image
-			image.url = `${resolveURL(assets, counter, image.url)}`
-			ctx.slideCtx.extra.assetCounter = counter + 1
+			const [url, newCounter] = resolveURL(assets, counter, image.url)
+			image.url = url
+			ctx.slideCtx.extra.assetCounter = newCounter
+			break
+		}
+		case 'link': {
+			const link = ctx.node as Link
+			const [url, newCounter] = resolveURL(assets, counter, link.url)
+			link.url = url
+			ctx.slideCtx.extra.assetCounter = newCounter
 			break
 		}
 		case 'html': {
 			const html = ctx.node as Html
-			const match = HTML_SRC_REGEX.exec(html.value)
-			if (!match) return
-			html.value = html.value.replace(match[1], `${resolveURL(assets, counter, match[1])}`)
-			ctx.slideCtx.extra.assetCounter = counter + 1
-			break
+			const src = HTML_SRC_REGEX.exec(html.value)
+			if (src) {
+				const [url, newCounter] = resolveURL(assets, counter, src[1])
+				html.value = html.value.replace(src[1], url)
+				ctx.slideCtx.extra.assetCounter = newCounter
+				break
+			}
+			const href = HTML_HREF_REGEX.exec(html.value)
+			if (href) {
+				const [url, newCounter] = resolveURL(assets, counter, href[1])
+				html.value = html.value.replace(href[1], url)
+				ctx.slideCtx.extra.assetCounter = newCounter
+				break
+			}
 		}
 		default:
 			return

@@ -8,6 +8,7 @@
 	],
 	"scripts": {
 		"cli": "bun run --cwd packages/cli dev",
+		"cli:full": "bun run build:parser && bun run prepack:decko && bun run --cwd packages/cli dev",
 		"dev": "bun run --cwd packages/decko dev",
 		"build": "bun run build:parser && bun run build:decko",
 		"build:parser": "bun run --cwd packages/parser build",

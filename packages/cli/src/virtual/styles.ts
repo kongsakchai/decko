@@ -1,14 +1,13 @@
 import { VirtualModule } from './types'
 
-export const virtualAppCSS: VirtualModule = {
-	id: 'decko:app.css',
-	content() {
+export const virtualStyle: VirtualModule = {
+	content(ctx) {
 		return [
 			`@import 'tailwindcss';`,
 			`@import 'tw-animate-css';`,
 			`@import '@decko/decko/themes/decko.css';`,
 			`@source './node_modules/@decko/decko/dist';`,
-			`@source '${this.root}';`,
+			`@source '${ctx.external.root}';`,
 			`:root {`,
 			`	font-synthesis: none;`,
 			`	text-rendering: optimizeLegibility;`,

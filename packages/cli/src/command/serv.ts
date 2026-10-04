@@ -1,4 +1,6 @@
-import { createSlideLoader } from '@/vite/loaders'
+import { createExternalContext } from '@/context'
+import { slideLoaderPlugin } from '@/vite/loaders'
+import { slideServerPlugin } from '@/vite/server'
 
 import { decko } from '@decko/decko'
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
@@ -12,10 +14,13 @@ interface Options {
 }
 
 export async function createServer(root: string, opt?: Options) {
+	const external = createExternalContext(root)
+
 	const inlineConfig: InlineConfig = {
 		configFile: false,
 		plugins: [
-			createSlideLoader(root),
+			slideLoaderPlugin({ external }),
+			slideServerPlugin({ external }),
 			tailwindcss(),
 			svelte({
 				extensions: ['.svelte', '.md'],

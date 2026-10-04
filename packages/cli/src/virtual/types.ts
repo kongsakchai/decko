@@ -1,11 +1,18 @@
-export interface Context {
-	root: string
-	markdowns: Set<string>
-	read: (src: string) => string | undefined
-	id: string
+import { Context } from '@/context'
+
+export interface VirtualModuleRoute {
+	staticId?: string
+	prefix?: string
+	suffix?: string
+	params?: string
+	module: VirtualModule
+
+	match(id: string): boolean
+	extract(id: string): string | undefined
+	parse(id: string): Record<string, string>
+	id(src: string): string
 }
 
 export interface VirtualModule {
-	id: string | RegExp
-	content: (this: Context & { id: string }) => string | PromiseLike<string>
+	content: (ctx: Context & { data: Record<string, string> }) => string | PromiseLike<string>
 }

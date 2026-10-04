@@ -1,30 +1,22 @@
-import { join } from 'node:path'
+import path from 'node:path'
 
 import { VirtualModule } from './types'
 
-export const resolveSlideId = (src: string) => join('decko:slide', src + '.svelte')
+export const SLIDE_PREFIX = 'decko:slide/'
+export const SLIDE_SUFFIX = '.svelte'
 
-export const resolveMarkdownId = (src: string) => join('decko:markdown', src)
+export function createSlideModuleId(id: string) {
+	return path.join(SLIDE_PREFIX, id + SLIDE_SUFFIX)
+}
 
 export const virtualSlide: VirtualModule = {
-	id: /^decko:slide\/.*\.svelte$/,
-	content() {
-		const src = this.id.replaceAll(/^decko:slide\/|\.svelte$/g, '')
+	content(ctx) {
 		return [
 			`<script lang="ts">`,
 			`import { SlidePlayer } from '@decko/decko/page'`,
-			`import Slide, { slide } from '${resolveMarkdownId(src)}'`,
+			`import Slide, { slide } from '${ctx.data.markdown}'`,
 			`</script>`,
 			`<SlidePlayer slide={Slide} data={slide} />`
 		].join('\n')
-	}
-}
-
-export const virtualMarkdown: VirtualModule = {
-	id: /^decko:markdown\/.*/,
-	content() {
-		const src = this.id.replace(/^decko:markdown\//, '')
-		const read = this.read(join(this.root, src))
-		return read ?? '<h1>404</h1>'
 	}
 }

@@ -1,6 +1,7 @@
 import { Command } from 'commander'
 import * as readline from 'node:readline'
 
+import { build } from './command/build'
 import { createServer } from './command/serv'
 
 const program = new Command('🚀 Decko')
@@ -37,6 +38,14 @@ function setupKeyboardShortcuts(server: Awaited<ReturnType<typeof createServer>>
 		}
 	})
 }
+
+program
+	.command('build')
+	.description('Build slides for production.')
+	.argument('<src>', 'Path to a slide file or slide directory.')
+	.action(async (src) => {
+		await build(src)
+	})
 
 program
 	.name('decko')

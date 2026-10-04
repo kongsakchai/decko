@@ -19,5 +19,8 @@ export default defineConfig({
 		alias: {
 			'@decko/decko': path.resolve(__dirname, './src/lib')
 		}
+	},
+	build: {
+		outDir: 'out'
 	}
 })
