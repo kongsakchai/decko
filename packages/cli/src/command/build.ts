@@ -9,15 +9,22 @@ import path from 'node:path'
 import type { InlineConfig } from 'vite'
 import { searchForWorkspaceRoot, build as viteBuild } from 'vite'
 
-export async function build(root: string) {
+interface Option {
+	isolate?: boolean
+	output: string
+}
+
+export async function build(src: string, opt: Option) {
+	const root = path.resolve(src)
+	const output = path.resolve(opt.output)
+
 	const external = createExternalContext(root)
 	if (external.markdowns().length === 0) {
 		console.log('markdown file not found!')
 		return
 	}
 
-	const output = path.resolve(path.join(root, 'dist'))
-	const input = external.markdowns().map((m) => [m, path.join(m, 'index.html')])
+	const input = external.markdowns().map((m) => [path.join(m, 'index'), path.join(m, 'index.html')])
 
 	const inlineConfig: InlineConfig = {
 		configFile: false,
@@ -37,7 +44,16 @@ export async function build(root: string) {
 			outDir: output,
 			emptyOutDir: true,
 			rolldownOptions: {
-				input: Object.fromEntries(input)
+				input: Object.fromEntries(input),
+				output: {
+					entryFileNames: '[name]-[hash].js',
+					assetFileNames: (assetInfo) => {
+						if (assetInfo.names.length > 0 && assetInfo.names[0].endsWith('.css')) {
+							return 'assets/index-[hash].css'
+						}
+						return 'assets/[name]-[hash][extname]'
+					}
+				}
 			}
 		},
 		logLevel: 'error',

@@ -41,22 +41,33 @@ function setupKeyboardShortcuts(server: Awaited<ReturnType<typeof createServer>>
 
 program
 	.command('build')
-	.description('Build slides for production.')
+	.description('Build Markdown slide decks into static HTML.')
 	.argument('<src>', 'Path to a slide file or slide directory.')
-	.action(async (src) => {
-		await build(src)
+	.option('-i, --isolated', 'Build each slide independently without sharing JavaScript bundles.')
+	.option('-o, --output <dir>', 'Output directory for the generated files.', 'dist')
+	.option('--no-index', 'Exclude the index slide from the build.')
+	.action(async (src, options) => {
+		await build(src, options)
 	})
+	.showHelpAfterError()
 
 program
-	.name('decko')
-	.description('Generate presentation slides from Markdown using Svelte.')
-	.version('1.0.0')
+	.command('dev')
+	.alias('serve')
+	.description('Start the development server for Markdown slide decks.')
 	.argument('<src>', 'Path to a slide file or slide directory.')
-	.option('-p, --port <number>', 'Port number for the development server.')
+	.option('-p, --port <port>', 'Port for the development server.', '5173')
 	.action(async (src, options) => {
 		const server = await createServer(src, options)
 		setupKeyboardShortcuts(server)
 	})
-	.showHelpAfterError()
+
+program
+	.name('decko')
+	.description('Generate presentation slide decks from Markdown using Svelte.')
+	.version('1.0.0')
+	.action(() => {
+		program.help()
+	})
 
 program.parse(process.argv)
