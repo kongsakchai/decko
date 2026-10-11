@@ -16,6 +16,8 @@ export interface ExternalContext {
 }
 
 export function createExternalContext(root: string): ExternalContext {
+	root = path.resolve(root)
+
 	let markdowns = new Set<string>()
 
 	function loadMarkdown() {
@@ -35,10 +37,10 @@ export function createExternalContext(root: string): ExternalContext {
 
 	return {
 		get root() {
-			return path.resolve(root)
+			return root
 		},
 		markdowns: () => [...markdowns],
-		refresh: () => loadMarkdown(),
+		refresh: loadMarkdown,
 		resolvePath: resolve,
 		read
 	}
