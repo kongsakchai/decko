@@ -19,9 +19,9 @@ function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent
 	}
 }
 
-export function extensionsTransform(opt?: ExtensionOptions): Transformer {
-	const extensions: Extension[] = opt?.extensions ?? []
-	const postExtensions: PostExtension[] = opt?.postExtensions ?? []
+export function extensionsTransform(options?: ExtensionOptions): Transformer {
+	const extensions: Extension[] = options?.extensions ?? []
+	const postExtensions: PostExtension[] = options?.postExtensions ?? []
 
 	return (tree, vfile) => {
 		const ctx = vfile.data.context as SlideContext

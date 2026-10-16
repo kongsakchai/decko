@@ -1,18 +1,15 @@
 import { Context } from '@/context'
 
-export interface VirtualModuleRoute {
+export interface VirtualModule {
 	staticId?: string
 	prefix?: string
 	suffix?: string
 	params?: string
-	module: VirtualModule
+	content: VirtualModuleContent
 
 	match(id: string): boolean
-	extract(id: string): string | undefined
-	parse(id: string): Record<string, string>
+	extract(id: string): Record<string, string>
 	id(src: string): string
 }
 
-export interface VirtualModule {
-	content: (ctx: Context & { data: Record<string, string> }) => string | PromiseLike<string>
-}
+export type VirtualModuleContent = (ctx: Context & { data: Record<string, string> }) => string | PromiseLike<string>

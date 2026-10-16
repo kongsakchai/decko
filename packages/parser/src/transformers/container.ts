@@ -7,8 +7,8 @@ import { ContainerOptions } from '../types.js'
 
 const BASIC_TAGS = new Set(htmlBlockNames)
 
-export function containerTransformer(opt?: ContainerOptions): Transformer {
-	const customContainer = new Set(opt?.customContainer)
+export function containerTransformer(options?: ContainerOptions): Transformer {
+	const customContainer = new Set(options?.customContainer)
 
 	return (tree) => {
 		visit(tree as Root, 'container', (node, index, parent) => {

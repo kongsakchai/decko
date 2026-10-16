@@ -18,8 +18,8 @@ export function slideLoaderPlugin(ctx: Context): Plugin {
 		async load(id) {
 			const route = virtualRoutes.find((m) => m.match(id))
 			if (route) {
-				const data = route.parse(id)
-				return await route.module.content({ ...ctx, data })
+				const data = route.extract(id)
+				return await route.content({ ...ctx, data })
 			}
 		}
 	}

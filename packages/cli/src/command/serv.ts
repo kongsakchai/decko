@@ -13,7 +13,7 @@ interface Options {
 	port: number
 }
 
-export async function createServer(root: string, opt?: Options) {
+export async function createServer(root: string, options?: Options) {
 	const external = createExternalContext(root)
 
 	const inlineConfig: InlineConfig = {
@@ -28,8 +28,8 @@ export async function createServer(root: string, opt?: Options) {
 			})
 		],
 		server: {
-			port: opt?.port,
-			strictPort: opt?.port != undefined,
+			port: options?.port,
+			strictPort: options?.port != undefined,
 			fs: { allow: [searchForWorkspaceRoot(process.cwd()), root] }
 		},
 		logLevel: 'error',

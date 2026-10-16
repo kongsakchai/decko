@@ -1,41 +1,34 @@
-import { virtualExplorer } from './explorer'
-import { defineVirtualRoute } from './helper'
-import { virtualEntryHTML } from './html'
+import { EXPLORER_ID, virtualExplorer } from './explorer'
+import { HTML_SUFFIX, virtualEntryHTML } from './html'
 import { virtualMarkdown } from './markdown'
-import { SLIDE_PREFIX, SLIDE_SUFFIX, createSlideModuleId, virtualSlide } from './slide'
-import { virtualStyle } from './styles'
+import { SLIDE_PREFIX, SLIDE_SUFFIX, virtualSlide } from './slide'
+import { STYLE_ID, virtualStyle } from './styles'
+import { defineVirtualModule } from './virtual'
 
 export const virtualRoutes = [
-	defineVirtualRoute({
-		staticId: '/index.html',
-		extract: (id) => 'decko:explorer.svelte',
+	defineVirtualModule({
+		suffix: HTML_SUFFIX,
 		params: 'module',
-		module: virtualEntryHTML
+		content: virtualEntryHTML
 	}),
-	defineVirtualRoute({
-		staticId: 'decko:explorer.svelte',
-		module: virtualExplorer
+	defineVirtualModule({
+		staticId: EXPLORER_ID,
+		content: virtualExplorer
 	}),
-	defineVirtualRoute({
-		staticId: 'decko:app.css',
-		module: virtualStyle
+	defineVirtualModule({
+		staticId: STYLE_ID,
+		content: virtualStyle
 	}),
-	defineVirtualRoute({
-		suffix: '.md/index.html',
-		extract: (id) => createSlideModuleId(id.slice(0, -11)),
-		params: 'module',
-		module: virtualEntryHTML
-	}),
-	defineVirtualRoute({
+	defineVirtualModule({
 		prefix: SLIDE_PREFIX,
 		suffix: SLIDE_SUFFIX,
 		params: 'markdown',
-		module: virtualSlide
+		content: virtualSlide
 	}),
-	defineVirtualRoute({
+	defineVirtualModule({
 		suffix: '.md',
 		params: 'markdown',
-		extract: (id) => id,
-		module: virtualMarkdown
+		content: virtualMarkdown,
+		extract: (id) => ({ markdown: id })
 	})
 ]

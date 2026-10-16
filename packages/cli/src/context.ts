@@ -7,41 +7,66 @@ export interface Context {
 	external: ExternalContext
 }
 
+export interface ResolvedPath {
+	path: string
+	isFile: boolean
+}
+
 export interface ExternalContext {
 	readonly root: string
+	readonly isSingle: boolean
 	markdowns(): string[]
+	markdown(): string | undefined
 	read(src: string): string | undefined
-	resolvePath(src: string): { path: string; isFile: boolean } | undefined
+	resolvePath(src: string): ResolvedPath | undefined
 	refresh(): void
 }
 
-export function createExternalContext(root: string): ExternalContext {
-	root = path.resolve(root)
+export function createExternalContext(input: string): ExternalContext {
+	const target = path.resolve(input)
 
-	let markdowns = new Set<string>()
-
-	function loadMarkdown() {
-		markdowns = new Set(findMarkdowns(root))
+	if (!existsSync(target)) {
+		throw new Error(`Path does not exist: ${target}`)
 	}
 
-	function read(src: string) {
-		return readMarkdown(path.join(root, src))
+	const isSingle = statSync(target).isFile()
+	const root = isSingle ? path.dirname(target) : target
+	const singleFile = isSingle ? path.basename(target) : undefined
+
+	let files: string[] = []
+
+	const refresh = () => {
+		files = singleFile ? [singleFile] : findMarkdowns(root)
 	}
 
-	function resolve(src: string) {
-		const absolute = path.join(root, src)
-		return existsSync(absolute) ? { path: absolute, isFile: statSync(absolute).isFile() } : undefined
+	function resolveInsideRoot(src: string) {
+		const normalized = src.replace(/^[\/\\]+/, '')
+		const absolutePath = path.resolve(root, normalized)
+		const relative = path.relative(root, absolutePath)
+
+		if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+			return undefined
+		}
+		return absolutePath
 	}
 
-	loadMarkdown()
+	refresh()
 
 	return {
-		get root() {
-			return root
+		root,
+		isSingle: isSingle,
+		refresh,
+		markdowns: () => files,
+		markdown: () => files.at(0),
+		read: (src) => {
+			const absolute = resolveInsideRoot(src)
+			if (!absolute) return undefined
+			return readMarkdown(absolute)
 		},
-		markdowns: () => [...markdowns],
-		refresh: loadMarkdown,
-		resolvePath: resolve,
-		read
+		resolvePath(src) {
+			const absolute = resolveInsideRoot(src)
+			if (!absolute || !existsSync(absolute)) return undefined
+			return { path: absolute, isFile: statSync(absolute).isFile() }
+		}
 	}
 }
