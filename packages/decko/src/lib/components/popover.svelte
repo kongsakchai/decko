@@ -40,19 +40,19 @@
 		display: flex;
 		scale: 100%;
 		opacity: 1;
-		transition: all 300ms cubic-bezier(0.68, -0.6, 0.32, 1.6);
+		transition: all 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
 
 		&:not(:popover-open) {
 			display: none;
-			scale: 80%;
-			opacity: 0.8;
+			scale: 0%;
+			opacity: 0;
 			transition-behavior: allow-discrete;
 		}
 
 		@starting-style {
 			&:popover-open {
-				scale: 80%;
-				opacity: 0.8;
+				scale: 0%;
+				opacity: 0;
 			}
 		}
 	}

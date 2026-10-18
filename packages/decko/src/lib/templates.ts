@@ -74,7 +74,7 @@ export function scriptContent(opt: ScriptOptions) {
 		`<script lang="ts">`,
 		...imports,
 		...runs,
-		`let { page=$bindable(),step=$bindable() } = $props()`,
+		`let { page=$bindable(),step=$bindable(),decko } = $props()`,
 		...opt.scripts,
 		'</script>'
 	]

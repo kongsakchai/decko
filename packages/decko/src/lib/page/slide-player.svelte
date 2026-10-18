@@ -2,7 +2,7 @@
 	import { untrack } from 'svelte'
 
 	import { useURLState } from '../client/url.svelte'
-	import { Container, SlideControl, StepProgress, ZoomLayout } from '../components'
+	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components'
 	import { createSlideContext, createViewContext } from '../context'
 	import type { SlideComponent, SlideData } from '../types'
 
@@ -29,6 +29,8 @@
 		viewCtx.width = width
 		viewCtx.height = height
 	})
+
+	const decko = { slide: slideCtx, view: viewCtx }
 </script>
 
 <svelte:head>
@@ -36,7 +38,7 @@
 </svelte:head>
 
 <main class="h-full w-full">
-	<Container>
+	<SlideContainer>
 		<ZoomLayout>
 			<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
 		</ZoomLayout>
@@ -46,7 +48,7 @@
 		{#snippet outside()}
 			<SlideControl />
 		{/snippet}
-	</Container>
+	</SlideContainer>
 </main>
 
 <style lang="postcss">

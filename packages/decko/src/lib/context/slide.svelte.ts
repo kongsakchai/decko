@@ -10,7 +10,7 @@ export enum Action {
 	JUMP
 }
 
-interface SlideContext {
+export interface SlideContext {
 	slide: SlideData
 
 	readonly page: number
