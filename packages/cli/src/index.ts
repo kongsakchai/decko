@@ -43,11 +43,14 @@ program
 	.command('build')
 	.description('Build Markdown slide decks into static HTML.')
 	.argument('<src>', 'Path to a slide file or slide directory.')
-	.option('-i, --isolated', 'Build each slide independently without sharing JavaScript bundles.')
 	.option('-o, --output <dir>', 'Output directory for the generated files.', 'dist')
 	.option('--no-index', 'Exclude the index slide from the build.')
 	.action(async (src, options) => {
-		await build(src, options)
+		try {
+			await build(src, options)
+		} catch (e) {
+			console.error(e)
+		}
 	})
 	.showHelpAfterError()
 
@@ -58,8 +61,12 @@ program
 	.argument('<src>', 'Path to a slide file or slide directory.')
 	.option('-p, --port <port>', 'Port for the development server.', '5173')
 	.action(async (src, options) => {
-		const server = await createServer(src, options)
-		setupKeyboardShortcuts(server)
+		try {
+			const server = await createServer(src, options)
+			setupKeyboardShortcuts(server)
+		} catch (e) {
+			console.error(e)
+		}
 	})
 
 program

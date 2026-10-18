@@ -1,4 +1,4 @@
-import { createExternalContext } from '@/context'
+import { createContext } from '@/context'
 import { slideLoaderPlugin } from '@/vite/loaders'
 import { slideServerPlugin } from '@/vite/server'
 
@@ -13,14 +13,14 @@ interface Options {
 	port: number
 }
 
-export async function createServer(root: string, opt?: Options) {
-	const external = createExternalContext(root)
+export async function createServer(root: string, options?: Options) {
+	const ctx = createContext(root)
 
 	const inlineConfig: InlineConfig = {
 		configFile: false,
 		plugins: [
-			slideLoaderPlugin({ external }),
-			slideServerPlugin({ external }),
+			slideLoaderPlugin(ctx),
+			slideServerPlugin(ctx),
 			tailwindcss(),
 			svelte({
 				extensions: ['.svelte', '.md'],
@@ -28,8 +28,8 @@ export async function createServer(root: string, opt?: Options) {
 			})
 		],
 		server: {
-			port: opt?.port,
-			strictPort: opt?.port != undefined,
+			port: options?.port,
+			strictPort: options?.port != undefined,
 			fs: { allow: [searchForWorkspaceRoot(process.cwd()), root] }
 		},
 		logLevel: 'error',
