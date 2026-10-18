@@ -2,8 +2,9 @@
 	import { untrack } from 'svelte'
 
 	import { useURLState } from '../client/url.svelte'
-	import { Container, SlideControl, StepProgress, ZoomLayout } from '../components'
+	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components'
 	import { createSlideContext, createViewContext } from '../context'
+	import { themeState } from '../state'
 	import type { SlideComponent, SlideData } from '../types'
 
 	interface Props {
@@ -21,6 +22,8 @@
 
 	useURLState()
 
+	untrack(() => typeof data.theme === 'string' && themeState.changeTheme(data.theme))
+
 	$effect(() => {
 		slideCtx.slide = data
 	})
@@ -36,7 +39,7 @@
 </svelte:head>
 
 <main class="h-full w-full">
-	<Container>
+	<SlideContainer>
 		<ZoomLayout>
 			<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
 		</ZoomLayout>
@@ -46,7 +49,7 @@
 		{#snippet outside()}
 			<SlideControl />
 		{/snippet}
-	</Container>
+	</SlideContainer>
 </main>
 
 <style lang="postcss">

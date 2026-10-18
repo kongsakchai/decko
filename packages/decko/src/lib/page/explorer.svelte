@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FileExplorer, SwitchTheme } from '../components'
+	import { FileExplorer, SwitchThemeMode } from '../components'
 
 	interface Props {
 		title: string
@@ -17,7 +17,7 @@
 	<section class="flex items-center justify-between">
 		<h1>{title}</h1>
 
-		<SwitchTheme
+		<SwitchThemeMode
 			class="bg-card text-card-foreground border-border hover:bg-accent hover:text-accent-foreground border active:scale-90"
 		/>
 	</section>

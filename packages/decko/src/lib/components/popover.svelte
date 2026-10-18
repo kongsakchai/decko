@@ -44,14 +44,14 @@
 
 		&:not(:popover-open) {
 			display: none;
-			scale: 80%;
+			scale: 0%;
 			opacity: 0.8;
 			transition-behavior: allow-discrete;
 		}
 
 		@starting-style {
 			&:popover-open {
-				scale: 80%;
+				scale: 0%;
 				opacity: 0.8;
 			}
 		}

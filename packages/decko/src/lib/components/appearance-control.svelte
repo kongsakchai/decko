@@ -2,14 +2,19 @@
 	import { useViewContext } from '../context'
 	import BurgerIcon from '../icons/burger-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
+	import ChangeTheme from './change-theme.svelte'
 	import Popover from './popover.svelte'
-	import SwitchTheme from './switch-theme.svelte'
+	import SwitchThemeMode from './switch-theme-mode.svelte'
 
 	const viewContext = useViewContext()
 </script>
 
 <div class="menu">
-	<SwitchTheme class="menu-btn rounded-l-sm" />
+	<SwitchThemeMode class="menu-btn rounded-l-sm" />
+
+	<div class=" border-border border-l"></div>
+
+	<ChangeTheme class="menu-btn" />
 
 	<div class=" border-border border-l"></div>
 
