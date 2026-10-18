@@ -1,18 +1,15 @@
 import { Context } from '@/context'
 
-export interface VirtualModuleRoute {
-	staticId?: string
-	prefix?: string
-	suffix?: string
-	params?: string
-	module: VirtualModule
-
-	match(id: string): boolean
-	extract(id: string): string | undefined
-	parse(id: string): Record<string, string>
-	id(src: string): string
-}
+export type VirtualPattern = string | RegExp
 
 export interface VirtualModule {
-	content: (ctx: Context & { data: Record<string, string> }) => string | PromiseLike<string>
+	staticId?: string
+	prefix?: VirtualPattern
+	suffix?: VirtualPattern
+	params?: string
+	match(id: string): boolean
+	extract(id: string): Record<string, string>
+	content: VirtualContent
 }
+
+export type VirtualContent = (ctx: Context) => string | PromiseLike<string>
