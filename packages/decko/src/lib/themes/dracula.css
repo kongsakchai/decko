@@ -1,0 +1,100 @@
+/* Dracula — Light: Alucard */
+:root[data-theme='dracula'],
+[data-theme='dracula'] {
+	color-scheme: light;
+	--border-radius: 0.5rem;
+
+	--background: oklch(0.987 0.021 95.28); /* #FFFBEB */
+	--foreground: oklch(0.239 0 89.88); /* #1F1F1F */
+
+	--card: oklch(0.943 0.023 101.36); /* #EFEDDC floating */
+	--card-foreground: oklch(0.239 0 89.88);
+
+	--primary: oklch(0.509 0.188 287.15); /* Purple #644AC9 */
+	--primary-foreground: oklch(0.987 0.021 95.28);
+
+	--secondary: oklch(0.859 0.021 285.96); /* Selection #CFCFDE */
+	--secondary-foreground: oklch(0.239 0 89.88);
+
+	--muted: oklch(0.934 0.014 92.99); /* #ECE9DF */
+	--muted-foreground: oklch(0.508 0.041 97.06); /* Comment #6C664B */
+
+	--accent: oklch(0.468 0.177 4.96 / 12%); /* Pink tint */
+	--accent-foreground: oklch(0.468 0.177 4.96); /* Pink #A3144D */
+
+	--destructive: oklch(0.629 0.176 35.2); /* Functional Red #DE5735 */
+	--border: oklch(0.508 0.041 97.06 / 30%); /* Current Line */
+	--input: oklch(0.508 0.041 97.06 / 30%);
+	--focus: oklch(0.574 0.18 293.97); /* Functional Purple #815CD6 */
+
+	/* Code */
+	--code-background: oklch(0.934 0.014 92.99);
+	--code-foreground: oklch(0.468 0.177 4.96); /* Pink */
+	--code-highlight: oklch(0.508 0.041 97.06 / 20%); /* Current Line */
+
+	--code-error: oklch(0.563 0.184 30.08 / 14%);
+	--code-error-foreground: oklch(0.563 0.184 30.08); /* Red #CB3A2A */
+	--code-warning: oklch(0.521 0.131 48.46 / 14%);
+	--code-warning-foreground: oklch(0.521 0.131 48.46); /* Orange #A34D14 */
+	--code-add: oklch(0.478 0.155 141.9 / 14%);
+	--code-add-foreground: oklch(0.478 0.155 141.9); /* Green #14710A */
+	--code-del: oklch(0.563 0.184 30.08 / 14%);
+	--code-del-foreground: oklch(0.563 0.184 30.08);
+
+	/* Semantic colors (Functional) */
+	--success: oklch(0.57 0.191 142.55); /* #089108 */
+	--info: oklch(0.589 0.159 248.19); /* #0081D6 */
+	--warning: oklch(0.662 0.134 102.45); /* #A39514 */
+	--error: oklch(0.629 0.176 35.2); /* #DE5735 */
+	--detail: oklch(0.521 0.131 48.46); /* Orange #A34D14 */
+}
+
+/* Dracula — Dark */
+:root[data-theme='dracula'].dark,
+[data-theme='dracula'].dark {
+	color-scheme: dark;
+
+	--background: oklch(0.288 0.022 277.51); /* #282A36 */
+	--foreground: oklch(0.977 0.008 106.55); /* #F8F8F2 */
+
+	--card: oklch(0.34 0.027 276.05); /* #343746 Background Light */
+	--card-foreground: oklch(0.977 0.008 106.55);
+
+	--primary: oklch(0.742 0.149 301.88); /* Purple #BD93F9 */
+	--primary-foreground: oklch(0.288 0.022 277.51);
+
+	--secondary: oklch(0.403 0.032 277.83); /* Selection #44475A */
+	--secondary-foreground: oklch(0.977 0.008 106.55);
+
+	--muted: oklch(0.255 0.019 280.49); /* #21222C Background Dark */
+	--muted-foreground: oklch(0.7 0.06 270); /* Comment, lightened for contrast */
+
+	--accent: oklch(0.755 0.183 346.81 / 16%); /* Pink tint */
+	--accent-foreground: oklch(0.755 0.183 346.81); /* Pink #FF79C6 */
+
+	--destructive: oklch(0.629 0.176 35.2); /* Functional Red #DE5735 */
+	--border: oklch(0.56 0.08 270.09 / 40%); /* Current Line */
+	--input: oklch(0.56 0.08 270.09 / 40%);
+	--focus: oklch(0.574 0.18 293.97); /* Functional Purple #815CD6 */
+
+	/* Code */
+	--code-background: oklch(0.255 0.019 280.49);
+	--code-foreground: oklch(0.755 0.183 346.81); /* Pink */
+	--code-highlight: oklch(0.56 0.08 270.09 / 20%); /* Current Line */
+
+	--code-error: oklch(0.682 0.206 24.43 / 14%);
+	--code-error-foreground: oklch(0.682 0.206 24.43); /* Red #FF5555 */
+	--code-warning: oklch(0.834 0.124 66.56 / 14%);
+	--code-warning-foreground: oklch(0.834 0.124 66.56); /* Orange #FFB86C */
+	--code-add: oklch(0.871 0.22 148.02 / 14%);
+	--code-add-foreground: oklch(0.871 0.22 148.02); /* Green #50FA7B */
+	--code-del: oklch(0.682 0.206 24.43 / 14%);
+	--code-del-foreground: oklch(0.682 0.206 24.43);
+
+	/* Semantic colors (Functional) */
+	--success: oklch(0.57 0.191 142.55); /* #089108 */
+	--info: oklch(0.589 0.159 248.19); /* #0081D6 */
+	--warning: oklch(0.662 0.134 102.45); /* #A39514 */
+	--error: oklch(0.629 0.176 35.2); /* #DE5735 */
+	--detail: oklch(0.834 0.124 66.56); /* Orange #FFB86C */
+}

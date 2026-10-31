@@ -11,4 +11,4 @@ tags:
 
 ![svelte logo](./svelte-logo.png)
 
-[link](./svelte-logo.png)
+{ JSON.stringify(data) }

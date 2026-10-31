@@ -20,7 +20,8 @@
 >
 	<section
 		id="slide-container"
-		class="bg-background absolute top-1/2 left-1/2 flex overflow-hidden select-none"
+		class="bg-background absolute top-1/2 left-1/2 flex overflow-hidden"
+		class:select-none={viewContext.zoom > 1}
 		class:rounded-xl={viewContext.size < 1}
 		style:font-size="{viewContext.fontSize}px"
 		style:width="{viewContext.width}px"

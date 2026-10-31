@@ -7,10 +7,12 @@ import { alerts } from './extensions/alerts'
 import { codeContainer, codeHighlighter } from './extensions/code'
 import { resolvePaginate, toBackgroundStyles, toSplitStyles } from './extensions/directive'
 import { assetsLinkExtension, hoistExtension, splitContainerExtension, stepExtension } from './extensions/extension'
-import { getFeatures } from './extensions/feature'
+import { getFeatures } from './logic/feature'
 import { pageContent, scriptContent, styleContent } from './templates'
 import type { Options, SlideData } from './types'
-import { asNumber, asString } from './utils'
+import { asNumber, asString, omit } from './utils'
+
+const RESERVED_KEYS = ['extraThemes', 'theme'] as const
 
 export function decko(options?: Options): PreprocessorGroup {
 	const parser = createSlideParser({
@@ -26,9 +28,10 @@ export function decko(options?: Options): PreprocessorGroup {
 		const slide = await parser.parse(body, metadata)
 
 		const slideData: SlideData = {
-			...metadata,
+			...omit(metadata, RESERVED_KEYS),
 			title: asString(metadata.title, 'Decko'),
-			pages: []
+			pages: [],
+			tags: metadata.tags
 		}
 
 		let page = { show: false, current: 0 }
@@ -59,7 +62,9 @@ export function decko(options?: Options): PreprocessorGroup {
 			features: getFeatures(slide.extra)
 		})
 
-		return [script, ...contents, styleContent(slide.style)].join('\n')
+		const style = styleContent({ styles: slide.style })
+
+		return [script, ...contents, style].join('\n')
 	}
 
 	return {

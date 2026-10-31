@@ -7,7 +7,7 @@
 	import ZoomIcon from '../icons/zoom-icon.svelte'
 	import Popover from './popover.svelte'
 
-	let fullscreen = $state(!!document.fullscreenElement)
+	let fullscreen = $state(false)
 
 	const viewContext = useViewContext()
 
@@ -25,13 +25,13 @@
 <div class="menu">
 	<button onclick={onFullscreen} title="fullscreen" class="menu-btn rounded-l-sm">
 		{#if fullscreen}
-			<span class="absolute top-0 left-0 h-full w-full content-center" transition:scale={{ opacity: 80 }}
-				><NormalscreenIcon /></span
-			>
+			<span class="absolute top-0 left-0 h-full w-full content-center" transition:scale={{ opacity: 80 }}>
+				<NormalscreenIcon />
+			</span>
 		{:else}
-			<span class="absolute top-0 left-0 h-full w-full content-center" transition:scale={{ opacity: 80 }}
-				><FullscreenIcon /></span
-			>
+			<span class="absolute top-0 left-0 h-full w-full content-center" transition:scale={{ opacity: 80 }}>
+				<FullscreenIcon />
+			</span>
 		{/if}
 	</button>
 

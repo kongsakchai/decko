@@ -1,10 +1,10 @@
 ---
 title: Decko
-theme: main
 paginate: true
 tags:
     - marp
     - slide
+defaultTheme: forest
 ---
 
 # Hello

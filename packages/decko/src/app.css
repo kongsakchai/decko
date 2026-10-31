@@ -1,6 +1,13 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import '@decko/decko/themes/decko.css';
+@import '@decko/decko/themes/claude.css';
+@import '@decko/decko/themes/catppuccin.css';
+@import '@decko/decko/themes/dracula.css';
+@import '@decko/decko/themes/bubblegum.css';
+@import '@decko/decko/themes/cyberpunk.css';
+@import '@decko/decko/themes/forest.css';
+@import '@decko/decko/themes/ocean.css';
 
 :root {
 	font-synthesis: none;

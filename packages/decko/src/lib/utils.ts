@@ -13,3 +13,9 @@ export function asString(v: unknown, defaultVal?: string): string | undefined {
 export function mergeStr(separator: string, ...v: unknown[]): string {
 	return v.filter(Boolean).join(separator)
 }
+
+export function omit<T extends object, K extends keyof T>(obj: T, keys: readonly K[]): Omit<T, K> {
+	const copy = { ...obj }
+	for (const key of keys) delete copy[key]
+	return copy
+}

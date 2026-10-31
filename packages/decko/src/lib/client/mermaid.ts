@@ -30,7 +30,7 @@ export function mermaidRender(node: HTMLElement) {
 		node.hidden = false
 	}
 
-	render()
+	void render()
 }
 
 async function hashString(str: string) {

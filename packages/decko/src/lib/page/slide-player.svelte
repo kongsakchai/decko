@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { untrack } from 'svelte'
-
-	import { useURLState } from '../client/url.svelte'
-	import { Container, SlideControl, StepProgress, ZoomLayout } from '../components'
+	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components'
 	import { createSlideContext, createViewContext } from '../context'
+	import { themeState } from '../state'
 	import type { SlideComponent, SlideData } from '../types'
 
 	interface Props {
@@ -15,20 +13,35 @@
 
 	const { data, slide: Slide, width = 1280, height = 720 }: Props = $props()
 
-	const slideCtx = createSlideContext(untrack(() => data))
+	// svelte-ignore state_referenced_locally
+	const slideCtx = createSlideContext(data)
+	// svelte-ignore state_referenced_locally
+	const viewCtx = createViewContext({ width, height })
 
-	const viewCtx = createViewContext(untrack(() => ({ width, height })))
+	if (typeof window !== 'undefined' && window.location.hash) {
+		const page = Number.parseInt(window.location.hash.slice(1))
+		if (!Number.isNaN(page)) slideCtx.goto(page)
+	}
 
-	useURLState()
+	// svelte-ignore state_referenced_locally
+	if (typeof data.theme === 'string') {
+		themeState.changeTheme(data.theme)
+	}
+
+	// $effect(() => {
+	// 	slideCtx.slide = data
+	// })
+
+	// $effect(() => {
+	// 	viewCtx.width = width
+	// 	viewCtx.height = height
+	// })
 
 	$effect(() => {
-		slideCtx.slide = data
+		navigation.navigate(`#${slideCtx.page}`, { history: 'replace' })
 	})
 
-	$effect(() => {
-		viewCtx.width = width
-		viewCtx.height = height
-	})
+	const decko = { slide: slideCtx, view: viewCtx }
 </script>
 
 <svelte:head>
@@ -36,7 +49,7 @@
 </svelte:head>
 
 <main class="h-full w-full">
-	<Container>
+	<SlideContainer>
 		<ZoomLayout>
 			<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
 		</ZoomLayout>
@@ -46,7 +59,7 @@
 		{#snippet outside()}
 			<SlideControl />
 		{/snippet}
-	</Container>
+	</SlideContainer>
 </main>
 
 <style lang="postcss">

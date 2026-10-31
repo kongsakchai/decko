@@ -16,8 +16,7 @@
 	const viewContext = useViewContext()
 	const slideCtx = useSlideContext()
 
-	// svelte-ignore state_referenced_locally
-	let steps = JSON.parse(lz.decompressFromBase64(baseCode))
+	let steps = $derived(JSON.parse(lz.decompressFromBase64(baseCode)))
 	let step = $derived(Math.max(0, Math.min(slideCtx.step - start, steps.length)))
 </script>
 

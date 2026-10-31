@@ -1,15 +1,26 @@
 <script lang="ts">
-	import { useViewContext } from '../context'
+	import { useSlideContext, useViewContext } from '../context'
 	import BurgerIcon from '../icons/burger-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
+	import { getExtraThemeKeys, getThemes } from '../logic/theme'
 	import Popover from './popover.svelte'
-	import SwitchTheme from './switch-theme.svelte'
+	import ThemeSelector from './theme-selector.svelte'
+	import ThemeToggle from './theme-toggle.svelte'
 
 	const viewContext = useViewContext()
+	const slideContext = useSlideContext()
 </script>
 
 <div class="menu">
-	<SwitchTheme class="menu-btn rounded-l-sm" />
+	<ThemeToggle class="menu-btn rounded-l-sm" />
+
+	<div class=" border-border border-l"></div>
+
+	<ThemeSelector
+		class="menu-btn"
+		extra={getExtraThemeKeys(slideContext.slide)}
+		available={getThemes(slideContext.slide)}
+	/>
 
 	<div class=" border-border border-l"></div>
 
@@ -23,7 +34,7 @@
 		{/snippet}
 
 		{#snippet content()}
-			<div class="grid grid-cols-[75px_10rem_40px_34px] items-center gap-2 p-2">
+			<div class="grid grid-cols-[75px_10rem_40px_34px] items-center gap-2 p-2 px-4">
 				<span class=" text-sm">Font Size</span>
 				<input type="range" min="10" max="64" step="1" bind:value={viewContext.fontSize} />
 				<span class=" text-sm">{viewContext.fontSize}px</span>

@@ -106,9 +106,10 @@ export const assetsLinkExtension: Extension = (ctx) => {
 				ctx.slideCtx.extra.assetCounter = newCounter
 				break
 			}
+			break
 		}
 		default:
-			return
+			break
 	}
 	ctx.slideCtx.extra.assets = assets
 }

@@ -1,4 +1,5 @@
-import { Feature } from './extensions/feature'
+import { Feature } from './logic/feature'
+import { getExtraThemeValue } from './logic/theme'
 import type { SlideData } from './types'
 import { mergeStr } from './utils'
 
@@ -11,17 +12,17 @@ export interface PageOptions {
 	split?: string
 }
 
-export function pageContent(content: string, page: number, opt: PageOptions = {}) {
-	const className = opt.class ? `slide ${opt.class}` : 'slide'
-	const style = opt.style ? `style="${opt.style}"` : ''
-	const layout = opt.layout || 'default'
+export function pageContent(content: string, page: number, opts: PageOptions = {}) {
+	const className = opts.class ? `slide ${opts.class}` : 'slide'
+	const style = opts.style ? `style="${opts.style}"` : ''
+	const layout = opts.layout || 'default'
 
 	const pages = [
 		`{#if page === ${page}}`,
 		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
-		opt.background ? `<div class='slide-background' style='${opt.background}'></div>` : '',
-		opt.pageNumber ? `<div class="slide-page-number">${opt.pageNumber}</div>` : '',
-		opt.split ? `<div class="split" style="${opt.split}">${content}</div>` : content,
+		opts.background ? `<div class='slide-background' style='${opts.background}'></div>` : '',
+		opts.pageNumber ? `<div class="slide-page-number">${opts.pageNumber}</div>` : '',
+		opts.split ? `<div class="split" style="${opts.split}">${content}</div>` : content,
 		`</section>`,
 		`{/if}`
 	]
@@ -29,14 +30,18 @@ export function pageContent(content: string, page: number, opt: PageOptions = {}
 	return mergeStr('\n', ...pages)
 }
 
-export function styleContent(styleTag: string[] = []) {
-	if (styleTag.length === 0) return ''
+interface StyleOptions {
+	styles: string[]
+}
+
+export function styleContent(opts: StyleOptions) {
+	if (opts.styles.length === 0) return ''
 
 	const styles = [
 		'<style lang="postcss">',
 		'@reference "tailwindcss";',
 		'@reference "../themes/decko.css";',
-		...styleTag,
+		...opts.styles,
 		'</style>'
 	]
 
@@ -50,7 +55,7 @@ interface ScriptOptions {
 	assets: [string, string][]
 }
 
-export function scriptContent(opt: ScriptOptions) {
+export function scriptContent(opts: ScriptOptions) {
 	const imports: string[] = []
 	const runs: string[] = []
 
@@ -63,19 +68,22 @@ export function scriptContent(opt: ScriptOptions) {
 		`import { CodeStepBlock } from "@decko/decko/components"`
 	)
 
-	if (opt.assets.length > 0) runs.push(...opt.assets.map(([p, v]) => `import ${v} from '${p}'`))
-	if (opt.features.has(Feature.Code)) runs.push('initCopyCode()')
+	if (opts.assets.length > 0) imports.push(...opts.assets.map(([p, v]) => `import ${v} from '${p}'`))
+	if (opts.features.has(Feature.Code)) runs.push('initCopyCode()')
+
+	const extraThemes = getExtraThemeValue(opts.data)
+	if (extraThemes && extraThemes.length > 0) imports.push(...extraThemes.map((t) => `import '${t}'`))
 
 	const scripts = [
 		`<script lang="ts" module>`,
-		`const data = ${JSON.stringify(opt.data)}`,
+		`const data = ${JSON.stringify(opts.data)}`,
 		`export { data as slide }`,
 		`</script>`,
 		`<script lang="ts">`,
 		...imports,
 		...runs,
-		`let { page=$bindable(),step=$bindable() } = $props()`,
-		...opt.scripts,
+		`let { page=$bindable(),step=$bindable(),decko } = $props()`,
+		...opts.scripts,
 		'</script>'
 	]
 
