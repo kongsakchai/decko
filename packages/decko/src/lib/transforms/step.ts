@@ -1,17 +1,17 @@
-import type { Attribute } from '@decko/parser'
+import type { Attribute, Extension } from '@decko/parser'
 
-import { asNumber, asString } from '../utils'
+import { asNumber, asString } from '../logic/utils'
 
-export const STEP_ATTR_PATTERN = /^step-(\d+)(?:-(\d+))?$/
+const STEP_ATTR_PATTERN = /^step-(\d+)(?:-(\d+))?$/
 
 export type Step = [number, StepAction[]]
 
-export interface StepAction {
+interface StepAction {
 	class: string[]
 	action: 'add' | 'remove'
 }
 
-export function extractSteps(data: Attribute): { steps: Step[]; maxStep: number } {
+function extractSteps(data: Attribute): { steps: Step[]; maxStep: number } {
 	const steps = new Map<number, StepAction[]>()
 
 	const appendStep = (stepStr: string, classes: string[], action: 'add' | 'remove') => {
@@ -39,4 +39,17 @@ export function extractSteps(data: Attribute): { steps: Step[]; maxStep: number 
 	}
 
 	return { steps: [...steps.entries()], maxStep }
+}
+
+export const stepExtension: Extension = (ctx) => {
+	const stepData = extractSteps(ctx.attrs)
+	if (stepData.steps.length === 0) return
+
+	ctx.currentSlide.local ??= {}
+	ctx.currentSlide.local.step = Math.max(asNumber(ctx.currentSlide.local?.step, 0), stepData.maxStep)
+
+	const stepEntries = JSON.stringify(stepData.steps)
+	ctx.attrs.svelteExpression ??= []
+	const exp = ctx.attrs.svelteExpression as string[]
+	exp.push(`{@attach stepper(page,${stepEntries})}`)
 }

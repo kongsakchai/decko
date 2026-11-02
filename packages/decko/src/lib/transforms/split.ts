@@ -1,25 +1,6 @@
-import { type Directive } from '@decko/parser'
+import { type Directive, type Extension } from '@decko/parser'
 
-import { mergeStr } from '../utils'
-
-const BACKGROUND_PROPS = {
-	bg: 'background',
-	'bg-color': 'background-color',
-	'bg-image': 'background-image',
-	'bg-size': 'background-size',
-	'bg-position': 'background-position',
-	'bg-opacity': 'opacity',
-	'bg-filter': 'filter'
-} as const satisfies Record<string, string>
-
-type BackgroundKey = keyof typeof BACKGROUND_PROPS
-
-export function toBackgroundStyles(directive: Directive): string {
-	return (Object.entries(BACKGROUND_PROPS) as [BackgroundKey, string][])
-		.filter(([key]) => typeof directive[key] === 'string')
-		.map(([key, prop]) => `${prop}: ${directive[key] as string}`)
-		.join(';')
-}
+import { mergeStr } from '../logic/utils'
 
 function toSplitValue(value: string): string {
 	const parts = value.trim().split(/\s+/).filter(Boolean)
@@ -53,9 +34,12 @@ export function toSplitStyles(directive: Directive): string | undefined {
 	return undefined
 }
 
-export function resolvePaginate(paginate: unknown, current: number) {
-	return {
-		show: paginate === true || paginate === 'hold',
-		current: paginate !== 'skip' && paginate !== 'hold' ? current + 1 : current
-	}
+export const splitContainerExtension: Extension = (ctx) => {
+	if (ctx.node.type !== 'container' || !ctx.attrs.split) return
+
+	const split = toSplitStyles(ctx.attrs)
+	if (!split) return
+
+	ctx.attrs.style = mergeStr('; ', split, ctx.attrs.style)
+	delete ctx.attrs.split
 }
