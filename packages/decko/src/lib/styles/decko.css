@@ -342,6 +342,11 @@
 			@apply bg-primary h-full rounded-full;
 		}
 	}
+
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-border) transparent;
+	}
 }
 
 @layer components {
