@@ -107,7 +107,7 @@
 
 <style>
 	@reference "tailwindcss";
-	@reference "../themes/decko.css";
+	@reference "@decko/decko/styles/decko.css";
 
 	.folder-icon {
 		@apply bg-primary h-6 w-6;

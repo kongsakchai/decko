@@ -2,7 +2,7 @@
 	import { useSlideContext, useViewContext } from '../context'
 	import BurgerIcon from '../icons/burger-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
-	import { getExtraThemeKeys, getThemes } from '../logic/theme'
+	import { getThemes } from '../logic/themes'
 	import Popover from './popover.svelte'
 	import ThemeSelector from './theme-selector.svelte'
 	import ThemeToggle from './theme-toggle.svelte'
@@ -16,11 +16,7 @@
 
 	<div class=" border-border border-l"></div>
 
-	<ThemeSelector
-		class="menu-btn"
-		extra={getExtraThemeKeys(slideContext.slide)}
-		available={getThemes(slideContext.slide)}
-	/>
+	<ThemeSelector class="menu-btn" themes={getThemes(slideContext.slide.themes)} />
 
 	<div class=" border-border border-l"></div>
 

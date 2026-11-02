@@ -1,6 +1,5 @@
 ---
 title: 🚀 Decko
-theme: main
 paginate: true
 tags:
     - marp

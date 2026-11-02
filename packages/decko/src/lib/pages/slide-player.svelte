@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components'
 	import { createSlideContext, createViewContext } from '../context'
+	import { onBrowser } from '../logic/events'
+	import { getThemes, resolveTheme } from '../logic/themes'
 	import { themeState } from '../state'
 	import type { SlideComponent, SlideData } from '../types'
 
@@ -19,23 +21,21 @@
 	const viewCtx = createViewContext({ width, height })
 
 	if (typeof window !== 'undefined' && window.location.hash) {
-		const page = Number.parseInt(window.location.hash.slice(1))
-		if (!Number.isNaN(page)) slideCtx.goto(page)
+		if (window.location.hash) {
+			const page = Number.parseInt(window.location.hash.slice(1))
+			if (!Number.isNaN(page)) slideCtx.goto(page)
+		}
 	}
 
-	// svelte-ignore state_referenced_locally
-	if (typeof data.theme === 'string') {
-		themeState.changeTheme(data.theme)
-	}
+	onBrowser(() => {
+		if (window.location.hash) {
+			const page = Number.parseInt(window.location.hash.slice(1))
+			if (!Number.isNaN(page)) slideCtx.goto(page)
+		}
 
-	// $effect(() => {
-	// 	slideCtx.slide = data
-	// })
-
-	// $effect(() => {
-	// 	viewCtx.width = width
-	// 	viewCtx.height = height
-	// })
+		const requested = typeof data.theme === 'string' ? data.theme : themeState.theme
+		themeState.changeTheme(resolveTheme(requested, getThemes(data.themes)))
+	})
 
 	$effect(() => {
 		navigation.navigate(`#${slideCtx.page}`, { history: 'replace' })
@@ -61,10 +61,3 @@
 		{/snippet}
 	</SlideContainer>
 </main>
-
-<style lang="postcss">
-	main {
-		scrollbar-width: thin;
-		scrollbar-color: var(--color-border) transparent;
-	}
-</style>

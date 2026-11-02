@@ -13,7 +13,10 @@
 	<title>{title}</title>
 </svelte:head>
 
-<main class="bg-background box-border h-dvh w-full overflow-y-scroll px-6 pt-1 transition-all duration-500">
+<main
+	data-theme="default"
+	class="bg-background box-border h-dvh w-full overflow-y-scroll px-6 pt-1 transition-all duration-500"
+>
 	<section class="flex items-center justify-between">
 		<h1>{title}</h1>
 

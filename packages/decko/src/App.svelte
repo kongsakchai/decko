@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Slide, { slide } from './example/example.svelte.md'
-	import { SlidePlayer } from './lib/page'
+	import { SlidePlayer } from './lib/pages'
 
 	const data = [
 		'03-resource/linux-check-port.md',

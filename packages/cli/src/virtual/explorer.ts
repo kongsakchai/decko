@@ -8,7 +8,7 @@ export const virtualExplorer: VirtualContent = (ctx) => {
 	const title = path.basename(ctx.root)
 	return [
 		`<script lang="ts">`,
-		`import { Explorer } from '@decko/decko/page'`,
+		`import { Explorer } from '@decko/decko/pages'`,
 		`const contents: string[] = ${JSON.stringify(ctx.markdowns())}`,
 		`</script>`,
 		`<Explorer title="${title}" files={contents} />`

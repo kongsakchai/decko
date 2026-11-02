@@ -18,6 +18,10 @@ export interface SlideData {
 	[key: string]: unknown
 }
 
+export interface SlideConfig {
+	[key: string]: unknown
+}
+
 export interface PageData {
 	page: number
 	step?: number

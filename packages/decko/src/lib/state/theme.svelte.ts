@@ -6,8 +6,13 @@ function getStored(key: string, fallback: string): string {
 }
 
 function createThemeState() {
-	let mode = $state(getStored('decko.schema', 'light'))
+	let mode = $state(getStored('decko.mode', 'light'))
 	let theme = $state(getStored('decko.theme', 'default'))
+
+	if (isBrowser) {
+		applyMode()
+		applyTheme()
+	}
 
 	function applyMode() {
 		document.documentElement.classList.toggle('dark', mode === 'dark')
@@ -17,25 +22,6 @@ function createThemeState() {
 		document.documentElement.dataset.theme = theme
 	}
 
-	if (isBrowser) {
-		applyMode()
-		applyTheme()
-	}
-
-	function toggleMode() {
-		mode = mode === 'dark' ? 'light' : 'dark'
-		if (!isBrowser) return
-		applyMode()
-		localStorage.setItem('decko.schema', mode)
-	}
-
-	function changeTheme(val: string) {
-		theme = val
-		if (!isBrowser) return
-		applyTheme()
-		localStorage.setItem('decko.theme', val)
-	}
-
 	return {
 		get isDark() {
 			return mode === 'dark'
@@ -43,8 +29,18 @@ function createThemeState() {
 		get theme() {
 			return theme
 		},
-		toggleMode: toggleMode,
-		changeTheme: changeTheme
+		toggleMode() {
+			if (!isBrowser) return
+			mode = mode === 'dark' ? 'light' : 'dark'
+			applyMode()
+			localStorage.setItem('decko.schema', mode)
+		},
+		changeTheme(val: string) {
+			if (!isBrowser) return
+			theme = val
+			applyTheme()
+			localStorage.setItem('decko.theme', val)
+		}
 	}
 }
 

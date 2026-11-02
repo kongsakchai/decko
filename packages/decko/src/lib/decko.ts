@@ -3,16 +3,19 @@ import { createSlideParser, extractFrontmatter } from '@decko/parser'
 import MagicString from 'magic-string'
 import type { PreprocessorGroup } from 'svelte/compiler'
 
-import { alerts } from './extensions/alerts'
-import { codeContainer, codeHighlighter } from './extensions/code'
-import { resolvePaginate, toBackgroundStyles, toSplitStyles } from './extensions/directive'
-import { assetsLinkExtension, hoistExtension, splitContainerExtension, stepExtension } from './extensions/extension'
-import { getFeatures } from './logic/feature'
-import { pageContent, scriptContent, styleContent } from './templates'
+import { asNumber, asString } from './logic/utils'
+import { alerts } from './transforms/alerts'
+import { assetsLinkExtension, getAssetImports } from './transforms/assets'
+import { toBackgroundStyles } from './transforms/background'
+import { codeContainer, codeHighlighter } from './transforms/code'
+import { getFeatures } from './transforms/feature'
+import { resolvePaginate } from './transforms/paginate'
+import { splitContainerExtension, toSplitStyles } from './transforms/split'
+import { stepExtension } from './transforms/step'
+import { pageContent, scriptContent, styleContent } from './transforms/templates'
+import { getCSSImports, getThemeImports } from './transforms/themes'
+import { hoistExtension } from './transforms/tree'
 import type { Options, SlideData } from './types'
-import { asNumber, asString, omit } from './utils'
-
-const RESERVED_KEYS = ['extraThemes', 'theme'] as const
 
 export function decko(options?: Options): PreprocessorGroup {
 	const parser = createSlideParser({
@@ -28,10 +31,9 @@ export function decko(options?: Options): PreprocessorGroup {
 		const slide = await parser.parse(body, metadata)
 
 		const slideData: SlideData = {
-			...omit(metadata, RESERVED_KEYS),
+			...metadata,
 			title: asString(metadata.title, 'Decko'),
-			pages: [],
-			tags: metadata.tags
+			pages: []
 		}
 
 		let page = { show: false, current: 0 }
@@ -58,8 +60,8 @@ export function decko(options?: Options): PreprocessorGroup {
 		const script = scriptContent({
 			data: slideData,
 			scripts: slide.script,
-			assets: Object.entries((slide.extra.assets ?? {}) as Record<string, string>),
-			features: getFeatures(slide.extra)
+			features: getFeatures(slide.extra),
+			imports: [...getAssetImports(slide.extra), ...getThemeImports(slideData), ...getCSSImports(slideData)]
 		})
 
 		const style = styleContent({ styles: slide.style })

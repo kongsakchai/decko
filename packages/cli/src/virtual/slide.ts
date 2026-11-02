@@ -14,7 +14,7 @@ export const virtualSlide: VirtualContent = (ctx) => {
 	if (!markdown) return `<h1>404</h1>`
 	return [
 		`<script lang="ts">`,
-		`import { SlidePlayer } from '@decko/decko/page'`,
+		`import { SlidePlayer } from '@decko/decko/pages'`,
 		`import Slide, { slide } from '${markdown}'`,
 		`</script>`,
 		`<SlidePlayer slide={Slide} data={slide} />`

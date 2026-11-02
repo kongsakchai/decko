@@ -14,8 +14,18 @@ export function mergeStr(separator: string, ...v: unknown[]): string {
 	return v.filter(Boolean).join(separator)
 }
 
-export function omit<T extends object, K extends keyof T>(obj: T, keys: readonly K[]): Omit<T, K> {
-	const copy = { ...obj }
-	for (const key of keys) delete copy[key]
-	return copy
+export function asStringArray(v: unknown, unique?: boolean): string[] | undefined {
+	const raw = typeof v === 'string' ? v.split(',') : Array.isArray(v) ? v : undefined
+	if (!raw) return undefined
+
+	const list = raw
+		.filter((t) => typeof t === 'string')
+		.map((t) => t.trim())
+		.filter(Boolean)
+
+	return unique ? uniqueArray(list) : list
+}
+
+export function uniqueArray<T>(v: T[]) {
+	return [...new Set(v)]
 }

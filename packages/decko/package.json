@@ -31,10 +31,10 @@
 			"svelte": "./dist/components/index.js",
 			"import": "./dist/components/index.js"
 		},
-		"./page": {
-			"types": "./dist/page/index.d.ts",
-			"svelte": "./dist/page/index.js",
-			"import": "./dist/page/index.js"
+		"./pages": {
+			"types": "./dist/pages/index.d.ts",
+			"svelte": "./dist/pages/index.js",
+			"import": "./dist/pages/index.js"
 		},
 		"./context": {
 			"types": "./dist/context/index.d.ts",
@@ -48,9 +48,13 @@
 			"types": "./dist/client/*.d.ts",
 			"import": "./dist/client/*.js"
 		},
-		"./themes/*": {
-			"style": "./dist/themes/*",
-			"import": "./dist/themes/*"
+		"./logic/*": {
+			"style": "./dist/logic/*",
+			"import": "./dist/logic/*"
+		},
+		"./styles/*": {
+			"style": "./dist/styles/*",
+			"import": "./dist/styles/*"
 		}
 	},
 	"files": [

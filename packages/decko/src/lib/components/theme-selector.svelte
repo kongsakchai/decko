@@ -6,13 +6,10 @@
 	interface Props {
 		class?: string
 		default?: string
-		extra?: string[]
-		available?: string[]
+		themes?: string[]
 	}
 
-	let { class: className, extra = [], available }: Props = $props()
-
-	const defualtThemes = ['default', 'claude', 'catppuccin', 'dracula', 'bubblegum', 'cyberpunk', 'forest', 'ocean']
+	let { class: className, themes }: Props = $props()
 </script>
 
 <Popover
@@ -25,7 +22,7 @@
 	{/snippet}
 
 	{#snippet content()}
-		{#each available ?? [...defualtThemes, ...extra] as theme}
+		{#each themes as theme}
 			<button
 				class:dark={themeState.isDark}
 				data-theme={theme}

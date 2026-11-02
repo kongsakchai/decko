@@ -1,12 +1,12 @@
 import { Action, useSlideContext } from '../context'
-import type { Step } from '../extensions/step'
+import type { Step } from '../transforms/step'
 
 export interface Stepper {
 	index: number
 	steps: Step[]
 }
 
-const next = (node: HTMLElement, stepper: Stepper, step: number) => {
+function next(node: HTMLElement, stepper: Stepper, step: number) {
 	const steps = stepper.steps
 	let index = stepper.index
 	while (index < steps.length && steps[index][0] <= step) {
@@ -21,7 +21,7 @@ const next = (node: HTMLElement, stepper: Stepper, step: number) => {
 	stepper.index = index
 }
 
-const prev = (node: HTMLElement, stepper: Stepper, step: number) => {
+function prev(node: HTMLElement, stepper: Stepper, step: number) {
 	const steps = stepper.steps
 	let index = stepper.index
 	while (index > 0 && steps[index - 1][0] > step) {

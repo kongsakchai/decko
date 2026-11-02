@@ -33,7 +33,7 @@ export function defineVirtualModule(opts: Partial<VirtualModule> & Pick<VirtualM
 			return { id, [key]: staticId || matchEnd(matchStart(id)) || '' }
 		},
 		match(id) {
-			return staticId ? id === staticId : matchEnd(matchStart(id)) !== undefined
+			return staticId ? id === staticId : matchEnd(matchStart(id)) != undefined
 		},
 		...opts
 	}

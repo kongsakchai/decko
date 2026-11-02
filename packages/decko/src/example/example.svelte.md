@@ -4,7 +4,6 @@ paginate: true
 tags:
     - marp
     - slide
-defaultTheme: forest
 ---
 
 # Hello
