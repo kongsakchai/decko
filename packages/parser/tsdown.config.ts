@@ -6,14 +6,13 @@ export default defineConfig({
 	...baseConfig,
 	entry: ['./src/index.ts'],
 	deps: {
-		// onlyBundle: ['@types/unist','']
+		onlyBundle: ['@types/hast', '@types/mdast', '@types/unist'],
 		neverBundle: [
 			'micromark-util-character',
 			'micromark-util-classify-character',
 			'micromark-util-html-tag-name',
 			'micromark-util-resolve-all',
-			'micromark-util-symbol',
-			/@types/
+			'micromark-util-symbol'
 		]
 	}
 })
