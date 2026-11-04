@@ -1,4 +1,4 @@
-import { createSlideParser, extractFrontmatter } from '@decko/parser'
+import { createSlideParser, extractFrontmatter } from '@deckomd/parser'
 
 import MagicString from 'magic-string'
 import type { PreprocessorGroup } from 'svelte/compiler'

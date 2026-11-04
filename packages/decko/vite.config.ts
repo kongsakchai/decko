@@ -17,7 +17,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@decko/decko': path.resolve(__dirname, './src/lib')
+			'@deckomd/decko': path.resolve(__dirname, './src/lib')
 		}
 	},
 	build: {

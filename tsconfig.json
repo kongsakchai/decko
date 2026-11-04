@@ -14,8 +14,8 @@
 		"noUnusedLocals": true,
 		"noEmit": true,
 		"paths": {
-			"@decko/parser/*": ["./packages/parser/src/*"],
-			"@decko/decko/*": ["./packages/decko/src/*"]
+			"@deckomd/parser/*": ["./packages/parser/src/*"],
+			"@deckomd/decko/*": ["./packages/decko/src/*"]
 		}
 	}
 }

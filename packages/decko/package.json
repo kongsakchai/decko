@@ -1,8 +1,9 @@
 {
-	"name": "@decko/decko",
+	"name": "@deckomd/decko",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
@@ -79,7 +80,7 @@
 		"vite": "^8.0.9"
 	},
 	"dependencies": {
-		"@decko/parser": "*",
+		"@deckomd/parser": "*",
 		"@shikijs/magic-move": "^4.3.1",
 		"@shikijs/transformers": "^4.3.1",
 		"lz-string": "^1.5.0",

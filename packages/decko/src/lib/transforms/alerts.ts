@@ -1,4 +1,4 @@
-import type { Alert } from '@decko/parser'
+import type { Alert } from '@deckomd/parser'
 
 export const alerts: Record<string, Alert> = {
 	info: {

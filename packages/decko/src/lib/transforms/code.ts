@@ -1,4 +1,4 @@
-import { type CodeContainer, type CodeHighlighter } from '@decko/parser'
+import { type CodeContainer, type CodeHighlighter } from '@deckomd/parser'
 import { codeToKeyedTokens, createMagicMoveMachine } from '@shikijs/magic-move/core'
 import {
 	transformerMetaHighlight,

@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import '@decko/decko/styles/decko.css';
+@import '@deckomd/decko/styles/decko.css';
 
 :root {
 	font-synthesis: none;

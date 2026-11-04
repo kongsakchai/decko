@@ -1,4 +1,4 @@
-import type { Attribute, Extension } from '@decko/parser'
+import type { Attribute, Extension } from '@deckomd/parser'
 
 import { asNumber, asString } from '../logic/utils'
 

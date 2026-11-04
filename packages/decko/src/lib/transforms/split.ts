@@ -1,4 +1,4 @@
-import { type Directive, type Extension } from '@decko/parser'
+import { type Directive, type Extension } from '@deckomd/parser'
 
 import { mergeStr } from '../logic/utils'
 

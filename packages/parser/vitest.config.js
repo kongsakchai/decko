@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
 	test: {
-		name: '@decko/parser',
+		name: '@deckomd/parser',
 		coverage: {
 			provider: 'v8',
 			include: ['src/**/*.ts'],

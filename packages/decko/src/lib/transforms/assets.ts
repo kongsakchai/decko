@@ -1,4 +1,4 @@
-import type { Directive, Extension } from '@decko/parser'
+import type { Directive, Extension } from '@deckomd/parser'
 
 import type { Html, Image, Link } from 'mdast'
 

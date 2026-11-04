@@ -39,7 +39,7 @@ export function styleContent(opts: StyleOptions) {
 	const styles = [
 		'<style lang="postcss">',
 		'@reference "tailwindcss";',
-		'@reference "@decko/decko/styles/decko.css";',
+		'@reference "@deckomd/decko/styles/decko.css";',
 		...opts.styles,
 		'</style>'
 	]
@@ -61,10 +61,10 @@ export function scriptContent(opts: ScriptOptions) {
 	// // svelte - auto remove when don't use
 	imports.push(
 		`import {blur,crossfade,draw,fade,fly,scale,slide as slide } from 'svelte/transition'`,
-		`import { stepper } from '@decko/decko/client/stepper'`,
-		'import { initCopyCode } from "@decko/decko/client/code"',
-		'import { mermaidRender } from "@decko/decko/client/mermaid"',
-		`import { CodeStepBlock } from "@decko/decko/components"`,
+		`import { stepper } from '@deckomd/decko/client/stepper'`,
+		'import { initCopyCode } from "@deckomd/decko/client/code"',
+		'import { mermaidRender } from "@deckomd/decko/client/mermaid"',
+		`import { CodeStepBlock } from "@deckomd/decko/components"`,
 		...opts.imports
 	)
 

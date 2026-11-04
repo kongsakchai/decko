@@ -2,7 +2,7 @@ import { Context, createContext } from '@/context'
 import { buildReport } from '@/vite/build-report'
 import { slideLoaderPlugin } from '@/vite/loaders'
 
-import { decko } from '@decko/decko'
+import { decko } from '@deckomd/decko'
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 

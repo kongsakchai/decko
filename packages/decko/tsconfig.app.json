@@ -10,7 +10,7 @@
 		"checkJs": true,
 		"moduleDetection": "force",
 		"paths": {
-			"@decko/decko/*": ["./src/lib/*"]
+			"@deckomd/decko/*": ["./src/lib/*"]
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]

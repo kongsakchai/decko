@@ -1,4 +1,4 @@
-import { type PostExtension, type RootContent } from '@decko/parser'
+import { type PostExtension, type RootContent } from '@deckomd/parser'
 
 import { asString } from '../logic/utils'
 

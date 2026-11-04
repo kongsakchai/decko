@@ -1,4 +1,4 @@
-import type { Directive } from '@decko/parser'
+import type { Directive } from '@deckomd/parser'
 
 export enum Feature {
 	Mermaid,
