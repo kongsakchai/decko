@@ -5,7 +5,7 @@ import { VirtualContent } from './types'
 export const HTML_SUFFIX = '/index.html'
 
 export const virtualEntryHTML: VirtualContent = (ctx) => {
-	let module = ctx.markdown ?? ctx.data?.module
+	let module = ctx.single ?? ctx.data?.module
 	if (module?.endsWith('.md')) {
 		module = createSlideModuleId(module)
 	} else {

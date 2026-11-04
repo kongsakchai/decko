@@ -42,9 +42,11 @@ function setupKeyboardShortcuts(server: Awaited<ReturnType<typeof createServer>>
 program
 	.command('build')
 	.description('Build Markdown slide decks into static HTML.')
-	.argument('<src>', 'Path to a slide file or slide directory.')
-	.option('-o, --output <dir>', 'Output directory for the generated files.', 'dist')
-	.option('--no-index', 'Exclude the index slide from the build.')
+	.argument('<src>', 'Path to a slide file or a directory of slides.')
+	.option('-o, --outDir <dir>', 'Output directory.', 'dist')
+	.option('-i, --isolated', 'Build each deck separately, with its own JS/CSS chunks (nothing shared between decks).')
+	.option('-s, --single', 'Bundle each deck into one self-contained HTML file (JS, CSS and assets inlined).')
+	.option('--no-index', 'Skip generating the index page.')
 	.action(async (src, options) => {
 		try {
 			await build(src, options)

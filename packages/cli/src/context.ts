@@ -10,11 +10,12 @@ export interface ResolvedPath {
 
 export interface Context {
 	readonly root: string
-	markdown?: string
+	single?: string
 	data?: Record<string, string>
 	markdowns(): string[]
 	read(src: string): string | undefined
 	resolvePath(src: string): ResolvedPath | undefined
+	withSingle(single: string): Context
 }
 
 export function createContext(input: string): Context {
@@ -39,8 +40,10 @@ export function createContext(input: string): Context {
 	}
 
 	return {
-		root,
-		markdown: isSingle ? path.basename(target) : undefined,
+		get root() {
+			return root
+		},
+		single: isSingle ? path.basename(target) : undefined,
 		markdowns: () => {
 			return findMarkdowns(root)
 		},
@@ -53,6 +56,9 @@ export function createContext(input: string): Context {
 			const absolute = resolveInsideRoot(src)
 			if (!absolute || !existsSync(absolute)) return undefined
 			return { path: absolute, isFile: statSync(absolute).isFile() }
+		},
+		withSingle(single) {
+			return { ...this, single: single }
 		}
 	}
 }

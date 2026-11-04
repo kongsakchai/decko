@@ -10,7 +10,7 @@ export function createSlideModuleId(id: string) {
 }
 
 export const virtualSlide: VirtualContent = (ctx) => {
-	const markdown = ctx.markdown ?? ctx.data?.markdown
+	const markdown = ctx.single ?? ctx.data?.markdown
 	if (!markdown) return `<h1>404</h1>`
 	return [
 		`<script lang="ts">`,
