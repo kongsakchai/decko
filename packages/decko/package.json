@@ -1,14 +1,33 @@
 {
 	"name": "@deckomd/decko",
-	"private": true,
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"type": "module",
+	"description": "Svelte-powered Markdown presentation framework for Decko.",
+	"keywords": [
+		"markdown",
+		"slides",
+		"presentation",
+		"svelte"
+	],
+	"author": "kongsakchai",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kongsakchai/slidemd.git",
+		"directory": "packages/decko"
+	},
+	"engines": {
+		"node": "^20.19.0 || >=22.12.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepack": "svelte-package && publint",
+	"prepublishOnly": "bun run prepack",
 		"check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
@@ -80,7 +99,7 @@
 		"vite": "^8.0.9"
 	},
 	"dependencies": {
-		"@deckomd/parser": "*",
+		"@deckomd/parser": "^0.1.1",
 		"@shikijs/magic-move": "^4.3.1",
 		"@shikijs/transformers": "^4.3.1",
 		"lz-string": "^1.5.0",
