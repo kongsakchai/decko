@@ -1,8 +1,8 @@
 import type { Directive } from '@deckomd/parser'
 
-import { getCustomThemes, getThemes } from '../logic/themes'
-import { asStringArray, uniqueArray } from '../logic/utils'
-import type { SlideData } from '../types'
+import { getCustomThemes, getThemes } from '../logic/themes.js'
+import { asStringArray, uniqueArray } from '../logic/utils.js'
+import type { SlideData } from '../types.js'
 
 const CUSTOM_THEME_KEY = 'customThemes'
 const DEFAULT_THEME = 'default'

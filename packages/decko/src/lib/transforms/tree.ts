@@ -1,6 +1,6 @@
 import { type PostExtension, type RootContent } from '@deckomd/parser'
 
-import { asString } from '../logic/utils'
+import { asString } from '../logic/utils.js'
 
 export const hoistExtension: PostExtension = {
 	when: (ctx) => {

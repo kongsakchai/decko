@@ -2,7 +2,7 @@
 
 [![NPM version](https://img.shields.io/npm/v/@deckomd/parser?color=3AB9D4&label=)](https://www.npmjs.com/package/@deckomd/parser)
 
-Markdown parser for [Decko](https://github.com/kongsakchai/decko)
+Markdown slide decks parser for [Decko](https://github.com/kongsakchai/decko)
 
 ```ts
 import { createSlideParser } from '@deckomd/parser'

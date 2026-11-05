@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components'
-	import { createSlideContext, createViewContext } from '../context'
-	import { onBrowser } from '../logic/events'
-	import { getThemes, resolveTheme } from '../logic/themes'
-	import { themeState } from '../state'
-	import type { SlideComponent, SlideData } from '../types'
+	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components/index.js'
+	import { createSlideContext, createViewContext } from '../context/index.js'
+	import { onBrowser } from '../logic/events.js'
+	import { getThemes, resolveTheme } from '../logic/themes.js'
+	import { themeState } from '../state/index.js'
+	import type { SlideComponent, SlideData } from '../types.js'
 
 	interface Props {
 		data: SlideData

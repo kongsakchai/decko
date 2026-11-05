@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PalleteIcon from '../icons/pallete-icon.svelte'
-	import { themeState } from '../state'
+	import { themeState } from '../state/index.js'
 	import Popover from './popover.svelte'
 
 	interface Props {

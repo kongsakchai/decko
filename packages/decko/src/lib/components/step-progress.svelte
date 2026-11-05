@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useSlideContext } from '../context'
+	import { useSlideContext } from '../context/index.js'
 
 	const slideCtx = useSlideContext()
 

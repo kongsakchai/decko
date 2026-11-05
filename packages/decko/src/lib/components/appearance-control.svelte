@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { useSlideContext, useViewContext } from '../context'
+	import { useSlideContext, useViewContext } from '../context/index.js'
 	import BurgerIcon from '../icons/burger-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
-	import { getThemes } from '../logic/themes'
+	import { getThemes } from '../logic/themes.js'
 	import Popover from './popover.svelte'
 	import ThemeSelector from './theme-selector.svelte'
 	import ThemeToggle from './theme-toggle.svelte'

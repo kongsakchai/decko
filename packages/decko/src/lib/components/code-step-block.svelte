@@ -4,7 +4,7 @@
 
 	import lz from 'lz-string'
 
-	import { useSlideContext, useViewContext } from '../context'
+	import { useSlideContext, useViewContext } from '../context/index.js'
 
 	interface Props {
 		code: string

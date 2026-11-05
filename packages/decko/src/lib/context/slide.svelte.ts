@@ -1,6 +1,6 @@
 import { createContext } from 'svelte'
 
-import type { SlideData } from '../types'
+import type { SlideData } from '../types.js'
 
 export enum Action {
 	NEXT,

@@ -3,6 +3,7 @@ import * as readline from 'node:readline'
 
 import { build } from './command/build'
 import { createServer } from './command/serv'
+import { version } from './version'
 
 const program = new Command('🚀 Decko')
 
@@ -74,7 +75,7 @@ program
 program
 	.name('decko')
 	.description('Generate presentation slide decks from Markdown using Svelte.')
-	.version('1.0.0')
+	.version(version)
 	.action(() => {
 		program.help()
 	})

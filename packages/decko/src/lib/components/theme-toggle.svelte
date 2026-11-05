@@ -3,7 +3,7 @@
 
 	import MoonIcon from '../icons/moon-icon.svelte'
 	import SunIcon from '../icons/sun-icon.svelte'
-	import { themeState } from '../state'
+	import { themeState } from '../state/index.js'
 
 	interface Props {
 		class?: string

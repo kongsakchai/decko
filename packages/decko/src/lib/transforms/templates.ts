@@ -1,6 +1,6 @@
-import { mergeStr } from '../logic/utils'
-import type { SlideData } from '../types'
-import { Feature } from './feature'
+import { mergeStr } from '../logic/utils.js'
+import type { SlideData } from '../types.js'
+import { Feature } from './feature.js'
 
 export interface PageOptions {
 	layout?: string
