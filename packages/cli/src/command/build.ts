@@ -1,4 +1,5 @@
 import { Context, createContext } from '@/context'
+import { resolveUser } from '@/paths'
 import { buildReport } from '@/vite/build-report'
 import { slideLoaderPlugin } from '@/vite/loaders'
 
@@ -71,7 +72,7 @@ function resolveOptions(src: string, options: Options): ResolvedOptions {
 	return {
 		ctx,
 		mode: resolveMode(options),
-		outDir: path.resolve(options.outDir),
+		outDir: resolveUser(options.outDir),
 		withIndex: ctx.single != null || options.index,
 		markdowns: ctx.single ? [] : markdowns
 	}
@@ -103,7 +104,7 @@ async function buildStandalone(options: ResolvedOptions) {
 			createInlineConfig(INDEX_ENTRY, {
 				...options,
 				ctx: options.ctx.withSingle(m),
-				outDir: path.resolve(options.outDir, m)
+				outDir: resolveUser(options.outDir, m)
 			})
 		)
 	}
@@ -116,7 +117,7 @@ function markdownEntry(markdown: string): [string, string] {
 function createInlineConfig(input: Record<string, string>, { outDir, mode, ctx }: ResolvedOptions): InlineConfig {
 	const split = mode !== 'single-file'
 
-	return {
+	const config: InlineConfig = {
 		configFile: false,
 		plugins: createPlugins(mode, ctx),
 		base: mode === 'isolated' ? './' : '/',
@@ -138,6 +139,8 @@ function createInlineConfig(input: Record<string, string>, { outDir, mode, ctx }
 			}
 		}
 	}
+
+	return config
 }
 
 function createPlugins(mode: BuildMode, ctx: Context) {

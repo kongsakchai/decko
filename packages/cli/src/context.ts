@@ -2,6 +2,7 @@ import { existsSync, statSync } from 'node:fs'
 import path from 'node:path'
 
 import { findMarkdowns, readMarkdown } from './content'
+import { resolveUser } from './paths'
 
 export interface ResolvedPath {
 	path: string
@@ -19,7 +20,7 @@ export interface Context {
 }
 
 export function createContext(input: string): Context {
-	const target = path.resolve(input)
+	const target = resolveUser(input)
 
 	if (!existsSync(target)) {
 		throw new Error(`Path does not exist: ${target}`)
@@ -30,7 +31,7 @@ export function createContext(input: string): Context {
 
 	function resolveInsideRoot(src: string) {
 		const normalized = src.replace(/^[/\\]+/, '')
-		const absolutePath = path.resolve(root, normalized)
+		const absolutePath = resolveUser(root, normalized)
 		const relative = path.relative(root, absolutePath)
 
 		if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
