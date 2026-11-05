@@ -2,7 +2,7 @@
 	"name": "@deckomd/parser",
 	"version": "0.1.1",
 	"type": "module",
-	"description": "Markdown slide deck parser for Decko.",
+	"description": "Markdown slide decks parser for Decko.",
 	"keywords": [
 		"markdown",
 		"slides",
