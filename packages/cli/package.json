@@ -1,6 +1,6 @@
 {
 	"name": "@deckomd/cli",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"type": "module",
 	"description": "The CLI for Decko - build slide decks from Markdown, with Svelte when you need it.",
 	"keywords": [
