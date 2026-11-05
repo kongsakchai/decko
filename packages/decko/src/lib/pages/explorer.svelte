@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FileExplorer, ThemeToggle } from '../components'
+	import { FileExplorer, ThemeToggle } from '../components/index.js'
 
 	interface Props {
 		title: string

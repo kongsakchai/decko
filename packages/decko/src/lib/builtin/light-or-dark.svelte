@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { themeState } from '../state'
+	import { themeState } from '../state/index.js'
 
 	interface Props {
 		light: Snippet

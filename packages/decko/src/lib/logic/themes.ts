@@ -1,4 +1,4 @@
-import { asStringArray } from './utils'
+import { asStringArray } from './utils.js'
 
 export function getThemes(themes: unknown): string[] | undefined {
 	return asStringArray(themes, true)

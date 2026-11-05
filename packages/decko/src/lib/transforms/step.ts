@@ -1,6 +1,6 @@
 import type { Attribute, Extension } from '@deckomd/parser'
 
-import { asNumber, asString } from '../logic/utils'
+import { asNumber, asString } from '../logic/utils.js'
 
 const STEP_ATTR_PATTERN = /^step-(\d+)(?:-(\d+))?$/
 

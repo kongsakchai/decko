@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { useViewContext } from '../context'
+	import { useViewContext } from '../context/index.js'
 
 	interface Props {
 		outside?: Snippet

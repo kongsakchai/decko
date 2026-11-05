@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { scale } from 'svelte/transition'
 
-	import { useViewContext } from '../context'
+	import { useViewContext } from '../context/index.js'
 	import FullscreenIcon from '../icons/fullscreen-icon.svelte'
 	import NormalscreenIcon from '../icons/normalscreen-icon.svelte'
 	import ZoomIcon from '../icons/zoom-icon.svelte'

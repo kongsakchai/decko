@@ -2,11 +2,11 @@
 
 [![NPM version](https://img.shields.io/npm/v/@deckomd/cli?color=3AB9D4&label=)](https://www.npmjs.com/package/@deckomd/cli)
 
-Generate presentation slide decks from Markdown using Svelte — powers the `decko` command.
+The CLI for [Decko](https://github.com/kongsakchai/decko) — build slide decks from Markdown, with Svelte when you need it.
 
 ```sh
 npm install -g @deckomd/cli
-decko slide.md
+decko serve slide.md
 ```
 
 ## License

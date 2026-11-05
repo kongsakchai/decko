@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { useSlideContext } from '../context'
+	import { useSlideContext } from '../context/index.js'
 	import ArrowLeftIcon from '../icons/arrow-left-icon.svelte'
 	import ArrowRightIcon from '../icons/arrow-right-icon.svelte'
 

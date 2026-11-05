@@ -1,6 +1,6 @@
 import { type Directive, type Extension } from '@deckomd/parser'
 
-import { mergeStr } from '../logic/utils'
+import { mergeStr } from '../logic/utils.js'
 
 function toSplitValue(value: string): string {
 	const parts = value.trim().split(/\s+/).filter(Boolean)
