@@ -3,8 +3,10 @@ import * as readline from 'node:readline'
 
 import { build } from './command/build'
 import { createServer } from './command/serv'
-import { version } from './version'
+import { version } from './const'
+import { pkgRoot } from './paths'
 
+process.chdir(pkgRoot)
 const program = new Command('🚀 Decko')
 
 function setupKeyboardShortcuts(server: Awaited<ReturnType<typeof createServer>>) {
