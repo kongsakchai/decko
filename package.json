@@ -1,6 +1,6 @@
 {
 	"name": "decko",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"type": "module",
 	"main": "index.js",
 	"private": true,
@@ -23,7 +23,8 @@
 		"test:unit:parser": "bun run --cwd packages/parser test:unit",
 		"test:cover:parser": "bun run --cwd packages/parser test:cover",
 		"test:decko": "bun run --cwd packages/decko test",
-		"bump": "bumpp -r --commit \"chore: release {tag}\""
+		"bump": "bumpp -r --commit \":rocket: chore: release {tag}\" --no-push",
+		"publish": "bun publish --cwd packages/parser && bun publish --cwd packages/decko && bun publish --cwd packages/cli"
 	},
 	"keywords": [],
 	"author": "",
