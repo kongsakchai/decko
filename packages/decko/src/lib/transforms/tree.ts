@@ -5,7 +5,7 @@ import { asString } from '../logic/utils.js'
 export const hoistExtension: PostExtension = {
 	when: (ctx) => {
 		return (
-			ctx.attrs.bg != undefined ||
+			ctx.attrs.bg != null ||
 			!!asString(ctx.attrs.class)?.includes('absolute') ||
 			!!asString(ctx.attrs.style)?.includes('absolute')
 		)

@@ -170,10 +170,12 @@ export const attributeFromMarkdown: FromMarkdownExtension = {
 		attributeSequence: enterAttributeSequence
 	},
 	exit: {
+		attribute: exitAttirbute,
+		attributeSequence: exitAttributeSequence,
 		attributeKey: exitAttributeKey,
 		attributeValue: exitAttributeValue,
 		attributeClass: exitAttributeClass,
-		attributeID: exitAttributeID,
+		attributeId: exitAttributeId,
 		attributeExpression: exitAttributeExpression
 	}
 }
@@ -186,7 +188,20 @@ function enterAttribute(this: CompileContext): void {
 }
 
 function enterAttributeSequence(this: CompileContext): void {
-	this.data.key = undefined
+	delete this.data.key
+}
+
+function exitAttirbute(this: CompileContext): void {
+	const data = this.data
+	if (data.class && data.class.length > 0) data.attr.class = data.class
+	if (data.id && data.id.length > 0) data.attr.id = data.id
+	if (data.exp && data.exp.length > 0) data.attr.svelteExpression = data.exp
+}
+
+function exitAttributeSequence(this: CompileContext): void {
+	if (this.data.key != null) {
+		this.data.attr[this.data.key] = true
+	}
 }
 
 function exitAttributeKey(this: CompileContext, token: Token): void {
@@ -198,15 +213,16 @@ function exitAttributeKey(this: CompileContext, token: Token): void {
 
 function exitAttributeValue(this: CompileContext, token: Token): void {
 	if (!this.data.key) return
-	const value = this.sliceSerialize(token).replace(/^(["'])(.*)(\1)$/, '{$2}')
+	const value = this.sliceSerialize(token).replace(/^(["'])(.*)(\1)$/, '$2')
 	this.data.attr[this.data.key] = value
+	delete this.data.key
 }
 
 function exitAttributeClass(this: CompileContext, token: Token): void {
 	this.data.class.push(this.sliceSerialize(token).slice(1))
 }
 
-function exitAttributeID(this: CompileContext, token: Token): void {
+function exitAttributeId(this: CompileContext, token: Token): void {
 	this.data.id.push(this.sliceSerialize(token).slice(1))
 }
 

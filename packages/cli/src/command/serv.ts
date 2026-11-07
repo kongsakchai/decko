@@ -29,7 +29,7 @@ export async function createServer(root: string, options?: Options) {
 		],
 		server: {
 			port: options?.port,
-			strictPort: options?.port != undefined,
+			strictPort: options?.port != null,
 			fs: { allow: [searchForWorkspaceRoot(process.cwd()), root] }
 		},
 		logLevel: 'error',
