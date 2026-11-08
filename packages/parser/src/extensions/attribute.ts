@@ -1,6 +1,6 @@
 import type { CompileContext, Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
 import { markdownLineEnding, markdownLineEndingOrSpace } from 'micromark-util-character'
-import { codes } from 'micromark-util-symbol'
+import { codes, types } from 'micromark-util-symbol'
 import type { Code, Effects, State, Token } from 'micromark-util-types'
 
 import { partialSpaceTokenizer } from './space.js'
@@ -10,7 +10,13 @@ export const isQuote = (code: Code) =>
 
 // Tokenize
 
-export function createAttributeTokenize(effects: Effects, ok: State, nok: State, closeCode: Code) {
+export function createAttributeTokenize(
+	effects: Effects,
+	ok: State,
+	nok: State,
+	closeCode: Code,
+	multipleLine: boolean = false
+) {
 	let markers: Code[] = []
 	let closeScopedValue = closeValue
 
@@ -21,14 +27,15 @@ export function createAttributeTokenize(effects: Effects, ok: State, nok: State,
 	// Entry
 
 	function start(code: Code) {
-		if (isEnd(code)) return nok(code)
+		if (isEnd(code)) return beforeEnd(code, nok)
 		effects.enter('attribute')
 		return effects.attempt(partialSpaceTokenizer, openSequence, openSequence)(code)
 	}
 
 	function openSequence(code: Code) {
-		if (isEnd(code)) return done(code)
+		if (isEnd(code)) return beforeEnd(code)
 		effects.enter('attributeSequence')
+		closeScopedValue = closeValue
 
 		if (code === codes.dot) {
 			effects.enter('attributeClass')
@@ -55,8 +62,18 @@ export function createAttributeTokenize(effects: Effects, ok: State, nok: State,
 
 	function closeSequence(code: Code) {
 		effects.exit('attributeSequence')
-		if (isEnd(code)) return done(code)
+		if (isEnd(code)) return beforeEnd(code)
 		return effects.attempt(partialSpaceTokenizer, openSequence, openSequence)(code)
+	}
+
+	function beforeEnd(code: Code, end = done) {
+		if (multipleLine && markdownLineEnding(code)) {
+			effects.enter(types.lineEnding)
+			effects.consume(code)
+			effects.exit(types.lineEnding)
+			return effects.attempt(partialSpaceTokenizer, openSequence, openSequence)
+		}
+		return end(code)
 	}
 
 	function done(code: Code) {
@@ -92,6 +109,7 @@ export function createAttributeTokenize(effects: Effects, ok: State, nok: State,
 		if (isEndOrSpace(code)) return closeSequence(code)
 
 		effects.enter('attributeValue')
+		effects.enter('attributeValueData')
 		effects.consume(code)
 
 		if (isQuote(code) || code === codes.leftCurlyBrace) {
@@ -109,17 +127,34 @@ export function createAttributeTokenize(effects: Effects, ok: State, nok: State,
 	}
 
 	function scopedAttributeValue(code: Code) {
-		if (latestMarker() == null || code === codes.eof || markdownLineEnding(code)) {
+		const before = latestMarker()
+		const lineEnding = markdownLineEnding(code) && !multipleLine
+
+		if (before == null || code === codes.eof || lineEnding) {
 			markers = []
 			return closeScopedValue(code)
 		}
 
-		if (code === codes.rightCurlyBrace && latestMarker() === codes.leftCurlyBrace) {
-			markers.pop()
-		} else if (isQuote(code) && latestMarker() === code) {
-			markers.pop()
-		} else if (isQuote(code) || code === codes.leftCurlyBrace) {
+		if (markdownLineEnding(code)) {
+			effects.exit('attributeValueData')
+			effects.enter(types.lineEnding)
+			effects.consume(code)
+			effects.exit(types.lineEnding)
+			effects.enter('attributeValueData')
+			return scopedAttributeValue
+		}
+
+		const inBrace = before === codes.leftCurlyBrace
+		const inQuote = isQuote(before)
+
+		if (code === codes.leftCurlyBrace && (inBrace || inQuote)) {
 			markers.push(code)
+		} else if (inBrace && isQuote(code)) {
+			markers.push(code)
+		} else if (inBrace && code === codes.rightCurlyBrace) {
+			markers.pop()
+		} else if (inQuote && code === before) {
+			markers.pop()
 		}
 
 		effects.consume(code)
@@ -127,6 +162,7 @@ export function createAttributeTokenize(effects: Effects, ok: State, nok: State,
 	}
 
 	function closeValue(code: Code) {
+		effects.exit('attributeValueData')
 		effects.exit('attributeValue')
 		return closeSequence(code)
 	}
@@ -213,7 +249,7 @@ function exitAttributeKey(this: CompileContext, token: Token): void {
 
 function exitAttributeValue(this: CompileContext, token: Token): void {
 	if (!this.data.key) return
-	const value = this.sliceSerialize(token).replace(/^(["'])(.*)(\1)$/, '$2')
+	const value = this.sliceSerialize(token).replace(/^(["'])([\s\S]*)(\1)$/m, '$2')
 	this.data.attr[this.data.key] = value
 	delete this.data.key
 }

@@ -31,6 +31,7 @@ declare module 'micromark-util-types' {
 		attributeSequence: 'attributeSequence'
 		attributeKey: 'attributeKey'
 		attributeValue: 'attributeValue'
+		attributeValueData: 'attributeValueData'
 		attributeClass: 'attributeClass'
 		attributeId: 'attributeId'
 		attributeMarker: 'attributeMarker'

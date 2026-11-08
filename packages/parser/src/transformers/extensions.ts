@@ -4,7 +4,7 @@ import { visitParents } from 'unist-util-visit-parents'
 
 import { Attribute, Extension, ExtensionContext, ExtensionOptions, PostExtension, SlideContext } from '../types.js'
 
-function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent[]): ExtensionContext | undefined {
+function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent[]): ExtensionContext {
 	node.data ??= { hProperties: {} }
 	node.data.hProperties ??= {}
 
@@ -12,7 +12,6 @@ function createContext(ctx: SlideContext, root: Root, node: Node, parent: Parent
 		root,
 		node,
 		parents: parent,
-
 		attrs: node.data.hProperties as Attribute,
 		slideCtx: ctx,
 		currentSlide: ctx.slides[node.indexGroup ?? 0]
@@ -29,12 +28,9 @@ export function extensionsTransform(options?: ExtensionOptions): Transformer {
 		const postQueue: { apply: Extension; ctx: ExtensionContext }[] = []
 
 		visitParents(root, (node, ancestors) => {
-			// no parent
 			if (ancestors.length == 0) return
 
 			const attrCtx = createContext(ctx, root, node, ancestors)
-			if (!attrCtx) return
-
 			for (const process of extensions) {
 				process(attrCtx)
 			}

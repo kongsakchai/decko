@@ -1,6 +1,6 @@
+import { Paragraph } from 'mdast'
 import markdown from 'remark-parse'
 import { unified } from 'unified'
-import { visit } from 'unist-util-visit'
 import { describe, expect, it } from 'vitest'
 
 import { attributeFromMarkdown } from '../../src/extensions/attribute'
@@ -14,10 +14,8 @@ const parser = unified()
 		addFromMarkdownExtensions(this, attributeBlockFromMarkdown, attributeFromMarkdown)
 	})
 
-describe('attribute block syntax', async () => {
+describe('attribute block extension', async () => {
 	it('should return attribute block mdast', async () => {
-		const str =
-			'decko @{ disable data= _invalid .class-1 .class-2 #id-1 #id-2 title=decko onclick="{onclick}" {...props} }'
 		const expected = {
 			disable: true,
 			title: 'decko',
@@ -28,38 +26,59 @@ describe('attribute block syntax', async () => {
 			svelteExpression: ['{...props}']
 		}
 
-		const node = parser.parse(str)
+		const node = parser.parse(
+			'attr @{ disable data= _invalid .class-1 .class-2 #id-1 #id-2 title=decko onclick="{onclick}" {...props} }'
+		)
 
-		let result: any = undefined
-		visit(node, 'attributeBlock', (node) => {
-			result = node
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.data).toEqual({
+			hProperties: expected
 		})
-		expect(result?.attr).toStrictEqual(expected)
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'text',
+			value: 'attr '
+		})
+		expect(paragraph.children[1]).toMatchObject({
+			type: 'attributeBlock',
+			attr: expected
+		})
 	})
 
 	it('should return empty when attribute empty', async () => {
-		const str = 'decko @{}'
+		const node = parser.parse('attr @{}')
 
-		const node = parser.parse(str)
-
-		let result: any = undefined
-		visit(node, 'attributeBlock', (node) => {
-			result = node
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.data).toEqual({
+			hProperties: {}
 		})
-		expect(result?.attr).toBeUndefined()
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'text',
+			value: 'attr '
+		})
+		expect(paragraph.children[1]).toMatchObject({
+			type: 'attributeBlock',
+			attr: undefined
+		})
 	})
 
 	it('should return empty when key invalid', async () => {
-		const str = 'decko @{ @data={data}}'
-		const expected = {}
+		const node = parser.parse('attr @{ @data={data}}')
 
-		const node = parser.parse(str)
-
-		let result: any = undefined
-		visit(node, 'attributeBlock', (node) => {
-			result = node
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.data).toEqual({
+			hProperties: {}
 		})
-		expect(result?.attr).toStrictEqual(expected)
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'text',
+			value: 'attr '
+		})
+		expect(paragraph.children[1]).toMatchObject({
+			type: 'attributeBlock',
+			attr: {}
+		})
 	})
 
 	it('should return undefined when syntax invalid', async () => {
@@ -68,11 +87,58 @@ describe('attribute block syntax', async () => {
 		for (const str of testcase) {
 			const node = parser.parse(str)
 
-			let result: any = undefined
-			visit(node, 'attributeBlock', (node) => {
-				result = node
+			const paragraph = node.children[0] as Paragraph
+			expect(paragraph.children).toHaveLength(1)
+			expect(paragraph.children[0]).toMatchObject({
+				type: 'text',
+				value: str
 			})
-			expect(result).toBeUndefined()
 		}
+	})
+
+	it('should return attribute with multiple line', async () => {
+		const expected = {
+			title: 'decko\ndecko',
+			class: ['class-1', 'class-2']
+		}
+
+		const node = parser.parse('attr @{ title="decko\ndecko"\n.class-1\n.class-2 }')
+
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.data).toEqual({
+			hProperties: expected
+		})
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'text',
+			value: 'attr '
+		})
+		expect(paragraph.children[1]).toMatchObject({
+			type: 'attributeBlock',
+			attr: expected
+		})
+	})
+
+	it('should return attribute with scope value', async () => {
+		const expected = {
+			data1: "'a",
+			data2: '{a + c}'
+		}
+
+		const node = parser.parse(`attr @{ data1="'a" data2={a + c} }`)
+
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.data).toEqual({
+			hProperties: expected
+		})
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'text',
+			value: 'attr '
+		})
+		expect(paragraph.children[1]).toMatchObject({
+			type: 'attributeBlock',
+			attr: expected
+		})
 	})
 })

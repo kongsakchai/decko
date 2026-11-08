@@ -12,7 +12,7 @@ import { createAttributeTokenize } from './attribute.js'
 const partialAttributeTokenizer: Construct = {
 	partial: true,
 	tokenize(this: TokenizeContext, effects: Effects, ok, nok) {
-		return createAttributeTokenize(effects, ok, nok, codes.rightCurlyBrace)
+		return createAttributeTokenize(effects, ok, nok, codes.rightCurlyBrace, true)
 	}
 }
 

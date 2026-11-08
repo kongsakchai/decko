@@ -1,7 +1,7 @@
 import type { CompileContext, Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
-import { markdownLineEnding } from 'micromark-util-character'
 import { codes, types } from 'micromark-util-symbol'
 import { Code, Construct, Effects, Extension, State, TokenizeContext } from 'micromark-util-types'
+import { visit } from 'unist-util-visit'
 
 import { createAttributeTokenize } from './attribute.js'
 
@@ -10,7 +10,7 @@ import { createAttributeTokenize } from './attribute.js'
 const partialAttributeTokenizer: Construct = {
 	partial: true,
 	tokenize(this: TokenizeContext, effects, ok, nok) {
-		return createAttributeTokenize(effects, ok, nok, codes.rightSquareBracket)
+		return createAttributeTokenize(effects, ok, nok, codes.rightSquareBracket, true)
 	}
 }
 
@@ -21,21 +21,13 @@ const imageAttributeTokenizer: Construct = {
 		const { events } = this
 
 		function start(code: Code) {
-			if (events[0][1].type !== types.labelImage) return nok(code)
+			if (events.length === 0 || events[0][1].type !== types.labelImage) return nok(code)
 			effects.enter('attributeImage')
 			effects.consume(code)
 			return effects.attempt(partialAttributeTokenizer, closeAttribute, closeAttribute)
 		}
 
 		function closeAttribute(code: Code) {
-			if (markdownLineEnding(code)) {
-				effects.exit('attributeImage')
-				effects.enter(types.lineEnding)
-				effects.consume(code)
-				effects.exit(types.lineEnding)
-				effects.enter('attributeImage')
-				return effects.attempt(partialAttributeTokenizer, closeAttribute, closeAttribute)
-			}
 			effects.exit('attributeImage')
 			return ok(code)
 		}
@@ -61,14 +53,17 @@ function exitAttributeImage(this: CompileContext) {
 
 		node.data ??= { hProperties: {} }
 		node.data.hProperties = { ...node.data.hProperties, ...this.data.attr }
-		this.data.attr = {}
+		node.title = node.title ?? node.data.hProperties.title
+
+		// cleanup reserved field
+		delete node.data.hProperties.title
+		delete node.data.hProperties.url
 
 		// trim alt image
 		const fragment = this.stack[index + 1]
-		if (fragment?.type === 'fragment') {
-			const firstChild = fragment.children[0]
-			if (firstChild?.type === 'text') firstChild.value = firstChild.value.trim()
-		}
+		visit(fragment, 'text', (node) => {
+			node.value = node.value.trim()
+		})
 
 		break
 	}
