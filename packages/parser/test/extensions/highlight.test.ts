@@ -150,6 +150,26 @@ describe('highlight extension', async () => {
 		})
 	})
 
+	it('should produce two separate highlights from four == sequences', () => {
+		const node = parser.parse('==a ==b== c==')
+
+		const paragraph = node.children[0] as Paragraph
+		expect(paragraph.children).toHaveLength(1)
+		expect(paragraph.children[0]).toMatchObject({
+			type: 'highlight',
+			data: { hName: 'mark' },
+			children: [
+				{ type: 'text', value: 'a ' },
+				{
+					type: 'highlight',
+					data: { hName: 'mark' },
+					children: [{ type: 'text', value: 'b' }]
+				},
+				{ type: 'text', value: ' c' }
+			]
+		})
+	})
+
 	it('should return normal when when syntax invalid', () => {
 		const testcase = ['a===b', '===a===', '== a ==']
 

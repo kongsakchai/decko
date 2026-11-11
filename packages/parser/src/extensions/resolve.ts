@@ -5,6 +5,6 @@ export function handleResolveAll(
 	constructs: Pick<Construct, 'resolveAll'>[] | undefined,
 	events: Event[],
 	context: TokenizeContext
-){
+) {
 	return constructs ? micromarkResolveAll(constructs, events, context) : []
 }
