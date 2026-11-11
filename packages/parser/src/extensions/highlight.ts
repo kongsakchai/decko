@@ -3,7 +3,7 @@ import { classifyCharacter } from 'micromark-util-classify-character'
 import { codes, constants, types } from 'micromark-util-symbol'
 import type { Code, Construct, Effects, Event, Extension, State, Token, TokenizeContext } from 'micromark-util-types'
 
-import { handleResolveAll } from './helper.js'
+import { handleResolveAll } from './resolve.js'
 
 // Tokenize
 

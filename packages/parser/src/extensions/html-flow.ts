@@ -34,7 +34,7 @@ const htmlFlowTokenizer: Construct = {
 		let cdataIndex = 0
 		let isClosingTag = false
 
-		const isInterrupt = () => this.interrupt
+		const isInterrupt = this.interrupt
 		const isLazy = () => this.parser.lazy[this.now().line]
 
 		function start(code: Code): State | undefined {
@@ -50,11 +50,6 @@ const htmlFlowTokenizer: Construct = {
 				case codes.exclamationMark:
 					effects.consume(code) // consume `!`
 					return openExclamationMark
-
-				case codes.questionMark:
-					tagType = constants.htmlInstruction
-					effects.consume(code) // consume `?`
-					return more
 
 				case codes.slash:
 					isClosingTag = true
@@ -164,7 +159,7 @@ const htmlFlowTokenizer: Construct = {
 				// tag can interrupt and becomes its own HTML block:
 				// e.g. `> hello, markdown\n<span>text</span>`:
 				//   <blockquote>\n<p>hello, markdown</p>\n</blockquote>\n<span>text</span>
-				if (isInterrupt() && !isLazy()) return nok(code)
+				if (isInterrupt && !isLazy()) return nok(code)
 			}
 
 			if (isSlash) {
@@ -179,7 +174,7 @@ const htmlFlowTokenizer: Construct = {
 		function completeEnd(code: Code) {
 			if (code === codes.greaterThan) {
 				effects.consume(code)
-				return isInterrupt() ? ok : beforeEnd
+				return isInterrupt ? ok : beforeEnd
 			}
 
 			return nok(code)
@@ -195,7 +190,7 @@ const htmlFlowTokenizer: Construct = {
 
 		// --- more
 		function more(code: Code): State | undefined {
-			if (isInterrupt()) return ok(code)
+			if (isInterrupt) return ok(code)
 
 			if (code === codes.lessThan && tagType === constants.htmlRaw) {
 				effects.consume(code)

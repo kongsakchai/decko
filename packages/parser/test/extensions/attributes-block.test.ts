@@ -121,11 +121,13 @@ describe('attribute block extension', async () => {
 
 	it('should return attribute with scope value', async () => {
 		const expected = {
-			data1: "'a",
-			data2: '{a + c}'
+			case1: '{a + c}',
+			case2: `\\"a\\"`,
+			case3: '`${click}`',
+			case4: '[]'
 		}
 
-		const node = parser.parse(`attr @{ data1="'a" data2={a + c} }`)
+		const node = parser.parse(`attr @{  case1={a + c} case2="\\"a\\"" case3=\`\${click}\` case4=[] }`)
 
 		const paragraph = node.children[0] as Paragraph
 		expect(paragraph.children).toHaveLength(2)

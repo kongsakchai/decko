@@ -3,10 +3,8 @@ import { markdownLineEnding, markdownLineEndingOrSpace } from 'micromark-util-ch
 import { codes, types } from 'micromark-util-symbol'
 import type { Code, Effects, State, Token } from 'micromark-util-types'
 
+import { createScopeResolver } from './scope.js'
 import { partialSpaceTokenizer } from './space.js'
-
-export const isQuote = (code: Code) =>
-	code === codes.quotationMark || code === codes.apostrophe || code === codes.graveAccent
 
 // Tokenize
 
@@ -17,10 +15,9 @@ export function createAttributeTokenize(
 	closeCode: Code,
 	multipleLine: boolean = false
 ) {
-	let markers: Code[] = []
+	const scope = createScopeResolver([codes.leftCurlyBrace, codes.quotationMark, codes.apostrophe, codes.graveAccent])
 	let closeScopedValue = closeValue
 
-	const latestMarker = () => markers.at(-1) ?? null
 	const isEnd = (code: Code) => code === codes.eof || markdownLineEnding(code) || code === closeCode
 	const isEndOrSpace = (code: Code) => code === codes.eof || markdownLineEndingOrSpace(code) || code === closeCode
 
@@ -51,7 +48,7 @@ export function createAttributeTokenize(
 			effects.enter('attributeExpression')
 			effects.consume(code)
 			closeScopedValue = closeAttributeExpression
-			markers.push(code)
+			scope.resolve(code)
 			return scopedAttributeValue
 		}
 
@@ -112,8 +109,8 @@ export function createAttributeTokenize(
 		effects.enter('attributeValueData')
 		effects.consume(code)
 
-		if (isQuote(code) || code === codes.leftCurlyBrace) {
-			markers.push(code)
+		if (scope.canOpen(code)) {
+			scope.resolve(code)
 			return scopedAttributeValue
 		}
 
@@ -127,11 +124,10 @@ export function createAttributeTokenize(
 	}
 
 	function scopedAttributeValue(code: Code) {
-		const before = latestMarker()
 		const lineEnding = markdownLineEnding(code) && !multipleLine
 
-		if (before == null || code === codes.eof || lineEnding) {
-			markers = []
+		if (scope.depth === 0 || code === codes.eof || lineEnding) {
+			scope.reset()
 			return closeScopedValue(code)
 		}
 
@@ -143,19 +139,7 @@ export function createAttributeTokenize(
 			effects.enter('attributeValueData')
 			return scopedAttributeValue
 		}
-
-		const inBrace = before === codes.leftCurlyBrace
-		const inQuote = isQuote(before)
-
-		if (code === codes.leftCurlyBrace && (inBrace || inQuote)) {
-			markers.push(code)
-		} else if (inBrace && isQuote(code)) {
-			markers.push(code)
-		} else if (inBrace && code === codes.rightCurlyBrace) {
-			markers.pop()
-		} else if (inQuote && code === before) {
-			markers.pop()
-		}
+		scope.resolve(code)
 
 		effects.consume(code)
 		return scopedAttributeValue
