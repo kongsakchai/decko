@@ -1,3 +1,4 @@
+import { ok as assert } from 'devlop'
 import type { CompileContext, Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
 import { asciiAlpha, markdownLineEnding, markdownLineEndingOrSpace } from 'micromark-util-character'
 import { codes, constants, types } from 'micromark-util-symbol'
@@ -200,17 +201,15 @@ function exitContainer(this: CompileContext, token: Token) {
 
 function exitContainerName(this: CompileContext, token: Token) {
 	const node = this.stack.at(-1)
-	if (node?.type === 'container') {
-		node.data.hName = this.sliceSerialize(token)
-	}
+	assert(node?.type === 'container', 'expected `container` on stack')
+	node.data.hName = this.sliceSerialize(token)
 }
 
 function exitContainerAttribute(this: CompileContext) {
 	const node = this.stack.at(-1)
-	if (node?.type === 'container') {
-		node.data.hProperties = this.data.attr
-		this.data.attr = {}
-	}
+	assert(node?.type === 'container', 'expected `container` on stack')
+	node.data.hProperties = this.data.attr
+	this.data.attr = {}
 }
 
 export const containerFromMarkdown: FromMarkdownExtension = {

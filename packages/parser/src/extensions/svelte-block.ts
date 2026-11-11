@@ -3,6 +3,7 @@ import { codes, types } from 'micromark-util-symbol'
 import type { Code, Construct, Effects, Extension, State, TokenizeContext } from 'micromark-util-types'
 
 import { nonLazyPartialTokenizer } from './line.js'
+import { createScopeResolver } from './scope.js'
 
 const NUMBER_SIGN_BLOCK = new Set(['if', 'each', 'key', 'await', 'snippet'])
 const COLON_BLOCK = new Set(['else', 'then', 'catch', 'final'])
@@ -25,6 +26,7 @@ const svelteBlockTokenizer: Construct = {
 		let tagNameBuffer: number[] = []
 		let tagSet: Set<string> | null = null
 
+		const scope = createScopeResolver()
 		const isInterrupt = () => this.interrupt
 
 		// Entry
@@ -68,7 +70,8 @@ const svelteBlockTokenizer: Construct = {
 
 		function more(code: Code) {
 			if (code === codes.eof) return nok(code)
-			if (code === codes.rightCurlyBrace) {
+
+			if (scope.depth === 0 && code === codes.rightCurlyBrace) {
 				effects.consume(code)
 				return beforeClose
 			}
@@ -76,6 +79,7 @@ const svelteBlockTokenizer: Construct = {
 				effects.exit(types.htmlFlowData)
 				return checkNonLazy(code)
 			}
+			scope.resolve(code)
 			effects.consume(code)
 			return more
 		}

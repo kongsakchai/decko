@@ -1,3 +1,4 @@
+import { ok as assert } from 'devlop'
 import { Properties } from 'hast'
 import type { CompileContext, Extension as FromMarkdownExtension } from 'mdast-util-from-markdown'
 import { markdownLineEnding } from 'micromark-util-character'
@@ -11,7 +12,7 @@ import { createAttributeTokenize } from './attribute.js'
 const partialAttributeTokenizer: Construct = {
 	partial: true,
 	tokenize(this: TokenizeContext, effects: Effects, ok, nok) {
-		return createAttributeTokenize(effects, ok, nok, codes.rightCurlyBrace)
+		return createAttributeTokenize(effects, ok, nok, codes.rightCurlyBrace, true)
 	}
 }
 
@@ -63,23 +64,16 @@ function enterAttributeBlock(this: CompileContext, token: Token) {
 
 function exitAttributeBlock(this: CompileContext, token: Token) {
 	const node = this.stack.at(-1)
+	assert(node?.type === 'attributeBlock', 'expected `attributeBlock` on stack')
+	node.attr = this.data.attr
 
-	if (node?.type === 'attributeBlock') {
-		node.attr = this.data.attr
-		if (this.data.class.length > 0) node.attr.class = this.data.class
-		if (this.data.id.length > 0) node.attr.id = this.data.id
-		if (this.data.exp.length > 0) node.attr.svelteExpression = this.data.exp
-
-		const parent = this.stack.at(-2) as { data?: { hProperties: Properties } } | undefined
-		if (parent) {
-			parent.data ??= { hProperties: {} }
-			parent.data.hProperties = {
-				...parent.data.hProperties,
-				...this.data.attr
-			}
-		}
+	const parent = this.stack.at(-2) as { data?: { hProperties: Properties } } | undefined
+	assert(parent != null, 'expected `parent` on stack')
+	parent.data ??= { hProperties: {} }
+	parent.data.hProperties = {
+		...parent.data.hProperties,
+		...this.data.attr
 	}
-
 	this.exit(token)
 }
 
