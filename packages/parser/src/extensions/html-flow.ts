@@ -1,12 +1,6 @@
-import {
-	asciiAlpha,
-	asciiAlphanumeric,
-	markdownLineEnding,
-	markdownLineEndingOrSpace,
-	markdownSpace
-} from 'micromark-util-character'
+import { asciiAlpha, asciiAlphanumeric, markdownLineEnding, markdownLineEndingOrSpace } from 'micromark-util-character'
 import { htmlBlockNames, htmlRawNames } from 'micromark-util-html-tag-name'
-import { codes, constants, types } from 'micromark-util-symbol'
+import { codes, types } from 'micromark-util-symbol'
 import type { Code, Construct, Effects, Extension, State, TokenizeContext } from 'micromark-util-types'
 
 import { nonLazyPartialTokenizer, partialBlankLineTokenizer } from './line.js'
@@ -27,13 +21,9 @@ const BASIC_TAGS = new Set(htmlBlockNames)
 
 const htmlFlowTokenizer: Construct = {
 	concrete: true,
-	name: 'html',
+	name: 'html-flow',
 	tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State): State {
 		let tagNameBuffer: number[] = []
-		let tagType = 0
-		let cdataIndex = 0
-		let isClosingTag = false
-
 		const isInterrupt = this.interrupt
 		const isLazy = () => this.parser.lazy[this.now().line]
 
@@ -46,63 +36,12 @@ const htmlFlowTokenizer: Construct = {
 
 		// Open - check after `<`
 		function open(code: Code): State | undefined {
-			switch (code) {
-				case codes.exclamationMark:
-					effects.consume(code) // consume `!`
-					return openExclamationMark
-
-				case codes.slash:
-					isClosingTag = true
-					effects.consume(code) // consume `\`
-					return openTagName
+			if (code === codes.slash) {
+				effects.consume(code) // consume `\`
+				return openTagName
 			}
 
 			return openTagName(code)
-		}
-
-		// Type 2 / 4 / 6 - check after `<!`
-		function openExclamationMark(code: Code) {
-			switch (code) {
-				case codes.dash:
-					tagType = constants.htmlComment
-					effects.consume(code) // consume `-`
-					return openComment
-
-				case codes.leftSquareBracket:
-					tagType = constants.htmlCdata
-					cdataIndex = 0
-					effects.consume(code) // consume `[`
-					return openCData
-			}
-
-			if (asciiAlpha(code)) {
-				tagType = constants.htmlDeclaration
-				effects.consume(code) // consume alpha
-				return more
-			}
-
-			return nok(code)
-		}
-
-		// Type 2 - comment block
-		function openComment(code: Code) {
-			if (code === codes.dash) {
-				effects.consume(code) // comsune `-`
-				return more
-			}
-
-			return nok(code)
-		}
-
-		// Type 4 - cdata block
-		function openCData(code: Code) {
-			const prefix = constants.cdataOpeningString
-			if (code === prefix.codePointAt(cdataIndex++)) {
-				effects.consume(code)
-				return cdataIndex === prefix.length ? more : openCData
-			}
-
-			return nok(code)
 		}
 
 		// tag name
@@ -136,156 +75,39 @@ const htmlFlowTokenizer: Construct = {
 		}
 
 		function closeTagName(code: Code) {
-			const isSlash = code === codes.slash
 			const name = String.fromCodePoint(...tagNameBuffer).toLowerCase()
+			if (RAW_TAGS.has(name) || BASIC_TAGS.has(name)) return nok(code)
 
-			if (!isClosingTag && !isSlash && RAW_TAGS.has(name)) {
-				tagType = constants.htmlRaw
-				return more(code)
-			}
+			// Do not support complete HTML when interrupting (CommonMark 4.6 "HTML blocks"):
+			// types 1–6 may interrupt a paragraph, but type 7 (a complete tag like
+			// `<span>`, `<Component />`) may not.
+			// e.g. `hello, markdown\n<span>text</span>` stays inside the paragraph:
+			//   <p>hello, markdown\n<span>text</span></p>
+			// Exception per 5.1/5.2 "Laziness": laziness only applies to paragraph
+			// continuation text, so on a lazy line (no `>` / list marker) the complete
+			// tag can interrupt and becomes its own HTML block:
+			// e.g. `> hello, markdown\n<span>text</span>`:
+			//   <blockquote>\n<p>hello, markdown</p>\n</blockquote>\n<span>text</span>
+			if (isInterrupt && !isLazy()) return nok(code)
 
-			if (BASIC_TAGS.has(name)) {
-				tagType = constants.htmlBasic
-			} else {
-				tagType = constants.htmlComplete
-
-				// Do not support complete HTML when interrupting (CommonMark 4.6 "HTML blocks"):
-				// types 1–6 may interrupt a paragraph, but type 7 (a complete tag like
-				// `<span>`, `<Component />`) may not.
-				// e.g. `hello, markdown\n<span>text</span>` stays inside the paragraph:
-				//   <p>hello, markdown\n<span>text</span></p>
-				// Exception per 5.1/5.2 "Laziness": laziness only applies to paragraph
-				// continuation text, so on a lazy line (no `>` / list marker) the complete
-				// tag can interrupt and becomes its own HTML block:
-				// e.g. `> hello, markdown\n<span>text</span>`:
-				//   <blockquote>\n<p>hello, markdown</p>\n</blockquote>\n<span>text</span>
-				if (isInterrupt && !isLazy()) return nok(code)
-			}
-
-			if (isSlash) {
-				effects.consume(code)
-				return completeEnd
-			}
-
-			return isClosingTag ? completeClosingTag(code) : more(code)
-		}
-
-		// check end with `>`
-		function completeEnd(code: Code) {
-			if (code === codes.greaterThan) {
-				effects.consume(code)
-				return isInterrupt ? ok : beforeEnd
-			}
-
-			return nok(code)
-		}
-
-		function completeClosingTag(code: Code) {
-			if (markdownSpace(code)) {
-				effects.consume(code)
-				return completeClosingTag
-			}
-			return completeEnd(code)
+			return more(code)
 		}
 
 		// --- more
 		function more(code: Code): State | undefined {
 			if (isInterrupt) return ok(code)
-
-			if (code === codes.lessThan && tagType === constants.htmlRaw) {
-				effects.consume(code)
-				return closeRawTag
-			}
-
-			if (code === codes.dash && tagType === constants.htmlComment) {
-				effects.consume(code)
-				return closeComment
-			}
-
-			if (code === codes.questionMark && tagType === constants.htmlInstruction) {
-				effects.consume(code)
-				return closeTag
-			}
-
-			if (code === codes.greaterThan && tagType === constants.htmlDeclaration) {
-				effects.consume(code)
-				return beforeEnd
-			}
-
-			if (code === codes.rightSquareBracket && tagType === constants.htmlCdata) {
-				effects.consume(code)
-				return closeCData
-			}
-
-			if (markdownLineEnding(code) && (tagType === constants.htmlBasic || tagType === constants.htmlComplete)) {
-				effects.exit(types.htmlFlowData)
-				return checkBlankLine(code)
-			}
-
-			if (code === codes.eof || markdownLineEnding(code)) {
-				effects.exit(types.htmlFlowData)
-				return checkNonLazy(code)
-			}
-
-			effects.consume(code)
-			return more
-		}
-
-		// close raw tag & read tag name
-		function closeRawTag(code: Code) {
-			if (code === codes.slash) {
-				isClosingTag = true
-				effects.consume(code)
-				return openTagName
-			}
-
-			return more(code)
-		}
-
-		// close comment
-		function closeComment(code: Code) {
-			if (code === codes.dash) {
-				effects.consume(code)
-				return closeTag
-			}
-
-			return more(code)
-		}
-
-		// close cdata
-		function closeCData(code: Code) {
-			if (code === codes.rightSquareBracket) {
-				effects.consume(code)
-				return closeTag
-			}
-
-			return more(code)
-		}
-
-		// close tag with `<` or comment with more dashes
-		function closeTag(code: Code) {
-			if (code === codes.greaterThan) {
-				effects.consume(code)
-				return beforeEnd
-			}
-
-			if (code === codes.dash && tagType === constants.htmlComment) {
-				effects.consume(code)
-				return closeTag
-			}
-
-			return more(code)
-		}
-
-		// before end consume all characters
-		function beforeEnd(code: Code) {
-			if (code === codes.eof || markdownLineEnding(code)) {
+			if (code === codes.eof) {
 				effects.exit(types.htmlFlowData)
 				return done(code)
 			}
 
+			if (markdownLineEnding(code)) {
+				effects.exit(types.htmlFlowData)
+				return checkBlankLine(code)
+			}
+
 			effects.consume(code)
-			return beforeEnd
+			return more
 		}
 
 		// done
@@ -311,8 +133,6 @@ const htmlFlowTokenizer: Construct = {
 		}
 
 		function checkNextLine(code: Code) {
-			if (code === codes.eof || markdownLineEnding(code)) return checkNonLazy(code)
-
 			effects.enter(types.htmlFlowData)
 			return more(code)
 		}
