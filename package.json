@@ -15,7 +15,7 @@
 		"build": "bun run build:parser && bun run build:decko && bun run build:cli",
 		"build:parser": "bun run --cwd packages/parser build",
 		"build:decko": "bun run --cwd packages/decko prepack",
-		"build:cli": "bun run --cwd packages/decko build",
+		"build:cli": "bun run --cwd packages/cli build",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test": "bun run test:parser && bun run test:decko",
@@ -43,7 +43,7 @@
 		"prettier-plugin-svelte": "^3.5.2",
 		"prettier-plugin-tailwindcss": "^0.7.4",
 		"tsdown": "^0.21.10",
-		"typescript": "^7.0.2",
+		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.72.2",
 		"vitest": "^4.1.12",
 		"bumpp": "^12.3.0"

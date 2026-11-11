@@ -10,4 +10,6 @@ tags:
 
 ![svelte logo](./svelte-logo.png)
 
-{ JSON.stringify(data) }
+55 { JSON.stringify(data) } 55
+
+Click <button transition:fad={()=>{}}>555</button>
