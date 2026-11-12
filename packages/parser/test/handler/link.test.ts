@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import { linkHandler } from '../../src/handler/link'
 
-describe('rehype image handle', async () => {
+describe('rehype link handle', async () => {
 	it('should return raw href when href inside curly brace', async () => {
 		const parser = unified()
 			.use(markdown)

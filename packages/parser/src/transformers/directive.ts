@@ -9,7 +9,7 @@ const DIRECTIVE_REGEX = /^<!--(global\s)?([\s\S]*)-->$/
 
 export function directiveTransformer(): Transformer {
 	return (tree, vfile) => {
-		const ctx = vfile.data.context as SlideContext
+		const ctx = vfile.context as SlideContext
 
 		visit(tree as Root, 'html', (node, index, parent) => {
 			if (typeof index !== 'number' || !parent || parent !== tree) return

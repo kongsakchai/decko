@@ -8,7 +8,7 @@ export const PAGE_BREAK_KEY = '\n---page-break---\n'
 
 export function pageBreakTransformer(): Transformer {
 	return (tree, vfile) => {
-		const ctx = vfile.data.context as SlideContext
+		const ctx = vfile.context as SlideContext
 
 		visit(tree as Root, (node, index, parent) => {
 			if (typeof index !== 'number' || !parent) return
