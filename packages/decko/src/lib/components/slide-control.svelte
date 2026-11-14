@@ -4,7 +4,9 @@
 	import ViewContral from './view-control.svelte'
 </script>
 
-<div class="control absolute bottom-10 left-10 flex gap-4">
+<div
+	class="control absolute bottom-0 left-0 flex gap-4 p-6 opacity-0 transition-all delay-1000 duration-300 hover:opacity-100 hover:delay-0"
+>
 	<Navigation />
 	<ViewContral />
 	<Appearance />

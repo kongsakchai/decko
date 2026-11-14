@@ -2,75 +2,24 @@
 	import { backIn, backOut } from 'svelte/easing'
 	import { slide } from 'svelte/transition'
 
+	import { buildTree, getChildrenSort, toggleFolder, type NodeTree } from '../logic/file-tree.js'
+
 	interface Props {
 		files: string[]
 	}
 
-	interface NodeTree {
-		name: string
-		children: Record<string, NodeTree>
-		isFolder: boolean
-		path: string
-		open?: boolean
-	}
-
 	let { files }: Props = $props()
-
-	function buildTree(files: string[]) {
-		const root: NodeTree = {
-			name: 'root',
-			children: {},
-			isFolder: true,
-			path: ''
-		}
-		for (const file of files.sort()) {
-			let parent = root
-			const parts = file.split('/')
-			for (const [i, name] of parts.entries()) {
-				let child = parent.children[name]
-				if (!child) {
-					child = {
-						name,
-						children: {},
-						isFolder: i < parts.length - 1,
-						path: parent.path ? `${parent.path}/${name}` : `/${name}`
-					}
-					parent.children[name] = child
-				}
-				parent = child
-			}
-		}
-		return root
-	}
-
-	function getChildrenSort(t: NodeTree) {
-		return Object.values(t.children).sort((a, b) => {
-			if (a.isFolder && b.isFolder) return 0
-			if (a.isFolder) return -1
-			return 1
-		})
-	}
 
 	let root = $state<NodeTree>()
 
 	$effect(() => {
 		if (files.length === 0) return
 		root = buildTree(files)
-		console.log('effect')
 	})
-
-	function closeAll(node: NodeTree) {
-		if (!node.isFolder) return
-		node.open = false
-		for (const n of Object.values(node.children)) {
-			closeAll(n)
-		}
-	}
 
 	function onClick(node: NodeTree) {
 		if (node.isFolder) {
-			node.open = !node.open
-			if (!node.open) closeAll(node)
+			toggleFolder(node)
 		} else {
 			window.open(node.path, '_blank')
 		}

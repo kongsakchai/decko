@@ -23,7 +23,7 @@ export function extensionsTransform(options?: ExtensionOptions): Transformer {
 	const postExtensions: PostExtension[] = options?.postExtensions ?? []
 
 	return (tree, vfile) => {
-		const ctx = vfile.data.context as SlideContext
+		const ctx = vfile.context as SlideContext
 		const root = tree as Root
 		const postQueue: { apply: Extension; ctx: ExtensionContext }[] = []
 

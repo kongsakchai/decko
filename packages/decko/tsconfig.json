@@ -1,7 +1,11 @@
 {
-	"files": [],
+	"extends": "$app/tsconfig",
 	"compilerOptions": {
-		"target": "es2023"
+		"strict": true,
+		"types": ["$app/types", "node"],
+		"paths": {
+			"@deckomd/decko/*": ["./src/lib/*"]
+		}
 	},
-	"references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+	"include": ["src", "vite.config.ts"]
 }

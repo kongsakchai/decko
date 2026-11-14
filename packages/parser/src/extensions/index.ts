@@ -7,6 +7,7 @@ import { attributeFromMarkdown } from './attribute.js'
 import { container, containerFromMarkdown } from './container.js'
 import { highlight, highlightFromMarkdown } from './highlight.js'
 import { htmlFlow } from './html-flow.js'
+import { htmlText } from './html-text.js'
 import { imageAttribute, imageAttributeFromMarkdown } from './image-attribute.js'
 import { subscript, subscriptFromMarkdown } from './subscript.js'
 import { superscript, superscriptFromMarkdown } from './superscript.js'
@@ -31,7 +32,7 @@ export function deckoExtension(this: Processor) {
 		subscript,
 		superscript,
 		htmlFlow,
-		// htmlText,
+		htmlText,
 		svelteBlock,
 		attributeBlock,
 		container,

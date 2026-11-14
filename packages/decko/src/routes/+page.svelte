@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { SlidePlayer } from '@decko/decko/pages'
+	import { SlidePlayer } from '@deckomd/decko/pages'
 
-	import Slide, { slide } from './example/example.svelte.md'
+	import Slide, { slide } from '../example/example.svelte.md'
 </script>
 
 <svelte:head>

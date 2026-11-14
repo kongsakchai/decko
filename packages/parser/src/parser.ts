@@ -45,7 +45,7 @@ export function createSlideParser(options?: Options) {
 			extra: {}
 		}
 
-		const parsed = await parser.process({ value: markdown, data: { context } })
+		const parsed = await parser.process({ value: markdown, context })
 		return covertSlideResult(context, parsed.toString())
 	}
 

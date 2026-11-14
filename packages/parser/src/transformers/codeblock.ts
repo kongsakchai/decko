@@ -10,7 +10,7 @@ export function codeblockTransformer(options?: CodeblockOptions): Transformer {
 	const highlighter = options?.highlighter ?? defaultHighlighter
 
 	return async (tree, vfile) => {
-		const ctx = vfile.data.context as SlideContext
+		const ctx = vfile.context as SlideContext
 
 		const codeProcess: Promise<void>[] = []
 		visit(tree as Root, 'code', (node, index, parent) => {

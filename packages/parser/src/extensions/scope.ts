@@ -62,8 +62,7 @@ export function createScopeResolver(parent?: readonly Code[]) {
 		}
 
 		// Opener
-		if (isOpener(code)) {
-			if (!canOpen(code)) return null // not allowed to start with this opener
+		if (canOpen(code)) {
 			stack.push(code)
 			escaped = false
 			dollar = false

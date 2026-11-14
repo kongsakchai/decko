@@ -2,7 +2,7 @@ import 'mdast'
 import 'mdast-util-from-markdown'
 import 'micromark-util-types'
 
-import { Attribute } from './types'
+import { Attribute, SlideContext } from './types'
 
 declare module 'micromark-util-types' {
 	interface TokenTypeMap {
@@ -102,5 +102,11 @@ declare module 'mdast-util-from-markdown' {
 		class: string[]
 		id: string[]
 		key?: string
+	}
+}
+
+declare module 'vfile' {
+	interface VFile {
+		context: SlideContext
 	}
 }
