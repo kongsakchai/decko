@@ -18,11 +18,14 @@
 		"build:cli": "bun run --cwd packages/cli build",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"test": "bun run test:parser && bun run test:decko",
+		"test": "bun run test:parser && bun run test:decko && bun run test:cli",
 		"test:parser": "bun run --cwd packages/parser test",
 		"test:unit:parser": "bun run --cwd packages/parser test:unit",
 		"test:cover:parser": "bun run --cwd packages/parser test:cover",
 		"test:decko": "bun run --cwd packages/decko test",
+		"test:cli": "bun run --cwd packages/cli test",
+		"test:unit:cli": "bun run --cwd packages/cli test:unit",
+		"test:cover:cli": "bun run --cwd packages/cli test:cover",
 		"bump": "bumpp -r --commit \":rocket: chore: release {tag}\" --no-push",
 		"publish": "bun publish --cwd packages/parser && bun publish --cwd packages/decko && bun publish --cwd packages/cli"
 	},
@@ -45,10 +48,6 @@
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.72.2",
 		"vitest": "^4.1.12",
-		"playwright": "^1.60.0",
-		"vitest-browser-svelte": "^2.1.1",
-		"@vitest/browser-playwright": "^4.1.8",
-		"@playwright/test": "^1.60.0",
 		"bumpp": "^12.3.0",
 		"globals": "^17.6.0"
 	}
