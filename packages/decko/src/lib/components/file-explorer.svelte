@@ -54,9 +54,9 @@
 	<div class="h-6 w-full"></div>
 </section>
 
-<style>
+<style lang="postcss">
 	@reference "tailwindcss";
-	@reference "@deckomd/decko/styles/decko.css";
+	@reference "../styles/decko.css";
 
 	.folder-icon {
 		@apply bg-primary h-6 w-6;

@@ -4,7 +4,6 @@ import { getCustomThemes, getThemes } from '../logic/themes.js'
 import { asStringArray, uniqueArray } from '../logic/utils.js'
 import type { SlideData } from '../types.js'
 
-const CUSTOM_THEME_KEY = 'customThemes'
 const DEFAULT_THEME = 'default'
 
 const BUILTIN_THEMES = ['default', 'claude', 'catppuccin', 'dracula', 'bubblegum', 'cyberpunk', 'forest', 'ocean']
