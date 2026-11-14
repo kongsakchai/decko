@@ -2,8 +2,10 @@ import adapter from '@sveltejs/adapter-auto'
 import { sveltekit } from '@sveltejs/kit/vite'
 import tailwindcss from '@tailwindcss/vite'
 import { playwright } from '@vitest/browser-playwright'
+
 import path from 'node:path'
 import { defineConfig } from 'vitest/config'
+
 import { decko } from './src/lib/index.ts'
 
 export default defineConfig({
@@ -26,7 +28,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@deckomd/decko': path.resolve(import.meta.dirname, './src/lib')
-		}
+		},
+		conditions: process.env.VITEST ? ['browser'] : undefined
 	},
 	build: {
 		outDir: 'out'
@@ -47,7 +50,6 @@ export default defineConfig({
 					exclude: ['src/lib/server/**']
 				}
 			},
-
 			{
 				extends: './vite.config.ts',
 				test: {

@@ -33,7 +33,7 @@ function createThemeState() {
 			if (!isBrowser) return
 			mode = mode === 'dark' ? 'light' : 'dark'
 			applyMode()
-			localStorage.setItem('decko.schema', mode)
+			localStorage.setItem('decko.mode', mode)
 		},
 		changeTheme(val: string) {
 			if (!isBrowser) return

@@ -18,7 +18,7 @@ export function toSplitStyles(directive: Directive): string | undefined {
 
 	if (typeof split === 'number') {
 		const colStyle = `--split-col: repeat(${split},1fr)`
-		return mergeStr('; ', directive.style, colStyle, gap) || undefined
+		return mergeStr('; ', directive.style, colStyle, gap)
 	}
 
 	if (typeof split === 'string') {

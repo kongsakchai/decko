@@ -49,6 +49,7 @@
 		"vitest-browser-svelte": "^2.1.1",
 		"@vitest/browser-playwright": "^4.1.8",
 		"@playwright/test": "^1.60.0",
-		"bumpp": "^12.3.0"
+		"bumpp": "^12.3.0",
+		"globals": "^17.6.0"
 	}
 }
