@@ -18,11 +18,6 @@ export async function createServer(root: string, options?: Options) {
 
 	const inlineConfig: InlineConfig = {
 		configFile: false,
-		// Pre-bundling decko skips Tailwind's CSS pipeline for component styles,
-		// leaving `@apply` directives unprocessed in development.
-		optimizeDeps: {
-			exclude: ['@deckomd/decko']
-		},
 		plugins: [
 			slideLoaderPlugin(ctx),
 			slideServerPlugin(ctx),
