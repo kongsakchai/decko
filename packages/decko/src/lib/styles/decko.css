@@ -3,6 +3,7 @@
 @source inline('opacity-0');
 @source inline('opacity-100');
 @source inline('hidden');
+@source '../';
 
 @custom-variant dark (&:is(.dark *));
 

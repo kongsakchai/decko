@@ -7,7 +7,6 @@ export const virtualStyle: VirtualContent = (ctx) => {
 		`@import 'tailwindcss';`,
 		`@import 'tw-animate-css';`,
 		`@import '@deckomd/decko/styles/decko.css';`,
-		`@source './node_modules/@deckomd/decko/dist';`,
 		`@source '${ctx.root}';`,
 		`:root {`,
 		`	font-synthesis: none;`,
