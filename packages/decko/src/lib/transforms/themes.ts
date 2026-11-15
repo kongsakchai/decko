@@ -10,7 +10,7 @@ const BUILTIN_THEMES = ['default', 'claude', 'catppuccin', 'dracula', 'bubblegum
 
 const isBuiltin = (name: string) => BUILTIN_THEMES.includes(name)
 const toImport = (specifier: string) => `import '${specifier}'`
-const builtinPath = (name: string) => toImport(`@deckomd/decko/styles/themes/${name}.css`)
+const builtinPath = (name: string) => toImport(`@deckomd/decko/themes/${name}.css`)
 
 export function getThemeImports(directive: Directive): string[] {
 	const customThemes = getCustomThemes(directive.customThemes) ?? {}
