@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import { getCSSImports, getThemeImports } from './themes.js'
 
-const themePath = (name: string) => `import '@deckomd/decko/styles/themes/${name}.css'`
+const themePath = (name: string) => `import '@deckomd/decko/themes/${name}.css'`
 
 describe('getThemeImports', () => {
 	it('should import all built-in themes by default', () => {

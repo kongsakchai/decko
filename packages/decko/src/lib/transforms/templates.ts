@@ -39,7 +39,7 @@ export function styleContent(opts: StyleOptions) {
 	const styles = [
 		'<style lang="postcss">',
 		'@reference "tailwindcss";',
-		'@reference "@deckomd/decko/styles/decko.css";',
+		'@reference "@deckomd/decko";',
 		...opts.styles,
 		'</style>'
 	]

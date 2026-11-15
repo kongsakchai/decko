@@ -36,7 +36,8 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js"
+			"import": "./dist/index.js",
+			"style": "./dist/decko.css"
 		},
 		"./builtin": {
 			"types": "./dist/builtin/index.d.ts",
@@ -66,12 +67,12 @@
 			"import": "./dist/client/*.js"
 		},
 		"./logic/*": {
-			"style": "./dist/logic/*",
-			"import": "./dist/logic/*"
+			"types": "./dist/logic/*.d.ts",
+			"import": "./dist/logic/*.js"
 		},
-		"./styles/*": {
-			"style": "./dist/styles/*",
-			"import": "./dist/styles/*"
+		"./themes/*": {
+			"style": "./dist/themes/*",
+			"import": "./dist/themes/*"
 		}
 	},
 	"scripts": {
