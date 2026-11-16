@@ -1,6 +1,5 @@
 import { createSlideParser, extractFrontmatter } from '@deckomd/parser'
 
-import MagicString from 'magic-string'
 import type { PreprocessorGroup } from 'svelte/compiler'
 
 import { asNumber, asString } from './logic/utils.js'
@@ -73,11 +72,7 @@ export function decko(options?: Options): PreprocessorGroup {
 		name: 'decko',
 		markup: async ({ content, filename }) => {
 			if (filename?.endsWith(options?.extension || '.svelte.md')) {
-				const result = new MagicString(content)
-				const parsed = await parse(content)
-
-				result.update(0, content.length - 1, parsed)
-				return { code: result.toString(), map: result.generateMap() }
+				return { code: await parse(content) }
 			}
 		}
 	}
