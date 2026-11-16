@@ -59,7 +59,7 @@ describe('scriptContent', () => {
 			imports: ["import 'custom.css'"]
 		})
 
-		expect(content).toContain('const data = {"title":"Test","pages":[]}')
+		expect(content).toContain('export const data = {"title":"Test","pages":[]}')
 		expect(content).toContain("import 'custom.css'")
 		expect(content).toContain('const value = 1')
 		expect(content).not.toContain('initCopyCode()')

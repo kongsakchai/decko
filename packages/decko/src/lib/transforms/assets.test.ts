@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Directive } from '@deckomd/parser'
 
 import { describe, expect, it } from 'vitest'
@@ -46,7 +47,14 @@ describe('assetsLinkExtension', () => {
 
 	it('should keep external, empty and markdown urls', () => {
 		const extra: Directive = {}
-		const urls = ['', 'https://example.com/a.png', 'http://example.com/a.png', '//example.com/a.png', 'readme.md']
+		const urls = [
+			'',
+			'https://example.com/a.png',
+			'http://example.com/a.png',
+			'//example.com/a.png',
+			'readme.md',
+			'mailto:someone@example.com'
+		]
 
 		for (const url of urls) {
 			const ctx = createContext({ type: 'link', url }, extra)

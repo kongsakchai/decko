@@ -8,8 +8,18 @@ const HTTP_REGEX = /^(https?:)?\/\//
 const HTML_SRC_REGEX = /<(?:img|video|source)\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/
 const HTML_HREF_REGEX = /<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/
 
+function isExternalURL(url: string): boolean {
+	if (HTTP_REGEX.test(url)) return true // http:, https:, //host
+	try {
+		new URL(url) // mailto:, tel:, data:, etc.
+		return true
+	} catch {
+		return false
+	}
+}
+
 function resolveURL(assets: Record<string, string>, counter: number, url: string): [string, number] {
-	if (!url || HTTP_REGEX.test(url) || url.endsWith('.md')) return [url, counter]
+	if (!url || isExternalURL(url) || url.endsWith('.md')) return [url, counter]
 	if (!assets[url]) {
 		assets[url] = `__assets${counter}`
 		counter++

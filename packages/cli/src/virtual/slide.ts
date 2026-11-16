@@ -15,8 +15,8 @@ export const virtualSlide: VirtualContent = (ctx) => {
 	return [
 		`<script lang="ts">`,
 		`import { SlidePlayer } from '@deckomd/decko/pages'`,
-		`import Slide, { slide } from '${markdown}'`,
+		`import Slide, { data } from '${markdown}'`,
 		`</script>`,
-		`<SlidePlayer slide={Slide} data={slide} />`
+		`<SlidePlayer slide={Slide} data={data} />`
 	].join('\n')
 }

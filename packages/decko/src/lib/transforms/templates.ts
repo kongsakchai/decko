@@ -74,8 +74,7 @@ export function scriptContent(opts: ScriptOptions) {
 
 	const scripts = [
 		`<script lang="ts" module>`,
-		`const data = ${JSON.stringify(opts.data)}`,
-		`export { data as slide }`,
+		`export const data = ${JSON.stringify(opts.data)}`,
 		`</script>`,
 		`<script lang="ts">`,
 		...imports,
