@@ -3,6 +3,7 @@
 	import { createSlideContext, createViewContext } from '../context/index.js'
 	import { onBrowser } from '../logic/events.js'
 	import { getThemes, resolveTheme } from '../logic/themes.js'
+	import { asNumber } from '../logic/utils.js'
 	import { themeState } from '../state/index.js'
 	import type { SlideComponent, SlideData } from '../types.js'
 
@@ -18,7 +19,7 @@
 	// svelte-ignore state_referenced_locally
 	const slideCtx = createSlideContext(data)
 	// svelte-ignore state_referenced_locally
-	const viewCtx = createViewContext({ width, height })
+	const viewCtx = createViewContext({ width, height, fontSize: asNumber(data.fontSize) })
 
 	if (typeof window !== 'undefined' && window.location.hash) {
 		if (window.location.hash) {

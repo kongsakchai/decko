@@ -38,8 +38,8 @@ export function directiveTransformer(): Transformer {
 export function parseYAML(value: string) {
 	try {
 		return YAML.parse(value) as Directive
-	} catch {
-		console.warn(`\x1b[43m\x1b[30m WARN \x1b[0m\x1b[33m directive syntax invalid:\x1b[0m\n${value}`)
+	} catch (e) {
+		console.warn(`\x1b[43m\x1b[30m WARN \x1b[0m\x1b[33m directive syntax invalid:\x1b[0m\n${e}`)
 		return {} as Directive
 	}
 }

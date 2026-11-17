@@ -67,14 +67,18 @@ function exitAttributeBlock(this: CompileContext, token: Token) {
 	assert(node?.type === 'attributeBlock', 'expected `attributeBlock` on stack')
 	node.attr = this.data.attr
 
-	const parent = this.stack.at(-2) as { data?: { hProperties: Properties } } | undefined
+	const parent = this.stack.at(-2) as { data?: { hProperties: Properties }; children?: unknown[] } | undefined
 	assert(parent != null, 'expected `parent` on stack')
 	parent.data ??= { hProperties: {} }
 	parent.data.hProperties = {
 		...parent.data.hProperties,
 		...this.data.attr
 	}
+
 	this.exit(token)
+
+	const index = parent.children?.indexOf(node) ?? -1
+	if (index !== -1) parent.children!.splice(index, 1)
 }
 
 export const attributeBlockFromMarkdown: FromMarkdownExtension = {

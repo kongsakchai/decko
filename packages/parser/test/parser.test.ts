@@ -59,6 +59,14 @@ describe('createSlideParser', () => {
 		expect(result.slides[0].content).toContain('alert="decko"')
 		expect(result.slides[0].content).toContain('Decko')
 	})
+
+	it('should apply an attribute block without rendering an extra element', async () => {
+		const parser = createSlideParser()
+		const result = await parser.parse('Sakchai Paoin @{ .mt-auto }')
+
+		expect(result.slides[0].content).toContain('<p class="mt-auto">Sakchai Paoin </p>')
+		expect(result.slides[0].content).not.toContain('<div>')
+	})
 })
 
 describe('extractFrontmatter', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Directive } from '@deckomd/parser'
 
 import { describe, expect, it } from 'vitest'

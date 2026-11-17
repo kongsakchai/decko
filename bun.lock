@@ -25,7 +25,7 @@
     },
     "packages/cli": {
       "name": "@deckomd/cli",
-      "version": "0.1.8",
+      "version": "0.1.10",
       "bin": {
         "decko": "dist/index.mjs",
       },
@@ -46,7 +46,7 @@
     },
     "packages/decko": {
       "name": "@deckomd/decko",
-      "version": "0.1.8",
+      "version": "0.1.10",
       "dependencies": {
         "@deckomd/parser": "workspace:*",
         "@shikijs/magic-move": "^4.3.1",
@@ -81,7 +81,7 @@
     },
     "packages/parser": {
       "name": "@deckomd/parser",
-      "version": "0.1.8",
+      "version": "0.1.10",
       "dependencies": {
         "devlop": "^1.1.0",
         "hast-util-to-html": "^9.0.6",

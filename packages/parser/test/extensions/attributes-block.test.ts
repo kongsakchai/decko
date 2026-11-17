@@ -31,7 +31,7 @@ describe('attribute block extension', async () => {
 		)
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
@@ -39,27 +39,19 @@ describe('attribute block extension', async () => {
 			type: 'text',
 			value: 'attr '
 		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
-		})
 	})
 
 	it('should return empty when attribute empty', async () => {
 		const node = parser.parse('attr @{}')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: {}
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: undefined
 		})
 	})
 
@@ -67,17 +59,13 @@ describe('attribute block extension', async () => {
 		const node = parser.parse('attr @{ @data={data}}')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: {}
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: {}
 		})
 	})
 
@@ -105,17 +93,13 @@ describe('attribute block extension', async () => {
 		const node = parser.parse('attr @{ title="decko\ndecko"\n.class-1\n.class-2 }')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
 		})
 	})
 
@@ -130,17 +114,13 @@ describe('attribute block extension', async () => {
 		const node = parser.parse(`attr @{  case1={a + c} case2="\\"a\\"" case3=\`\${click}\` case4=[] }`)
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
 		})
 	})
 })
