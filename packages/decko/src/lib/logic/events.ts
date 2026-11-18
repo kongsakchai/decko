@@ -1,3 +1,7 @@
+export function isBrowser() {
+	return typeof window !== 'undefined' && typeof document !== 'undefined'
+}
+
 export function onBrowser(fn: () => unknown) {
-	if (typeof window !== 'undefined') fn()
+	if (isBrowser()) fn()
 }

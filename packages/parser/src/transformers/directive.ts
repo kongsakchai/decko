@@ -26,7 +26,7 @@ export function directiveTransformer(): Transformer {
 			if (match[1]) {
 				page.global = { ...page.global, ...directive }
 			} else {
-				page.local = { ...page.local, ...directive }
+				page.directive = { ...page.directive, ...directive }
 			}
 
 			parent.children.splice(index, 1)

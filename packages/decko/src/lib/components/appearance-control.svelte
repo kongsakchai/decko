@@ -1,14 +1,10 @@
 <script lang="ts">
-	import { useSlideContext, useViewContext } from '../context/index.js'
 	import BurgerIcon from '../icons/burger-icon.svelte'
 	import ResetIcon from '../icons/reset-icon.svelte'
-	import { getThemes } from '../logic/themes.js'
+	import { appearance } from '../state/appearance.svelte.js'
 	import Popover from './popover.svelte'
 	import ThemeSelector from './theme-selector.svelte'
 	import ThemeToggle from './theme-toggle.svelte'
-
-	const viewContext = useViewContext()
-	const slideContext = useSlideContext()
 </script>
 
 <div class="menu">
@@ -16,7 +12,7 @@
 
 	<div class=" border-border border-l"></div>
 
-	<ThemeSelector class="menu-btn" themes={getThemes(slideContext.slide.themes)} />
+	<ThemeSelector class="menu-btn" />
 
 	<div class=" border-border border-l"></div>
 
@@ -32,17 +28,17 @@
 		{#snippet content()}
 			<div class="grid grid-cols-[75px_10rem_40px_34px] items-center gap-2 p-2 px-4">
 				<span class=" text-sm">Font Size</span>
-				<input type="range" min="10" max="64" step="1" bind:value={viewContext.fontSize} />
-				<span class=" text-sm">{viewContext.fontSize}px</span>
-				<button title="reset-font" class="menu-btn rounded-sm" onclick={() => (viewContext.fontSize = 16)}>
+				<input type="range" min="0.5" max="3" step="0.1" bind:value={appearance.fontScale} />
+				<span class=" text-sm">{appearance.fontScale}</span>
+				<button title="reset-font" class="menu-btn rounded-sm" onclick={() => (appearance.fontScale = 1)}>
 					<ResetIcon />
 				</button>
 
 				<span class="text-sm">Slide Size</span>
-				<input type="range" min="0.1" max="1" step="0.01" bind:value={viewContext.size} />
-				<span class=" text-sm">{Math.round(viewContext.size * 100)}%</span>
+				<input type="range" min="0.1" max="1" step="0.01" bind:value={appearance.slideScale} />
+				<span class=" text-sm">{Math.round(appearance.slideScale * 100)}%</span>
 
-				<button title="reset-scale" class="menu-btn rounded-sm" onclick={() => (viewContext.size = 1)}>
+				<button title="reset-scale" class="menu-btn rounded-sm" onclick={() => (appearance.slideScale = 1)}>
 					<span>
 						<ResetIcon />
 					</span>

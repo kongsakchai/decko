@@ -78,7 +78,7 @@ function exitAttributeBlock(this: CompileContext, token: Token) {
 	this.exit(token)
 
 	const index = parent.children?.indexOf(node) ?? -1
-	if (index !== -1) parent.children!.splice(index, 1)
+	if (index !== -1) parent.children?.splice(index, 1)
 }
 
 export const attributeBlockFromMarkdown: FromMarkdownExtension = {

@@ -5,6 +5,7 @@ tags:
     - slide
 font: Mali
 fontSize: 20
+theme: default
 ---
 
 <!--

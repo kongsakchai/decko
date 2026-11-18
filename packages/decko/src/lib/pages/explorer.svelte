@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { FileExplorer, ThemeToggle } from '../components/index.js'
-	import { themeState } from '../state/theme.svelte.js'
+	import { appearance } from '../state/appearance.svelte.js'
 
 	interface Props {
 		title: string
@@ -16,7 +16,7 @@
 
 <main
 	data-theme="default"
-	class:dark={themeState.isDark}
+	class:dark={appearance.isDark}
 	class="bg-background box-border h-dvh w-full overflow-y-scroll px-6 pt-1 transition-all duration-500"
 >
 	<section class="flex items-center justify-between">

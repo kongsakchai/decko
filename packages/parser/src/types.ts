@@ -8,13 +8,17 @@ export type Attribute = Record<string, string | number | boolean | (string | num
 export type Directive = Record<string, unknown>
 
 export interface SlideData {
-	global?: Directive
-	local?: Directive
+	directive?: Directive
 	title?: string
 }
 
+export interface SlideContextData extends SlideData {
+	breakIndex: number
+	global?: Directive
+}
+
 export interface SlideContext {
-	slides: (SlideData & { breakIndex: number })[]
+	slides: SlideContextData[]
 	style: string[]
 	script: string[]
 	extra: Directive

@@ -1,4 +1,6 @@
 import { Paragraph } from 'mdast'
+import type { CompileContext } from 'mdast-util-from-markdown'
+import type { Token } from 'micromark-util-types'
 import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
@@ -122,5 +124,25 @@ describe('attribute block extension', async () => {
 			type: 'text',
 			value: 'attr '
 		})
+	})
+
+	it('should merge attributes when parent has no children', () => {
+		const node = { type: 'attributeBlock', value: '', attr: {} }
+		const parent: { data?: { hProperties: Record<string, unknown> }; children?: unknown[] } = {
+			data: { hProperties: { title: 'decko' } }
+		}
+		const context = {
+			stack: [parent, node],
+			data: { attr: { class: ['class-1'] } },
+			exit: () => {}
+		} as unknown as CompileContext
+
+		attributeBlockFromMarkdown.exit!.attributeBlock!.call(context, {} as Token)
+
+		expect(parent.data?.hProperties).toEqual({
+			title: 'decko',
+			class: ['class-1']
+		})
+		expect(parent.children).toBeUndefined()
 	})
 })

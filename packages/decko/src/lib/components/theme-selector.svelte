@@ -1,15 +1,26 @@
 <script lang="ts">
+	import { useSlideContext } from '../context/slide.svelte.js'
 	import PalleteIcon from '../icons/pallete-icon.svelte'
-	import { themeState } from '../state/index.js'
+	import { getThemes, resolveTheme } from '../logic/themes.js'
+	import { asString } from '../logic/utils.js'
+	import { appearance } from '../state/index.js'
 	import Popover from './popover.svelte'
 
 	interface Props {
 		class?: string
-		default?: string
-		themes?: string[]
 	}
 
-	let { class: className, themes }: Props = $props()
+	let { class: className }: Props = $props()
+
+	const slideContex = useSlideContext()
+
+	const themes = getThemes(slideContex.slide.themes)
+
+	let initValue = $state(resolveTheme(asString(slideContex.slide.theme, appearance.theme), themes))
+
+	$effect(() => {
+		document.documentElement.dataset.theme = initValue || appearance.theme
+	})
 </script>
 
 <Popover
@@ -22,14 +33,17 @@
 	{/snippet}
 
 	{#snippet content()}
-		{#each themes as theme}
+		{#each themes as theme (theme)}
 			<button
-				class:dark={themeState.isDark}
+				class:dark={appearance.isDark}
 				data-theme={theme}
-				class:bg-accent={theme === themeState.theme}
-				class:text-accent-foreground={theme === themeState.theme}
+				class:bg-accent={theme === (initValue || appearance.theme)}
+				class:text-accent-foreground={theme === appearance.theme}
 				class="hover:bg-accent hover:text-accent-foreground flex min-w-30 items-center gap-2 rounded-md px-2 py-0.5"
-				onclick={() => themeState.changeTheme(theme)}
+				onclick={() => {
+					appearance.theme = theme
+					initValue = ''
+				}}
 			>
 				<div class="grid grid-cols-2 grid-rows-2 gap-px">
 					<div class="border-border bg-primary h-2 w-2 rounded-md border"></div>

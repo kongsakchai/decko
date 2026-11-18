@@ -7,7 +7,7 @@ import { SlideContext } from '../../src/types'
 describe('directive transformer', () => {
 	it('should merge directive into slide', async () => {
 		const context: SlideContext = {
-			slides: [{ breakIndex: 0, global: { a: 1 }, local: { b: 1 } }],
+			slides: [{ breakIndex: 0, global: { a: 1 }, directive: { b: 1 } }],
 			style: [],
 			script: [],
 			extra: {}
@@ -37,7 +37,7 @@ describe('directive transformer', () => {
 		expect(warn).toHaveBeenCalledOnce()
 		warn.mockRestore()
 
-		expect(context.slides[0].local).toEqual({ b: 1, title: 'Hello' })
+		expect(context.slides[0].directive).toEqual({ b: 1, title: 'Hello' })
 		expect(context.slides[0].global).toEqual({ a: 1, theme: 'dark' })
 
 		expect(node.children).toHaveLength(5)

@@ -3,21 +3,25 @@
 
 	import MoonIcon from '../icons/moon-icon.svelte'
 	import SunIcon from '../icons/sun-icon.svelte'
-	import { themeState } from '../state/index.js'
+	import { appearance } from '../state'
 
 	interface Props {
 		class?: string
 	}
 
 	let { class: className }: Props = $props()
+
+	$effect(() => {
+		document.documentElement.classList.toggle('dark', appearance.isDark)
+	})
 </script>
 
 <button
-	onclick={themeState.toggleMode}
+	onclick={() => appearance.toggleDark()}
 	title="switch-theme"
 	class={['relative h-8.5 w-8.5 appearance-none overflow-hidden rounded-md', className]}
 >
-	{#if themeState.isDark}
+	{#if appearance.isDark}
 		<span class="absolute top-0 left-0 h-full w-full content-center" transition:fly={{ duration: 300, y: 300 }}>
 			<MoonIcon />
 		</span>

@@ -38,7 +38,7 @@ export function decko(options?: Options): PreprocessorGroup {
 
 		let page = { show: false, current: 0 }
 		const contents = slide.slides.map((slide) => {
-			const directive = { ...slide.global, ...slide.local }
+			const directive = { ...slide.directive }
 			page = resolvePaginate(directive.paginate, page.current)
 
 			slideData.pages.push({
