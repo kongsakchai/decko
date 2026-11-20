@@ -39,7 +39,7 @@
 				data-theme={theme}
 				class:bg-accent={theme === (initValue || appearance.theme)}
 				class:text-accent-foreground={theme === appearance.theme}
-				class="hover:bg-accent hover:text-accent-foreground flex min-w-30 items-center gap-2 rounded-md px-2 py-0.5"
+				class="hover:bg-accent hover:text-accent-foreground box-content flex min-w-30 items-center gap-2 rounded-md px-2 py-0.5"
 				onclick={() => {
 					appearance.theme = theme
 					initValue = ''
