@@ -1,6 +1,7 @@
+import type { Directive } from '@deckomd/parser'
+
 import { mergeStr } from '../logic/utils.js'
 import type { SlideData } from '../types.js'
-import { Feature } from './feature.js'
 
 export interface PageOptions {
 	layout?: string
@@ -50,7 +51,7 @@ export function styleContent(opts: StyleOptions) {
 interface ScriptOptions {
 	data: SlideData
 	scripts: string[]
-	features: Set<Feature>
+	extra: Directive
 	imports: string[]
 }
 
@@ -63,12 +64,11 @@ export function scriptContent(opts: ScriptOptions) {
 		`import {blur,crossfade,draw,fade,fly,scale,slide as slide } from 'svelte/transition'`,
 		`import { stepper } from '@deckomd/decko/client/stepper'`,
 		'import { initCopyCode } from "@deckomd/decko/client/code"',
-		'import { mermaidRender } from "@deckomd/decko/client/mermaid"',
 		`import { CodeStepBlock } from "@deckomd/decko/components"`,
 		...opts.imports
 	)
 
-	if (opts.features.has(Feature.Code)) {
+	if (opts.extra.hasCode) {
 		runs.push('initCopyCode()')
 	}
 

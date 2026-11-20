@@ -7,7 +7,6 @@ import { alerts } from './transforms/alerts.js'
 import { assetsLinkExtension, getAssetImports } from './transforms/assets.js'
 import { toBackgroundStyles } from './transforms/background.js'
 import { codeContainer, codeHighlighter } from './transforms/code.js'
-import { getFeatures } from './transforms/feature.js'
 import { resolvePaginate } from './transforms/paginate.js'
 import { splitContainerExtension, toSplitStyles } from './transforms/split.js'
 import { stepExtension } from './transforms/step.js'
@@ -60,7 +59,7 @@ export function decko(options?: Options): PreprocessorGroup {
 		const script = scriptContent({
 			data: slideData,
 			scripts: slide.script,
-			features: getFeatures(slide.extra),
+			extra: slide.extra,
 			imports: [...getAssetImports(slide.extra), ...getThemeImports(slideData), ...getCSSImports(slideData)]
 		})
 

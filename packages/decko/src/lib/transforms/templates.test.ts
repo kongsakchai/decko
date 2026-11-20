@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 
-import { Feature } from './feature.js'
 import { pageContent, scriptContent, styleContent } from './templates.js'
 
 describe('pageContent', () => {
@@ -55,7 +54,7 @@ describe('scriptContent', () => {
 		const content = scriptContent({
 			data: { title: 'Test', pages: [] },
 			scripts: ['const value = 1'],
-			features: new Set(),
+			extra: {},
 			imports: ["import 'custom.css'"]
 		})
 
@@ -69,7 +68,7 @@ describe('scriptContent', () => {
 		const content = scriptContent({
 			data: { title: 'Test', pages: [] },
 			scripts: [],
-			features: new Set([Feature.Code]),
+			extra: { hasCode: true },
 			imports: []
 		})
 

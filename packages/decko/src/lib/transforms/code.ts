@@ -11,11 +11,11 @@ import {
 } from '@shikijs/transformers'
 
 import lz from 'lz-string'
+import { render } from 'pele'
 import { type SpecialLanguage, createHighlighter } from 'shiki'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
 import { asString } from '../logic/utils.js'
-import { Feature, getFeatures } from './feature.js'
 
 export const CODE_SPLIT_REGEX = /^>>>>>$/gm
 
@@ -44,11 +44,7 @@ const highlighter = await createHighlighter({
 
 export const codeContainer: CodeContainer = async (ctx) => {
 	if (ctx.lang === 'mermaid') {
-		ctx.attrs.class = asString(ctx.attrs.class, '').replace('language-mermaid', 'mermaid-container')
-		ctx.attrs.name = 'mermaid'
-		ctx.attrs.svelteExpression ??= []
-		const exp = ctx.attrs.svelteExpression as string[]
-		exp.push('{@attach mermaidRender}')
+		ctx.attrs.class = asString(ctx.attrs.class, '').replace('language-mermaid', '')
 
 		return {
 			type: 'container',
@@ -79,15 +75,12 @@ export const codeContainer: CodeContainer = async (ctx) => {
 }
 
 export const codeHighlighter: CodeHighlighter = async (ctx) => {
-	const features = getFeatures(ctx.slideCtx.extra)
-
 	if (ctx.lang === 'mermaid') {
-		features.add(Feature.Mermaid)
+		const { svg } = render(ctx.code)
+
 		return {
-			type: 'element',
-			tagName: 'pre',
-			properties: {},
-			children: [{ type: 'text', value: ctx.code }]
+			type: 'raw',
+			value: svg
 		}
 	}
 
@@ -100,7 +93,7 @@ export const codeHighlighter: CodeHighlighter = async (ctx) => {
 		ctx.lang = 'plaintext'
 	}
 
-	features.add(Feature.Code)
+	ctx.slideCtx.extra.hasCode = true
 	if (ctx.attrs.step == null) {
 		return highlighter.codeToHast(ctx.code, {
 			lang: ctx.lang,
@@ -130,8 +123,8 @@ export const codeHighlighter: CodeHighlighter = async (ctx) => {
 	const codeTokenInfo = JSON.stringify(codeSteps.map((code) => magicMove.commit(code.trim()).current))
 
 	const start = Number.parseInt(asString(ctx.attrs.at, '0'), 10) || 0
-	ctx.slide.local ??= {}
-	ctx.slide.local.step = start + codeSteps.length - 1
+	ctx.slide.directive ??= {}
+	ctx.slide.directive.step = start + codeSteps.length - 1
 
 	return {
 		type: 'element',

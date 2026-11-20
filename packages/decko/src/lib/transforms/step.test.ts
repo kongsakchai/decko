@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest'
 
 import { stepExtension } from './step.js'
 
-function createContext(attrs: Directive, local?: Directive) {
-	const currentSlide: Directive = local ? { local } : {}
+function createContext(attrs: Directive, directive?: Directive) {
+	const currentSlide: Directive = directive ? { directive } : {}
 
 	return {
 		node: { type: 'paragraph' },
@@ -24,7 +24,7 @@ describe('stepExtension', () => {
 		stepExtension(ctx)
 
 		expect(ctx.attrs.svelteExpression).toBeUndefined()
-		expect(ctx.currentSlide.local).toBeUndefined()
+		expect(ctx.currentSlide.directive).toBeUndefined()
 	})
 
 	it('should add step classes and create the attachment', () => {
@@ -32,7 +32,7 @@ describe('stepExtension', () => {
 
 		stepExtension(ctx)
 
-		expect(ctx.currentSlide.local).toEqual({ step: 1 })
+		expect(ctx.currentSlide.directive).toEqual({ step: 1 })
 		expect(ctx.attrs.svelteExpression).toEqual([
 			'{@attach stepper(page,[[1,[{"action":"add","class":["active","visible"]}]]])}'
 		])
@@ -43,18 +43,18 @@ describe('stepExtension', () => {
 
 		stepExtension(ctx)
 
-		expect(ctx.currentSlide.local).toEqual({ step: 3 })
+		expect(ctx.currentSlide.directive).toEqual({ step: 3 })
 		expect(ctx.attrs.svelteExpression).toEqual([
 			'{@attach stepper(page,[[1,[{"action":"add","class":["active"]}]],[3,[{"action":"remove","class":["active"]}]]])}'
 		])
 	})
 
-	it('should keep the highest step from attributes and local state', () => {
+	it('should keep the highest step from attributes and directive state', () => {
 		const ctx = createContext({ step: 5, 'step-1': 'active' }, { step: 7 })
 
 		stepExtension(ctx)
 
-		expect(ctx.currentSlide.local).toEqual({ step: 7 })
+		expect(ctx.currentSlide.directive).toEqual({ step: 7 })
 	})
 
 	it('should append to existing svelte expressions', () => {
@@ -81,7 +81,7 @@ describe('stepExtension', () => {
 
 		stepExtension(ctx)
 
-		expect(ctx.currentSlide.local).toEqual({ step: 3 })
+		expect(ctx.currentSlide.directive).toEqual({ step: 3 })
 		expect(ctx.attrs.svelteExpression).toEqual([
 			'{@attach stepper(page,[[3,[{"action":"add","class":["active"]}]]])}'
 		])

@@ -86,6 +86,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
+		"test:cover": "vitest --coverage",
 		"test": "npm run test:unit -- --run",
 		"test:e2e": "playwright install && playwright test"
 	},
@@ -114,7 +115,7 @@
 		"@shikijs/transformers": "^4.3.1",
 		"lz-string": "^1.5.0",
 		"magic-string": "^1.1.0",
-		"mermaid": "^11.16.0",
+		"pele": "^1.13.0",
 		"shiki": "^4.3.1"
 	},
 	"peerDependencies": {

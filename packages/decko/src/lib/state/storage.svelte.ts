@@ -8,7 +8,7 @@ export class LocalStorage<T extends string = string> {
 	constructor(key: string, fallback: T) {
 		this.#key = key
 		this.#fallback = fallback
-		this.#value = (localStorage.getItem(key) as T) ?? fallback
+		this.#value = (isBrowser() ? (localStorage.getItem(key) as T) : null) ?? fallback
 	}
 
 	get current() {

@@ -1,3 +1,4 @@
+import { Parent } from 'mdast'
 import { VFile } from 'vfile'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -12,7 +13,7 @@ describe('directive transformer', () => {
 			script: [],
 			extra: {}
 		}
-		const node: any = {
+		const node = {
 			type: 'root',
 			children: [
 				{ type: 'html', value: '<!--\ntitle: Hello\n-->' },
@@ -44,7 +45,7 @@ describe('directive transformer', () => {
 		expect(node.children[0]).toEqual({ type: 'html', value: '<!--\n-->' })
 		expect(node.children[1]).toEqual({ type: 'html', value: '<!--\nnot yaml: [\n-->' })
 		expect(node.children[2]).toEqual({ type: 'html', value: '<div>plain</div>' })
-		expect(node.children[3].children[0]).toEqual({
+		expect((node.children[3] as Parent).children[0]).toEqual({
 			type: 'html',
 			value: '<!--global\nnested: true\n-->'
 		})

@@ -6,8 +6,10 @@ export default defineConfig({
 	...baseConfig,
 	entry: ['./src/index.ts'],
 	deps: {
-		onlyBundle: ['@types/hast', '@types/mdast', '@types/unist'],
 		neverBundle: [
+			'@types/hast',
+			'@types/mdast',
+			'@types/unist',
 			'micromark-util-character',
 			'micromark-util-classify-character',
 			'micromark-util-html-tag-name',

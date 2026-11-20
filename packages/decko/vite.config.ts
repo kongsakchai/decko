@@ -36,6 +36,15 @@ export default defineConfig({
 	},
 	test: {
 		expect: { requireAssertions: true },
+		coverage: {
+			reporter: ['text', 'text-summary', 'html'],
+			thresholds: {
+				statements: 100,
+				branches: 100,
+				functions: 100,
+				lines: 100
+			}
+		},
 		projects: [
 			{
 				extends: './vite.config.ts',

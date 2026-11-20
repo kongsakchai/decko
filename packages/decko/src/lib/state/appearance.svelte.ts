@@ -23,11 +23,8 @@ export class Appearance {
 	}
 
 	get fontScale() {
-		try {
-			return Number.parseFloat(this.#fontScale.current)
-		} catch {
-			return 1
-		}
+		const value = Number.parseFloat(this.#fontScale.current)
+		return Number.isNaN(value) ? 1 : value
 	}
 
 	set fontScale(val: number) {
@@ -35,11 +32,8 @@ export class Appearance {
 	}
 
 	get slideScale() {
-		try {
-			return Number.parseFloat(this.#slideScale.current)
-		} catch {
-			return 1
-		}
+		const value = Number.parseFloat(this.#slideScale.current)
+		return Number.isNaN(value) ? 1 : value
 	}
 
 	set slideScale(val: number) {

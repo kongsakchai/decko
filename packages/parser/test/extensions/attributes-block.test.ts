@@ -1,4 +1,4 @@
-import { Paragraph } from 'mdast'
+import type { Paragraph } from 'mdast'
 import type { CompileContext } from 'mdast-util-from-markdown'
 import type { Token } from 'micromark-util-types'
 import markdown from 'remark-parse'

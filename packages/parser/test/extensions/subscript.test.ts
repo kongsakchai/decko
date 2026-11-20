@@ -1,4 +1,4 @@
-import { Paragraph, Text } from 'mdast'
+import type { Paragraph, Text } from 'mdast'
 import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'

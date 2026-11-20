@@ -3,7 +3,6 @@ import type { CodeContext } from '@deckomd/parser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { CODE_SPLIT_REGEX, codeContainer, codeHighlighter } from './code.js'
-import { Feature } from './feature.js'
 
 const mocks = vi.hoisted(() => {
 	const commit = vi.fn((code: string) => ({ current: { value: code } }))
@@ -25,7 +24,8 @@ const mocks = vi.hoisted(() => {
 			}
 		})),
 		codeToKeyedTokens: vi.fn(() => []),
-		compressToBase64: vi.fn(() => 'compressed')
+		compressToBase64: vi.fn(() => 'compressed'),
+		render: vi.fn(() => ({ svg: '<svg>graph TD</svg>' }))
 	}
 })
 
@@ -49,9 +49,10 @@ vi.mock('@shikijs/transformers', () => ({
 vi.mock('lz-string', () => ({
 	default: { compressToBase64: mocks.compressToBase64 }
 }))
+vi.mock('pele', () => ({ render: mocks.render }))
 
 function createContext(overrides: Partial<CodeContext> = {}): CodeContext {
-	const slideCtx = {
+	const slideCtx: CodeContext['slideCtx'] = {
 		slides: [{ breakIndex: 0, global: {} }],
 		style: [],
 		script: [],
@@ -74,9 +75,7 @@ describe('codeContainer', () => {
 		const attrs = { class: 'language-mermaid extra' }
 		const result: any = await codeContainer(createContext({ lang: 'mermaid', attrs }))
 
-		expect(attrs.class).toBe('mermaid-container extra')
-		expect(attrs).toHaveProperty('name', 'mermaid')
-		expect(attrs).toHaveProperty('svelteExpression', ['{@attach mermaidRender}'])
+		expect(attrs.class).toBe(' extra')
 		expect(result).toEqual({
 			type: 'container',
 			data: { hName: 'div', hProperties: attrs, hChildren: [] },
@@ -84,14 +83,15 @@ describe('codeContainer', () => {
 		})
 	})
 
-	it('should append to existing mermaid expressions', async () => {
+	it('should only remove the mermaid language class', async () => {
 		const attrs = {
 			class: 'language-mermaid',
 			svelteExpression: ['existing']
 		}
 		await codeContainer(createContext({ lang: 'mermaid', attrs }))
 
-		expect(attrs.svelteExpression).toEqual(['existing', '{@attach mermaidRender}'])
+		expect(attrs.class).toBe('')
+		expect(attrs.svelteExpression).toEqual(['existing'])
 	})
 
 	it('should create a code container', async () => {
@@ -117,18 +117,13 @@ describe('codeHighlighter', () => {
 		mocks.commit.mockImplementation((code: string) => ({ current: { value: code } }))
 	})
 
-	it('should return plain code for mermaid diagrams', async () => {
+	it('should render mermaid diagrams', async () => {
 		const ctx = createContext({ lang: 'mermaid', code: 'graph TD' })
 
 		const result = await codeHighlighter(ctx)
 
-		expect(ctx.slideCtx.extra.features).toEqual(new Set([Feature.Mermaid]))
-		expect(result).toEqual({
-			type: 'element',
-			tagName: 'pre',
-			properties: {},
-			children: [{ type: 'text', value: 'graph TD' }]
-		})
+		expect(mocks.render).toHaveBeenCalledWith('graph TD')
+		expect(result).toEqual({ type: 'raw', value: '<svg>graph TD</svg>' })
 		expect(mocks.highlighter.codeToHast).not.toHaveBeenCalled()
 	})
 
@@ -147,7 +142,7 @@ describe('codeHighlighter', () => {
 				themes: { light: 'github-light', dark: 'github-dark' }
 			})
 		)
-		expect(ctx.slideCtx.extra.features).toEqual(new Set([Feature.Code]))
+		expect(ctx.slideCtx.extra.hasCode).toBe(true)
 	})
 
 	it('should load an unloaded language', async () => {
@@ -184,12 +179,12 @@ describe('codeHighlighter', () => {
 			attrs: { step: '1', at: '2' }
 		})
 
-		const result: any = await codeHighlighter(ctx)
+		const result = await codeHighlighter(ctx)
 
 		expect(mocks.createMagicMoveMachine).toHaveBeenCalledOnce()
 		expect(mocks.commit).toHaveBeenNthCalledWith(1, 'line1')
 		expect(mocks.commit).toHaveBeenNthCalledWith(2, 'line2')
-		expect(ctx.slide.local).toEqual({ step: 3 })
+		expect(ctx.slide.directive).toEqual({ step: 3 })
 		expect(mocks.compressToBase64).toHaveBeenCalledWith(JSON.stringify([{ value: 'line1' }, { value: 'line2' }]))
 		expect(result).toEqual({
 			type: 'element',
@@ -204,7 +199,7 @@ describe('codeHighlighter', () => {
 
 		const result: any = await codeHighlighter(ctx)
 
-		expect(ctx.slide.local).toEqual({ step: 0 })
+		expect(ctx.slide.directive).toEqual({ step: 0 })
 		expect(result.properties.start).toBe(0)
 	})
 
@@ -213,7 +208,7 @@ describe('codeHighlighter', () => {
 
 		const result: any = await codeHighlighter(ctx)
 
-		expect(ctx.slide.local).toEqual({ step: 0 })
+		expect(ctx.slide.directive).toEqual({ step: 0 })
 		expect(result.properties.start).toBe(0)
 	})
 

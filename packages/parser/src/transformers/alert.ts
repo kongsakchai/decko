@@ -1,4 +1,4 @@
-import { Root } from 'mdast'
+import type { Root } from 'mdast'
 import type { Transformer } from 'unified'
 import { SKIP, visit } from 'unist-util-visit'
 

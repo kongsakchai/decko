@@ -1,4 +1,4 @@
-import { Root } from 'mdast'
+import type { Root } from 'mdast'
 import { htmlBlockNames } from 'micromark-util-html-tag-name'
 import type { Transformer } from 'unified'
 import { visit } from 'unist-util-visit'
