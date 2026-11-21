@@ -1,4 +1,5 @@
 import { createContext } from '@/context'
+import { slideHmrPlugin } from '@/vite/hmr'
 import { slideLoaderPlugin } from '@/vite/loaders'
 import { slideServerPlugin } from '@/vite/server'
 
@@ -21,6 +22,7 @@ export async function createServer(root: string, options?: Options) {
 		plugins: [
 			slideLoaderPlugin(ctx),
 			slideServerPlugin(ctx),
+			slideHmrPlugin(ctx),
 			tailwindcss(),
 			svelte({
 				extensions: ['.svelte', '.md'],
