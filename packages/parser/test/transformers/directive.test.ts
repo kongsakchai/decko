@@ -1,3 +1,4 @@
+import { Parent } from 'mdast'
 import { VFile } from 'vfile'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -7,12 +8,12 @@ import { SlideContext } from '../../src/types'
 describe('directive transformer', () => {
 	it('should merge directive into slide', async () => {
 		const context: SlideContext = {
-			slides: [{ breakIndex: 0, global: { a: 1 }, local: { b: 1 } }],
+			slides: [{ breakIndex: 0, global: { a: 1 }, directive: { b: 1 } }],
 			style: [],
 			script: [],
 			extra: {}
 		}
-		const node: any = {
+		const node = {
 			type: 'root',
 			children: [
 				{ type: 'html', value: '<!--\ntitle: Hello\n-->' },
@@ -37,14 +38,14 @@ describe('directive transformer', () => {
 		expect(warn).toHaveBeenCalledOnce()
 		warn.mockRestore()
 
-		expect(context.slides[0].local).toEqual({ b: 1, title: 'Hello' })
+		expect(context.slides[0].directive).toEqual({ b: 1, title: 'Hello' })
 		expect(context.slides[0].global).toEqual({ a: 1, theme: 'dark' })
 
 		expect(node.children).toHaveLength(5)
 		expect(node.children[0]).toEqual({ type: 'html', value: '<!--\n-->' })
 		expect(node.children[1]).toEqual({ type: 'html', value: '<!--\nnot yaml: [\n-->' })
 		expect(node.children[2]).toEqual({ type: 'html', value: '<div>plain</div>' })
-		expect(node.children[3].children[0]).toEqual({
+		expect((node.children[3] as Parent).children[0]).toEqual({
 			type: 'html',
 			value: '<!--global\nnested: true\n-->'
 		})

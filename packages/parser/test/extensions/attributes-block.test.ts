@@ -1,4 +1,6 @@
-import { Paragraph } from 'mdast'
+import type { Paragraph } from 'mdast'
+import type { CompileContext } from 'mdast-util-from-markdown'
+import type { Token } from 'micromark-util-types'
 import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
@@ -31,7 +33,7 @@ describe('attribute block extension', async () => {
 		)
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
@@ -39,27 +41,19 @@ describe('attribute block extension', async () => {
 			type: 'text',
 			value: 'attr '
 		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
-		})
 	})
 
 	it('should return empty when attribute empty', async () => {
 		const node = parser.parse('attr @{}')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: {}
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: undefined
 		})
 	})
 
@@ -67,17 +61,13 @@ describe('attribute block extension', async () => {
 		const node = parser.parse('attr @{ @data={data}}')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: {}
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: {}
 		})
 	})
 
@@ -105,17 +95,13 @@ describe('attribute block extension', async () => {
 		const node = parser.parse('attr @{ title="decko\ndecko"\n.class-1\n.class-2 }')
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
 		expect(paragraph.children[0]).toMatchObject({
 			type: 'text',
 			value: 'attr '
-		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
 		})
 	})
 
@@ -130,7 +116,7 @@ describe('attribute block extension', async () => {
 		const node = parser.parse(`attr @{  case1={a + c} case2="\\"a\\"" case3=\`\${click}\` case4=[] }`)
 
 		const paragraph = node.children[0] as Paragraph
-		expect(paragraph.children).toHaveLength(2)
+		expect(paragraph.children).toHaveLength(1)
 		expect(paragraph.data).toEqual({
 			hProperties: expected
 		})
@@ -138,9 +124,25 @@ describe('attribute block extension', async () => {
 			type: 'text',
 			value: 'attr '
 		})
-		expect(paragraph.children[1]).toMatchObject({
-			type: 'attributeBlock',
-			attr: expected
+	})
+
+	it('should merge attributes when parent has no children', () => {
+		const node = { type: 'attributeBlock', value: '', attr: {} }
+		const parent: { data?: { hProperties: Record<string, unknown> }; children?: unknown[] } = {
+			data: { hProperties: { title: 'decko' } }
+		}
+		const context = {
+			stack: [parent, node],
+			data: { attr: { class: ['class-1'] } },
+			exit: () => {}
+		} as unknown as CompileContext
+
+		attributeBlockFromMarkdown.exit!.attributeBlock!.call(context, {} as Token)
+
+		expect(parent.data?.hProperties).toEqual({
+			title: 'decko',
+			class: ['class-1']
 		})
+		expect(parent.children).toBeUndefined()
 	})
 })

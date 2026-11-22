@@ -1,6 +1,7 @@
+import type { Directive } from '@deckomd/parser'
+
 import { mergeStr } from '../logic/utils.js'
 import type { SlideData } from '../types.js'
-import { Feature } from './feature.js'
 
 export interface PageOptions {
 	layout?: string
@@ -16,6 +17,7 @@ export function pageContent(content: string, page: number, opts: PageOptions = {
 	const style = opts.style ? `style="${opts.style}"` : ''
 	const layout = opts.layout || 'default'
 
+	const disableRules = ['<!-- svelte-ignore a11y_no_noninteractive_tabindex -->']
 	const pages = [
 		`{#if page === ${page}}`,
 		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
@@ -26,7 +28,7 @@ export function pageContent(content: string, page: number, opts: PageOptions = {
 		`{/if}`
 	]
 
-	return mergeStr('\n', ...pages)
+	return mergeStr('\n', ...disableRules, ...pages)
 }
 
 interface StyleOptions {
@@ -50,7 +52,7 @@ export function styleContent(opts: StyleOptions) {
 interface ScriptOptions {
 	data: SlideData
 	scripts: string[]
-	features: Set<Feature>
+	extra: Directive
 	imports: string[]
 }
 
@@ -61,14 +63,13 @@ export function scriptContent(opts: ScriptOptions) {
 	// // svelte - auto remove when don't use
 	imports.push(
 		`import {blur,crossfade,draw,fade,fly,scale,slide as slide } from 'svelte/transition'`,
-		`import { stepper } from '@deckomd/decko/client/stepper'`,
-		'import { initCopyCode } from "@deckomd/decko/client/code"',
-		'import { mermaidRender } from "@deckomd/decko/client/mermaid"',
+		`import { stepper } from '@deckomd/decko/logic/stepper'`,
+		'import { initCopyCode } from "@deckomd/decko/logic/copy-code"',
 		`import { CodeStepBlock } from "@deckomd/decko/components"`,
 		...opts.imports
 	)
 
-	if (opts.features.has(Feature.Code)) {
+	if (opts.extra.hasCode) {
 		runs.push('initCopyCode()')
 	}
 

@@ -5,9 +5,7 @@ export interface ViewContext {
 	height: number
 	viewportWidth: number
 	viewportHeight: number
-	fontSize: number
 	zoom: number
-	size: number
 	readonly scale: number
 }
 
@@ -16,18 +14,14 @@ class Context implements ViewContext {
 	height = $state<number>(720)
 	viewportWidth = $state<number>(1280)
 	viewportHeight = $state<number>(720)
-	fontSize = $state<number>(16)
 	zoom = $state<number>(1)
-	size = $state<number>(1)
 
 	constructor(source?: Partial<ViewContext>) {
 		this.width = source?.width || 1280
 		this.height = source?.height || 720
 		this.viewportWidth = source?.viewportWidth || 1280
 		this.viewportHeight = source?.viewportHeight || 720
-		this.fontSize = source?.fontSize || 16
 		this.zoom = source?.zoom || 1
-		this.size = source?.size || 1
 	}
 
 	get scale() {
@@ -40,7 +34,7 @@ class Context implements ViewContext {
 		const isOverHeight = scaledHeight > this.viewportHeight
 		const finalWidth = isOverHeight ? this.viewportHeight * aspect : this.viewportWidth
 
-		return (finalWidth / this.width) * this.size
+		return finalWidth / this.width
 	}
 }
 

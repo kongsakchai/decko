@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { themeState } from '../state/index.js'
+	import { appearance } from '../state/index.js'
 
 	interface Props {
 		light: Snippet
@@ -11,7 +11,7 @@
 	let { light, dark }: Props = $props()
 </script>
 
-{#if themeState.isDark}
+{#if appearance.isDark}
 	{@render dark()}
 {:else}
 	{@render light()}

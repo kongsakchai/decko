@@ -35,6 +35,13 @@ export default defineConfig(
 		}
 	},
 	{
+		// Tests often need to build partial/loose fixtures, so `any` is allowed there.
+		files: ['**/*.test.ts', '**/*.spec.ts'],
+		rules: {
+			'@typescript-eslint/no-explicit-any': 'off'
+		}
+	},
+	{
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {}

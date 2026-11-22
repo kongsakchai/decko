@@ -54,13 +54,11 @@ export function createSlideParser(options?: Options) {
 
 function covertSlideResult(ctx: SlideContext, str: string): SlideResult {
 	const slideInfo: SlideInfo[] = str.split(PAGE_BREAK_KEY).map((content, index) => {
-		const previous = index === 0 ? undefined : ctx.slides[index - 1]
 		const slide = ctx.slides[index]
 		return {
 			index,
 			content,
-			global: { ...slide.global, ...previous?.global },
-			local: slide.local,
+			directive: { ...slide.directive, ...slide.global },
 			title: slide.title
 		}
 	})

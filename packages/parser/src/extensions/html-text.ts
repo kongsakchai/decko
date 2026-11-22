@@ -10,7 +10,6 @@ import { createScopeResolver } from './scope.js'
 const htmlTextTokenizer: Construct = {
 	name: 'html-text',
 	tokenize(this: TokenizeContext, effects: Effects, ok: State, nok: State): State {
-		const a = this
 		const scope = createScopeResolver()
 		return start
 

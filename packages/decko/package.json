@@ -62,10 +62,6 @@
 			"types": "./dist/state/index.d.ts",
 			"import": "./dist/state/index.js"
 		},
-		"./client/*": {
-			"types": "./dist/client/*.d.ts",
-			"import": "./dist/client/*.js"
-		},
 		"./logic/*": {
 			"types": "./dist/logic/*.d.ts",
 			"import": "./dist/logic/*.js"
@@ -86,7 +82,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run && npm run test:e2e",
+		"test:cover": "vitest --coverage",
+		"test": "npm run test:unit -- --run",
 		"test:e2e": "playwright install && playwright test"
 	},
 	"devDependencies": {
@@ -114,7 +111,7 @@
 		"@shikijs/transformers": "^4.3.1",
 		"lz-string": "^1.5.0",
 		"magic-string": "^1.1.0",
-		"mermaid": "^11.16.0",
+		"pele": "^1.13.0",
 		"shiki": "^4.3.1"
 	},
 	"peerDependencies": {

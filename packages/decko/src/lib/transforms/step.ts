@@ -45,8 +45,8 @@ export const stepExtension: Extension = (ctx) => {
 	const stepData = extractSteps(ctx.attrs)
 	if (stepData.steps.length === 0) return
 
-	ctx.currentSlide.local ??= {}
-	ctx.currentSlide.local.step = Math.max(asNumber(ctx.currentSlide.local?.step, 0), stepData.maxStep)
+	ctx.currentSlide.directive ??= {}
+	ctx.currentSlide.directive.step = Math.max(asNumber(ctx.currentSlide.directive?.step, 0), stepData.maxStep)
 
 	const stepEntries = JSON.stringify(stepData.steps)
 	ctx.attrs.svelteExpression ??= []

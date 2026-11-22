@@ -8,6 +8,8 @@ import { defineConfig } from 'vitest/config'
 
 import { decko } from './src/lib/index.ts'
 
+const testExclude = ['**/node_modules/**', '**/.svelte-kit/**', '**/dist/**', '**/coverage/**', '**/out/**']
+
 export default defineConfig({
 	plugins: [
 		tailwindcss(),
@@ -36,6 +38,20 @@ export default defineConfig({
 	},
 	test: {
 		expect: { requireAssertions: true },
+		exclude: testExclude,
+		coverage: {
+			provider: 'v8',
+			include: ['src/**/*.ts'],
+			exclude: ['src/app.d.ts', '**/.svelte-kit/**', '**/dist/**', '**/coverage/**', '**/out/**'],
+			reporter: ['text', 'text-summary', 'html'],
+			thresholds: {
+				perFile: true,
+				lines: 80,
+				functions: 80,
+				branches: 80,
+				statements: 80
+			}
+		},
 		projects: [
 			{
 				extends: './vite.config.ts',
@@ -47,7 +63,7 @@ export default defineConfig({
 						instances: [{ browser: 'chromium', headless: true }]
 					},
 					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**']
+					exclude: ['src/lib/server/**', ...testExclude]
 				}
 			},
 			{
@@ -56,7 +72,7 @@ export default defineConfig({
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}', ...testExclude]
 				}
 			}
 		]

@@ -2,11 +2,12 @@ import { existsSync, statSync } from 'node:fs'
 import path from 'node:path'
 
 import { findMarkdowns, readMarkdown } from './content'
-import { resolveUser } from './paths'
+import { resolveInsideRoot, resolveUser } from './paths'
+import type { ResolvedPath as RootPath } from './paths'
 
-export interface ResolvedPath {
-	path: string
+export interface ResolvedPath extends RootPath {
 	isFile: boolean
+	isExists: boolean
 }
 
 export interface Context {
@@ -29,17 +30,6 @@ export function createContext(input: string): Context {
 	const isSingle = statSync(target).isFile()
 	const root = isSingle ? path.dirname(target) : target
 
-	function resolveInsideRoot(src: string) {
-		const normalized = src.replace(/^[/\\]+/, '')
-		const absolutePath = resolveUser(root, normalized)
-		const relative = path.relative(root, absolutePath)
-
-		if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
-			return undefined
-		}
-		return absolutePath
-	}
-
 	return {
 		get root() {
 			return root
@@ -49,14 +39,17 @@ export function createContext(input: string): Context {
 			return findMarkdowns(root)
 		},
 		read: (src) => {
-			const absolute = resolveInsideRoot(src)
-			if (!absolute) return undefined
-			return readMarkdown(absolute)
+			const resolved = resolveInsideRoot(root, src)
+			if (!resolved) return undefined
+			return readMarkdown(resolved.absolute)
 		},
 		resolvePath(src) {
-			const absolute = resolveInsideRoot(src)
-			if (!absolute || !existsSync(absolute)) return undefined
-			return { path: absolute, isFile: statSync(absolute).isFile() }
+			const resolved = resolveInsideRoot(root, src)
+			if (!resolved) return undefined
+
+			const exists = existsSync(resolved.absolute)
+			const isFile = exists ? statSync(resolved.absolute).isFile() : false
+			return { ...resolved, isFile, isExists: exists }
 		},
 		withSingle(single) {
 			return { ...this, single: single }

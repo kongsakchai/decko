@@ -10,8 +10,7 @@ describe('createSlideParser', () => {
 		expect(result.slides).toHaveLength(1)
 		expect(result.slides[0]).toMatchObject({ index: 0, title: undefined })
 		expect(result.slides[0].content).toContain('<h1>Hello</h1>')
-		expect(result.slides[0].global).toEqual({})
-		expect(result.slides[0].local).toBeUndefined()
+		expect(result.slides[0].directive).toEqual({})
 		expect(result.script).toEqual([])
 		expect(result.style).toEqual([])
 		expect(result.extra).toEqual({})
@@ -24,32 +23,30 @@ describe('createSlideParser', () => {
 		expect(result.slides).toHaveLength(2)
 		expect(result.slides[0].content).toContain('<h1>One</h1>')
 		expect(result.slides[1].content).toContain('<h1>Two</h1>')
-		expect(result.slides[1].global).toEqual({})
+		expect(result.slides[1].directive).toEqual({})
 	})
 
 	it('should pass global data to every slide', async () => {
 		const parser = createSlideParser()
 		const result = await parser.parse('# One\n\n---\n\n# Two', { theme: 'dark' })
 
-		expect(result.slides[0].global).toEqual({ theme: 'dark' })
-		expect(result.slides[1].global).toEqual({ theme: 'dark' })
+		expect(result.slides[0].directive).toEqual({ theme: 'dark' })
+		expect(result.slides[1].directive).toEqual({ theme: 'dark' })
 	})
 
 	it('should extract script and style', async () => {
 		const parser = createSlideParser()
-		const result = await parser.parse(
-			'<script>\nconst a = 1\n</script>\n\n<style>\n.a { color: red }\n</style>'
-		)
+		const result = await parser.parse('<script>\nconst a = 1\n</script>\n\n<style>\n.a { color: red }\n</style>')
 
 		expect(result.script).toEqual(['\nconst a = 1\n'])
 		expect(result.style).toEqual(['\n.a { color: red }\n'])
 	})
 
-	it('should apply local directive', async () => {
+	it('should apply page directive', async () => {
 		const parser = createSlideParser()
 		const result = await parser.parse('<!-- title: Local -->\n\n# Hi')
 
-		expect(result.slides[0].local).toEqual({ title: 'Local' })
+		expect(result.slides[0].directive).toEqual({ title: 'Local' })
 	})
 
 	it('should pass options to transformers', async () => {
@@ -58,6 +55,14 @@ describe('createSlideParser', () => {
 
 		expect(result.slides[0].content).toContain('alert="decko"')
 		expect(result.slides[0].content).toContain('Decko')
+	})
+
+	it('should apply an attribute block without rendering an extra element', async () => {
+		const parser = createSlideParser()
+		const result = await parser.parse('Sakchai Paoin @{ .mt-auto }')
+
+		expect(result.slides[0].content).toContain('<p class="mt-auto">Sakchai Paoin </p>')
+		expect(result.slides[0].content).not.toContain('<div>')
 	})
 })
 

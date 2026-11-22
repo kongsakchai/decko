@@ -25,9 +25,7 @@ describe('createViewContext', () => {
 			height: 720,
 			viewportWidth: 1280,
 			viewportHeight: 720,
-			fontSize: 16,
-			zoom: 1,
-			size: 1
+			zoom: 1
 		})
 		expect(ctx.scale).toBe(1)
 	})
@@ -38,9 +36,7 @@ describe('createViewContext', () => {
 			height: 1080,
 			viewportWidth: 960,
 			viewportHeight: 540,
-			fontSize: 20,
-			zoom: 2,
-			size: 0.5
+			zoom: 2
 		})
 
 		expect(ctx).toMatchObject({
@@ -48,24 +44,20 @@ describe('createViewContext', () => {
 			height: 1080,
 			viewportWidth: 960,
 			viewportHeight: 540,
-			fontSize: 20,
-			zoom: 2,
-			size: 0.5
+			zoom: 2
 		})
-		expect(ctx.scale).toBe(0.25)
+		expect(ctx.scale).toBe(0.5)
 	})
 
 	it('should fall back to defaults for missing values', () => {
-		const ctx = createViewContext({ fontSize: 20 })
+		const ctx = createViewContext({ zoom: 2 })
 
 		expect(ctx).toMatchObject({
 			width: 1280,
 			height: 720,
 			viewportWidth: 1280,
 			viewportHeight: 720,
-			fontSize: 20,
-			zoom: 1,
-			size: 1
+			zoom: 2
 		})
 	})
 

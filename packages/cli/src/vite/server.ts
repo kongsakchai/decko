@@ -11,17 +11,14 @@ export function slideServerPlugin(ctx: Context): Plugin {
 			server.middlewares.use(async (req, resp, next) => {
 				const url = req.url || '/'
 				const pathname = decodeURI(url.split('?')[0])
+				const isMarkdown = pathname.endsWith('.md')
 
 				const isNavigation = req.headers['sec-fetch-dest'] === 'document'
 				if (!isNavigation) {
 					return next()
 				}
 				const assets = ctx.resolvePath(pathname)
-				if (!assets) {
-					return next()
-				}
-				const isMarkdown = pathname.endsWith('.md')
-				if (assets.isFile && !isMarkdown) {
+				if (!assets || (assets.isFile && !isMarkdown)) {
 					return next()
 				}
 

@@ -10,8 +10,11 @@ export function slideLoaderPlugin(ctx: Context): Plugin {
 			const route = virtualRoutes.some((m) => m.match(id))
 			if (route) return id
 
-			const absolutePath = ctx.resolvePath(id)
-			if (absolutePath?.isFile) return absolutePath.path
+			// handle asset files
+			const resolved = ctx.resolvePath(id)
+			if (resolved?.isFile && resolved.isExists) {
+				return resolved.absolute
+			}
 
 			return null
 		},

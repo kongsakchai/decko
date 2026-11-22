@@ -1,4 +1,4 @@
-import { Link } from 'mdast'
+import type { Link } from 'mdast'
 import { State, defaultHandlers } from 'mdast-util-to-hast'
 
 export function linkHandler(state: State, node: Link) {

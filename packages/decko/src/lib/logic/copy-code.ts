@@ -1,5 +1,7 @@
+import { isBrowser } from './events.js'
+
 export function initCopyCode() {
-	if (typeof window === 'undefined') return
+	if (!isBrowser()) return
 	window.copyCode = (e: Event) => {
 		const button = e.currentTarget as HTMLButtonElement
 		const pre = button.parentNode?.querySelector('pre')

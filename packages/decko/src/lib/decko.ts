@@ -7,10 +7,10 @@ import { alerts } from './transforms/alerts.js'
 import { assetsLinkExtension, getAssetImports } from './transforms/assets.js'
 import { toBackgroundStyles } from './transforms/background.js'
 import { codeContainer, codeHighlighter } from './transforms/code.js'
-import { getFeatures } from './transforms/feature.js'
 import { resolvePaginate } from './transforms/paginate.js'
 import { splitContainerExtension, toSplitStyles } from './transforms/split.js'
 import { stepExtension } from './transforms/step.js'
+import { toStyles } from './transforms/styles.js'
 import { pageContent, scriptContent, styleContent } from './transforms/templates.js'
 import { getCSSImports, getThemeImports } from './transforms/themes.js'
 import { hoistExtension } from './transforms/tree.js'
@@ -37,7 +37,7 @@ export function decko(options?: Options): PreprocessorGroup {
 
 		let page = { show: false, current: 0 }
 		const contents = slide.slides.map((slide) => {
-			const directive = { ...slide.global, ...slide.local }
+			const directive = { ...slide.directive }
 			page = resolvePaginate(directive.paginate, page.current)
 
 			slideData.pages.push({
@@ -49,7 +49,7 @@ export function decko(options?: Options): PreprocessorGroup {
 			return pageContent(slide.content, slide.index + 1, {
 				pageNumber: page.show ? page.current : undefined,
 				class: asString(directive.class),
-				style: asString(directive.style),
+				style: toStyles(directive),
 				layout: asString(directive.layout, 'default'),
 				background: toBackgroundStyles(directive),
 				split: toSplitStyles(directive)
@@ -59,7 +59,7 @@ export function decko(options?: Options): PreprocessorGroup {
 		const script = scriptContent({
 			data: slideData,
 			scripts: slide.script,
-			features: getFeatures(slide.extra),
+			extra: slide.extra,
 			imports: [...getAssetImports(slide.extra), ...getThemeImports(slideData), ...getCSSImports(slideData)]
 		})
 

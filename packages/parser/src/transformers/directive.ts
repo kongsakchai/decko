@@ -1,4 +1,4 @@
-import { Root } from 'mdast'
+import type { Root } from 'mdast'
 import type { Transformer } from 'unified'
 import { visit } from 'unist-util-visit'
 import YAML from 'yaml'
@@ -26,7 +26,7 @@ export function directiveTransformer(): Transformer {
 			if (match[1]) {
 				page.global = { ...page.global, ...directive }
 			} else {
-				page.local = { ...page.local, ...directive }
+				page.directive = { ...page.directive, ...directive }
 			}
 
 			parent.children.splice(index, 1)
@@ -38,8 +38,8 @@ export function directiveTransformer(): Transformer {
 export function parseYAML(value: string) {
 	try {
 		return YAML.parse(value) as Directive
-	} catch {
-		console.warn(`\x1b[43m\x1b[30m WARN \x1b[0m\x1b[33m directive syntax invalid:\x1b[0m\n${value}`)
+	} catch (e) {
+		console.warn(`\x1b[43m\x1b[30m WARN \x1b[0m\x1b[33m directive syntax invalid:\x1b[0m\n${e}`)
 		return {} as Directive
 	}
 }

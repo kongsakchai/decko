@@ -23,6 +23,8 @@
 		"test:unit:parser": "bun run --cwd packages/parser test:unit",
 		"test:cover:parser": "bun run --cwd packages/parser test:cover",
 		"test:decko": "bun run --cwd packages/decko test",
+		"test:unit:decko": "bun run --cwd packages/decko test",
+		"test:cover:decko": "bun run --cwd packages/decko test:cover",
 		"test:cli": "bun run --cwd packages/cli test",
 		"test:unit:cli": "bun run --cwd packages/cli test:unit",
 		"test:cover:cli": "bun run --cwd packages/cli test:cover",

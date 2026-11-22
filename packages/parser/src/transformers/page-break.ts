@@ -1,4 +1,4 @@
-import { Root } from 'mdast'
+import type { Root } from 'mdast'
 import type { Transformer } from 'unified'
 import { visit } from 'unist-util-visit'
 
@@ -14,7 +14,7 @@ export function pageBreakTransformer(): Transformer {
 			if (typeof index !== 'number' || !parent) return
 
 			if (node.type === 'thematicBreak' && parent === tree) {
-				ctx.slides.push({ breakIndex: index })
+				ctx.slides.push({ breakIndex: index, global: ctx.slides.at(-1)?.global })
 
 				parent.children.splice(index, 1, {
 					type: 'text',
