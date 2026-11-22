@@ -1,7 +1,5 @@
 import { createContext } from '@/context'
-import { slideHmrPlugin } from '@/vite/hmr'
-import { slideLoaderPlugin } from '@/vite/loaders'
-import { slideServerPlugin } from '@/vite/server'
+import { viteDecko } from '@/vite'
 
 import { decko } from '@deckomd/decko'
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte'
@@ -20,9 +18,7 @@ export async function createServer(root: string, options?: Options) {
 	const inlineConfig: InlineConfig = {
 		configFile: false,
 		plugins: [
-			slideLoaderPlugin(ctx),
-			slideServerPlugin(ctx),
-			slideHmrPlugin(ctx),
+			...(await viteDecko(ctx)),
 			tailwindcss(),
 			svelte({
 				extensions: ['.svelte', '.md'],
