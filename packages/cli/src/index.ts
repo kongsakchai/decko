@@ -3,6 +3,7 @@ import * as readline from 'node:readline'
 
 import { build } from './command/build'
 import { createServer } from './command/serv'
+import { bold, dim } from './console'
 import { version } from './const'
 import { pkgRoot } from './paths'
 
@@ -19,6 +20,8 @@ function setupKeyboardShortcuts(server: Awaited<ReturnType<typeof createServer>>
 	readline.emitKeypressEvents(process.stdin) // consume event
 	process.stdin.setRawMode(true) // process event when key is pressed without enter.
 
+	console.log(dim('press'), bold('r'), dim('to restart the server'))
+	console.log(dim('press'), bold('c'), dim('to quit'))
 	process.stdin.on('keypress', async (_input, key) => {
 		if (key.ctrl && key.name === 'c') {
 			process.exit(0)

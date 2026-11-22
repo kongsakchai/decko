@@ -1,3 +1,4 @@
+import { bold, green, red } from '@/console'
 import { Context, createContext } from '@/context'
 import { resolveUser } from '@/paths'
 import { buildReport } from '@/vite/build-report'
@@ -41,16 +42,16 @@ interface ResolvedOptions {
 export async function build(src: string, options: Options) {
 	const resolvedOptions = resolveOptions(src, options)
 
-	console.log(`[BUILD] mode ${resolvedOptions.mode}`)
-	console.log('[BUILD] Building...')
+	console.log(`${bold(green('[BUILD]'))} mode ${resolvedOptions.mode}`)
+	console.log(`${bold(green('[BUILD]'))} Building...`)
 	const start = performance.now()
 
 	try {
 		await runBuilds(resolvedOptions)
 		const seconds = ((performance.now() - start) / 1000).toFixed(2)
-		console.log(`\n[BUILD] Done in ${seconds}s`)
+		console.log(`\n${bold(green('[BUILD]'))} Done in ${seconds}s`)
 	} catch (e) {
-		console.error('[BUILD] Failed:', e)
+		console.error(`${bold(red('[BUILD]'))} Failed:`, e)
 		process.exitCode = 1
 	}
 }

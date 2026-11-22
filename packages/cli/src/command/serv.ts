@@ -1,3 +1,4 @@
+import { bold, cyan, green } from '@/console'
 import { createContext } from '@/context'
 import { viteDecko } from '@/vite'
 
@@ -38,6 +39,6 @@ export async function createServer(root: string, options?: Options) {
 	await server.listen()
 
 	const resolved = server.resolvedUrls?.local[0] ?? `http://localhost:${server.config.server.port}`
-	console.log(`[DEV] Start server listened at ${resolved}`)
+	console.log(`${bold(green('[DEV]'))} Start server listened at ${cyan(resolved)}`)
 	return server
 }

@@ -1,3 +1,4 @@
+import { blue, bold, dim } from '@/console'
 import { Context } from '@/context'
 import { EXPLORER_ID } from '@/virtual/explorer'
 import { STYLE_ID } from '@/virtual/styles'
@@ -49,6 +50,7 @@ export function slideHmrPlugin(ctx: Context): Plugin {
 
 			server.watcher.add(ctx.root)
 			server.watcher.on('change', (file) => {
+				console.log(`${bold(blue('[HMR]'))} update ${dim(file)}`)
 				const resolved = ctx.resolvePath(file)
 				if (!resolved) return
 				if (resolved.relative.endsWith('.md')) {
@@ -58,6 +60,7 @@ export function slideHmrPlugin(ctx: Context): Plugin {
 				reloadUntracked(file)
 			})
 			server.watcher.on('add', (file) => {
+				console.log(`${bold(blue('[HMR]'))} add ${dim(file)}`)
 				const resolved = ctx.resolvePath(file)
 				if (resolved?.relative.endsWith('.md')) {
 					return reloadModules(resolved.relative, EXPLORER_ID, STYLE_ID)
@@ -66,6 +69,7 @@ export function slideHmrPlugin(ctx: Context): Plugin {
 				reloadUntracked(file)
 			})
 			server.watcher.on('unlink', (file) => {
+				console.log(`${bold(blue('[HMR]'))} unlink ${dim(file)}`)
 				const resolved = ctx.resolvePath(file)
 				if (!resolved) return
 

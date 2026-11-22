@@ -1,4 +1,5 @@
-import { extname } from 'node:path'
+import { bold, colorByExt, dim, formatKb, green, sizeColor } from '@/console'
+
 import { gzipSync } from 'node:zlib'
 import type { Plugin } from 'vite'
 
@@ -20,61 +21,8 @@ type ReportContext = {
 }
 
 const DEFAULT_WARN_KB = 500
-const KB_COLUMN_WIDTH = 9
-
-function detectColorSupport(): boolean {
-	if (process.env.NO_COLOR) return false
-	if (process.env.FORCE_COLOR) return process.env.FORCE_COLOR !== '0'
-	return Boolean(process.stdout.isTTY)
-}
-
-const useColor = detectColorSupport()
-
-const paint = (code: number) => (s: string) => (useColor ? `\x1b[${code}m${s}\x1b[0m` : s)
-const bold = paint(1)
-const dim = paint(2)
-const red = paint(31)
-const green = paint(32)
-const yellow = paint(33)
-const blue = paint(34)
-const magenta = paint(35)
-const cyan = paint(36)
-const gray = paint(90)
-
-/** Used when a file is under the warn threshold: keep the text uncolored */
-const plain = (s: string) => s
-
-/** Color by extension (js=cyan, css=magenta, html=green, map=gray) so the report scans at a glance */
-function colorByExt(file: string): (s: string) => string {
-	switch (extname(file)) {
-		case '.js':
-		case '.mjs':
-		case '.cjs':
-			return cyan
-		case '.css':
-			return magenta
-		case '.html':
-			return green
-		case '.map':
-			return gray
-		default:
-			return blue // images, fonts, other assets
-	}
-}
-
-/** At or above warnKb → red, at or above half of warnKb → yellow */
-function sizeColor(bytes: number, warnKb: number): (s: string) => string {
-	const sizeInKb = bytes / 1024
-	if (sizeInKb >= warnKb) return red
-	if (sizeInKb >= warnKb / 2) return yellow
-	return plain
-}
 
 const sum = (values: number[]) => values.reduce((total, n) => total + n, 0)
-
-function formatKb(bytes: number): string {
-	return (bytes / 1024).toFixed(2).padStart(KB_COLUMN_WIDTH) + ' kB'
-}
 
 /** One row: folder (dim) + filename (by extension) + size + gzip */
 function formatFileLine(row: Row, nameWidth: number, ctx: ReportContext): string {
