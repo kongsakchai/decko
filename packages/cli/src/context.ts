@@ -3,10 +3,9 @@ import path from 'node:path'
 
 import { findMarkdowns, readMarkdown } from './content'
 import { resolveInsideRoot, resolveUser } from './paths'
+import type { ResolvedPath as RootPath } from './paths'
 
-export interface ResolvedPath {
-	absolute: string
-	relative: string
+export interface ResolvedPath extends RootPath {
 	isFile: boolean
 	isExists: boolean
 }
@@ -40,17 +39,17 @@ export function createContext(input: string): Context {
 			return findMarkdowns(root)
 		},
 		read: (src) => {
-			const { absolute } = resolveInsideRoot(root, src)
-			if (!absolute) return undefined
-			return readMarkdown(absolute)
+			const resolved = resolveInsideRoot(root, src)
+			if (!resolved) return undefined
+			return readMarkdown(resolved.absolute)
 		},
 		resolvePath(src) {
-			const { absolute, relative } = resolveInsideRoot(root, src)
-			if (!absolute) return undefined
+			const resolved = resolveInsideRoot(root, src)
+			if (!resolved) return undefined
 
-			const exists = existsSync(absolute)
-			const isFile = exists ? statSync(absolute).isFile() : false
-			return { absolute, relative, isFile, isExists: exists }
+			const exists = existsSync(resolved.absolute)
+			const isFile = exists ? statSync(resolved.absolute).isFile() : false
+			return { ...resolved, isFile, isExists: exists }
 		},
 		withSingle(single) {
 			return { ...this, single: single }

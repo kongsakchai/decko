@@ -68,27 +68,42 @@ describe('paths', () => {
 		})
 	})
 
+	it('should treat absolute paths outside the root as web-root paths', () => {
+		expect(resolveInsideRoot(root, '/image.png')).toEqual({
+			absolute: '/deck/image.png',
+			relative: 'image.png'
+		})
+	})
+
 	it('should reject paths that escape the root', () => {
-		expect(resolveInsideRoot(root, '../intro.md')).toEqual({})
+		expect(resolveInsideRoot(root, '../intro.md')).toBeUndefined()
 	})
 
 	it('should reject absolute paths outside the root', () => {
-		expect(checkInsideRoot(root, '/other/intro.md')).toEqual({})
+		expect(checkInsideRoot(root, '/other/intro.md')).toBeUndefined()
+	})
+
+	it('should ignore hidden directories inside the root only', () => {
+		const hiddenRoot = '/home/user/.config/work'
+		expect(resolveInsideRoot(hiddenRoot, `${hiddenRoot}/slides/intro.md`)).toEqual({
+			absolute: `${hiddenRoot}/slides/intro.md`,
+			relative: 'slides/intro.md'
+		})
 	})
 
 	it('should reject hidden and generated directories', () => {
-		expect(resolveInsideRoot(root, '/deck/.cache/intro.md')).toEqual({})
-		expect(resolveInsideRoot(root, '/deck/node_modules/intro.md')).toEqual({})
-		expect(resolveInsideRoot(root, '/deck/dist/intro.md')).toEqual({})
-		expect(resolveInsideRoot(root, '/deck/coverage/intro.md')).toEqual({})
-		expect(resolveInsideRoot(root, '/deck/out/intro.md')).toEqual({})
+		expect(resolveInsideRoot(root, '/deck/.cache/intro.md')).toBeUndefined()
+		expect(resolveInsideRoot(root, '/deck/node_modules/intro.md')).toBeUndefined()
+		expect(resolveInsideRoot(root, '/deck/dist/intro.md')).toBeUndefined()
+		expect(resolveInsideRoot(root, '/deck/coverage/intro.md')).toBeUndefined()
+		expect(resolveInsideRoot(root, '/deck/out/intro.md')).toBeUndefined()
 	})
 
 	it('should detect ignored paths', () => {
-		expect(isIgnoredPath('/deck/.cache/intro.md')).toBe(true)
-		expect(isIgnoredPath('/deck/node_modules/intro.md')).toBe(true)
-		expect(isIgnoredPath('/deck/dist/intro.md')).toBe(true)
-		expect(isIgnoredPath('/deck/slides/intro.md')).toBe(false)
+		expect(isIgnoredPath('.cache/intro.md')).toBe(true)
+		expect(isIgnoredPath('node_modules/intro.md')).toBe(true)
+		expect(isIgnoredPath('dist/intro.md')).toBe(true)
+		expect(isIgnoredPath('slides/intro.md')).toBe(false)
 	})
 })
 
@@ -191,6 +206,15 @@ describe('slideHmrPlugin', () => {
 
 		watcher.emit('change', '/other/slide.md')
 
+		expect(send).not.toHaveBeenCalled()
+	})
+
+	it('should ignore files outside the root when removed', () => {
+		const { watcher, graph, send } = setup()
+
+		watcher.emit('unlink', '/other/slide.md')
+
+		expect(graph.invalidateAll).not.toHaveBeenCalled()
 		expect(send).not.toHaveBeenCalled()
 	})
 })

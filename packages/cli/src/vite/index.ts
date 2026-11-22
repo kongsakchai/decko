@@ -5,5 +5,5 @@ import { slideLoaderPlugin } from './loaders'
 import { slideServerPlugin } from './server'
 
 export function viteDecko(ctx: Context) {
-	return Promise.all([slideHmrPlugin(ctx), slideLoaderPlugin(ctx), slideServerPlugin(ctx)])
+	return [slideHmrPlugin(ctx), slideLoaderPlugin(ctx), slideServerPlugin(ctx)]
 }

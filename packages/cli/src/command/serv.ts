@@ -18,7 +18,7 @@ export async function createServer(root: string, options?: Options) {
 	const inlineConfig: InlineConfig = {
 		configFile: false,
 		plugins: [
-			...(await viteDecko(ctx)),
+			...viteDecko(ctx),
 			tailwindcss(),
 			svelte({
 				extensions: ['.svelte', '.md'],

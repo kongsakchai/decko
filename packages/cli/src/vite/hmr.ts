@@ -1,5 +1,4 @@
 import { Context } from '@/context'
-import { isIgnoredPath } from '@/paths'
 import { EXPLORER_ID } from '@/virtual/explorer'
 import { STYLE_ID } from '@/virtual/styles'
 
@@ -67,7 +66,10 @@ export function slideHmrPlugin(ctx: Context): Plugin {
 				reloadUntracked(file)
 			})
 			server.watcher.on('unlink', (file) => {
-				if (!isIgnoredPath(file) && file.endsWith('.md')) {
+				const resolved = ctx.resolvePath(file)
+				if (!resolved) return
+
+				if (resolved.relative.endsWith('.md')) {
 					return reloadFull()
 				}
 
