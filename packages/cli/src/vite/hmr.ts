@@ -60,7 +60,7 @@ export function slideHmrPlugin(ctx: Context): Plugin {
 			server.watcher.on('add', (file) => {
 				const resolved = ctx.resolvePath(file)
 				if (resolved?.relative.endsWith('.md')) {
-					return reloadModules(EXPLORER_ID, STYLE_ID)
+					return reloadModules(resolved.relative, EXPLORER_ID, STYLE_ID)
 				}
 
 				reloadUntracked(file)
