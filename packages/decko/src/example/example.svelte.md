@@ -4,7 +4,7 @@ date: 15-07-2024
 tags:
     - slide
 font: Mali
-fontSize: 20
+fontSize: 28
 theme: default
 ---
 
@@ -27,6 +27,70 @@ Backend Engineer @ Arise by Infinitas
 ---
 
 ## 📂 Directory Structure
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
+
+```sh
+~/kong
+
+├── labs
+├── projects
+└── workspaces
+```
 
 ```sh
 ~/kong

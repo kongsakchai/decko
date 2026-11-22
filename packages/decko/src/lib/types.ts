@@ -9,6 +9,7 @@ export type SlideComponent = import('svelte').Component<SlideProps>
 export interface SlideProps {
 	page: number
 	step: number
+	showAll?: boolean
 }
 
 // Slide

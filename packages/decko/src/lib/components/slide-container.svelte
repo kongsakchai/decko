@@ -23,7 +23,7 @@
 >
 	<section
 		id="slide-container"
-		class="bg-background absolute top-1/2 left-1/2 flex overflow-hidden"
+		class="bg-background absolute top-1/2 left-1/2 grid overflow-hidden"
 		class:select-none={viewContext.zoom > 1}
 		class:rounded-xl={appearance.slideScale < 1}
 		style:font-size="{appearance.fontScale * asNumber(slideContext.slide.fontSize, 16)}px"
@@ -40,7 +40,6 @@
 
 <style lang="postcss">
 	#slide-container {
-		transform: translate(-50%, -50%) scale(var(--slide-scale));
 		transition:
 			background 300ms ease-in-out,
 			color 300ms ease-in-out;

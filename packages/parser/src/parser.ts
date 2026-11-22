@@ -11,7 +11,7 @@ import { svelteExpressionTransformer } from './html/index.js'
 import { PAGE_BREAK_KEY, TransformOptions, applyTransformers, parseYAML } from './transformers/index.js'
 import type { Directive, SlideContext, SlideInfo, SlideResult } from './types.js'
 
-export interface Options extends TransformOptions {}
+export type Options = TransformOptions
 
 function setupProcessor(options?: Options) {
 	const mdastTransform = unified()
@@ -42,6 +42,7 @@ export function createSlideParser(options?: Options) {
 			slides: [{ breakIndex: 0, global: data }],
 			style: [],
 			script: [],
+			heading: [],
 			extra: {}
 		}
 

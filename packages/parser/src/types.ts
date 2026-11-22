@@ -18,10 +18,17 @@ export interface SlideContextData extends SlideData {
 	global?: Directive
 }
 
+export interface SlideHeader {
+	depth: number
+	text: string
+	index: number
+}
+
 export interface SlideContext {
 	slides: SlideContextData[]
 	style: string[]
 	script: string[]
+	heading: SlideHeader[]
 	extra: Directive
 }
 
