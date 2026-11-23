@@ -15,7 +15,7 @@
 	<title>🌱 PDF {data.title}</title>
 </svelte:head>
 
-<section id="pdf-container" class="h-full w-full overflow-scroll">
+<section id="pdf-container" class="h-full w-full overflow-scroll bg-[#242424] dark:bg-black">
 	<section
 		style:width="{width}px"
 		style:--slide-height="{height}px"
@@ -37,7 +37,7 @@
 			width: 100%;
 			height: 100%;
 			inset: 0;
-			z-index: -2;
+			z-index: -1;
 			user-select: none;
 			top: 0;
 			left: 0;

@@ -1,4 +1,5 @@
 import { EXPLORER_ID } from './explorer'
+import { createPDFModuleId } from './pdf'
 import { createSlideModuleId } from './slide'
 import { VirtualContent } from './types'
 
@@ -6,7 +7,9 @@ export const HTML_SUFFIX = '/index.html'
 
 export const virtualEntryHTML: VirtualContent = (ctx) => {
 	let module = ctx.single ?? ctx.data?.module
-	if (module?.endsWith('.md')) {
+	if (module?.endsWith('/pdf')) {
+		module = createPDFModuleId(module.replace(/\/pdf$/, ''))
+	} else if (module?.endsWith('.md')) {
 		module = createSlideModuleId(module)
 	} else {
 		module = EXPLORER_ID

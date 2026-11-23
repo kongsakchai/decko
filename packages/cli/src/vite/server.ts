@@ -12,13 +12,14 @@ export function slideServerPlugin(ctx: Context): Plugin {
 				const url = req.url || '/'
 				const pathname = decodeURI(url.split('?')[0])
 				const isMarkdown = pathname.endsWith('.md')
+				const isPDF = pathname.endsWith('.md/pdf')
 
 				const isNavigation = req.headers['sec-fetch-dest'] === 'document'
 				if (!isNavigation) {
 					return next()
 				}
 				const assets = ctx.resolvePath(pathname)
-				if (!assets || (assets.isFile && !isMarkdown)) {
+				if (!assets || (assets.isFile && !isMarkdown && !isPDF)) {
 					return next()
 				}
 
