@@ -65,7 +65,7 @@ export const codeContainer: CodeContainer = async (ctx) => {
 			hChildren: [
 				{
 					type: 'raw',
-					value: `<button title="copy code button" class="copy" onclick={()=>window.copyCode()}></button>`
+					value: `<button title="copy code button" class="copy" onclick={window.copyCode}></button>`
 				},
 				{ type: 'raw', value: `<span class="lang">${ctx.lang}</span>` }
 			]

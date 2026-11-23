@@ -48,11 +48,6 @@
 		}
 	})
 
-	$effect(() => {
-		zoomEl.addEventListener('wheel', onWheel, { passive: false })
-		return () => zoomEl.removeEventListener('wheel', onWheel)
-	})
-
 	function clamp(val: number, min: number, max: number) {
 		return Math.max(min, Math.min(max, val))
 	}
@@ -90,12 +85,13 @@
 	bind:this={zoomEl}
 	id="zoom-contrainer"
 	role="presentation"
-	class="grid h-full w-full"
+	class="grid h-full w-full overflow-hidden"
 	style:scale={viewContext.zoom}
 	style:translate="{translateX}px {translateY}px"
 	onpointerdown={onPointerdown}
 	onpointermove={onPointermove}
 	onpointerup={onPointerup}
+	onwheel={onWheel}
 >
 	{@render children()}
 </section>

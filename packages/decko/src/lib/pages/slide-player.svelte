@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SlideContainer, SlideControl, StepProgress } from '../components/index.js'
+	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components/index.js'
 	import { createSlideContext, createViewContext } from '../context/index.js'
 	import { isBrowser } from '../logic/events.js'
 	import type { SlideComponent, SlideData } from '../types.js'
@@ -11,7 +11,7 @@
 		height?: number
 	}
 
-	const { data, slide: Slide, width = 1920, height = 1080 }: Props = $props()
+	const { data, slide: Slide, width = 1280, height = 720 }: Props = $props()
 
 	// svelte-ignore state_referenced_locally
 	const slideCtx = createSlideContext(data)
@@ -34,14 +34,12 @@
 
 <main class="h-full w-full">
 	<SlideContainer>
-		<!-- <ZoomLayout> -->
-		<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
-		<!-- </ZoomLayout> -->
+		<ZoomLayout>
+			<Slide bind:page={slideCtx.page} bind:step={slideCtx.step} />
+		</ZoomLayout>
 
 		<StepProgress />
-
-		{#snippet outside()}
-			<SlideControl />
-		{/snippet}
 	</SlideContainer>
+
+	<SlideControl />
 </main>

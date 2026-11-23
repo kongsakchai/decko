@@ -6,11 +6,13 @@ export function toStyles(directive: Directive): string {
 	const style = asString(directive.style)
 	const font = asString(directive.font)
 	const fontMono = asString(directive.fontMono)
+	const fontSize = asString(directive.fontSize)
 
 	return mergeStr(
 		';',
 		style?.endsWith(';') ? style.slice(0, -1) : style,
 		font && `--font-primary:${font}`,
-		fontMono && `--font-mono:${fontMono}`
+		fontMono && `--font-mono:${fontMono}`,
+		fontSize && `--font-size:${fontSize}`
 	)
 }

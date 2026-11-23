@@ -6,7 +6,7 @@ describe('pageContent', () => {
 	it('should create default page content', () => {
 		const content = pageContent('Hello', 1)
 
-		expect(content).toContain('{#if page === 1}')
+		expect(content).toContain('{#if page === 1 || showAll}')
 		expect(content).toContain("class='slide'")
 		expect(content).toContain("layout='default'")
 		expect(content).toContain('Hello')

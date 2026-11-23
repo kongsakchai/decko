@@ -2,40 +2,40 @@
 	import type { Snippet } from 'svelte'
 
 	import { useSlideContext, useViewContext } from '../context/index.js'
-	import { asNumber } from '../logic/utils.js'
+	import { asString } from '../logic/utils.js'
 	import { appearance } from '../state/appearance.svelte.js'
 
 	interface Props {
-		outside?: Snippet
-		children: Snippet
+		children?: Snippet
 	}
 
-	let { children, outside }: Props = $props()
+	let { children }: Props = $props()
 
 	const viewContext = useViewContext()
 	const slideContext = useSlideContext()
+
+	const fontSize = asString(slideContext.slide.fontSize, '16px')
 </script>
 
+<!-- backdrop -->
 <section
-	class="relative h-full w-full content-center overflow-hidden bg-[#242424] transition-all dark:bg-black"
+	class="relative h-full w-full overflow-hidden bg-[#242424] transition-all dark:bg-black"
 	bind:clientWidth={viewContext.viewportWidth}
 	bind:clientHeight={viewContext.viewportHeight}
 >
+	<!-- container -->
 	<section
 		id="slide-container"
-		class="bg-background absolute top-1/2 left-1/2 grid overflow-hidden"
-		class:select-none={viewContext.zoom > 1}
-		class:rounded-xl={appearance.slideScale < 1}
-		style:font-size="{appearance.fontScale * asNumber(slideContext.slide.fontSize, 16)}px"
+		class="bg-background relative top-1/2 left-1/2 grid origin-center -translate-1/2 overflow-hidden"
 		style:width="{viewContext.width}px"
 		style:height="{viewContext.height}px"
-		style:translate="-50% -50%"
+		class:select-none={viewContext.zoom > 1}
 		style:scale={viewContext.scale * appearance.slideScale}
+		class:rounded-xl={appearance.slideScale < 1}
+		style:font-size="calc({appearance.fontScale} * {fontSize})"
 	>
-		{@render children()}
+		{@render children?.()}
 	</section>
-
-	{@render outside?.()}
 </section>
 
 <style lang="postcss">

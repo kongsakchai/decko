@@ -20,7 +20,7 @@ export function pageContent(content: string, page: number, opts: PageOptions = {
 	const disableRules = ['<!-- svelte-ignore a11y_no_noninteractive_tabindex -->']
 	const pages = [
 		`{#if page === ${page} || showAll}`,
-		`<section class='${className}' ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
+		`<section class='${className}' class:show-all={showAll} ${style} data-page='${page}'  layout='${layout}' transition:fade={{duration:100}}>`,
 		opts.background ? `<div class='slide-background' style='${opts.background}'></div>` : '',
 		opts.pageNumber ? `<div class="slide-page-number">${opts.pageNumber}</div>` : '',
 		opts.split ? `<div class="split" style="${opts.split}">${content}</div>` : content,

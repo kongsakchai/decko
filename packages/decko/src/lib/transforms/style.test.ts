@@ -13,8 +13,9 @@ describe('toStyles', () => {
 			toStyles({
 				style: 'color:red;',
 				font: 'mali',
-				fontMono: 'GeistMono NF'
+				fontMono: 'GeistMono NF',
+				fontSize: '15px'
 			})
-		).toBe('color:red;--font-primary:mali;--font-mono:GeistMono NF')
+		).toBe('color:red;--font-primary:mali;--font-mono:GeistMono NF;--font-size:15px')
 	})
 })

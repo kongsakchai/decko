@@ -1,5 +1,7 @@
 import { createContext } from 'svelte'
 
+import { calScale } from '../logic/scale.js'
+
 export interface ViewContext {
 	width: number
 	height: number
@@ -15,6 +17,7 @@ class Context implements ViewContext {
 	viewportWidth = $state<number>(1280)
 	viewportHeight = $state<number>(720)
 	zoom = $state<number>(1)
+	readonly scale = $derived(calScale(this.viewportWidth, this.viewportHeight, this.width, this.height))
 
 	constructor(source?: Partial<ViewContext>) {
 		this.width = source?.width || 1280
@@ -22,19 +25,6 @@ class Context implements ViewContext {
 		this.viewportWidth = source?.viewportWidth || 1280
 		this.viewportHeight = source?.viewportHeight || 720
 		this.zoom = source?.zoom || 1
-	}
-
-	get scale() {
-		if (this.width <= 0 || this.height <= 0 || this.viewportWidth <= 0 || this.viewportHeight <= 0) {
-			return 0
-		}
-
-		const aspect = this.width / this.height
-		const scaledHeight = this.viewportWidth / aspect
-		const isOverHeight = scaledHeight > this.viewportHeight
-		const finalWidth = isOverHeight ? this.viewportHeight * aspect : this.viewportWidth
-
-		return finalWidth / this.width
 	}
 }
 
