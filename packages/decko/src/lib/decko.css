@@ -360,6 +360,10 @@
 		grid-row: 1;
 
 		overflow-y: scroll;
+
+		/* support for stacking context and containing block */
+		isolation: isolate;
+		transform: translate(0, 0);
 	}
 
 	section.slide .slide-background,
@@ -382,14 +386,6 @@
 		position: fixed;
 		bottom: 1rem;
 		right: 1rem;
-	}
-
-	section.slide.show-all {
-		overflow-y: hidden;
-
-		.slide-page-number {
-			position: absolute;
-		}
 	}
 
 	section.slide .split {

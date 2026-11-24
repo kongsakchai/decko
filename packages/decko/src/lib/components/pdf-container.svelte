@@ -1,27 +1,23 @@
 <script lang="ts">
-	import type { SlideComponent, SlideData } from '../types.js'
+	import type { Snippet } from 'svelte'
 
 	interface Props {
-		data: SlideData
-		slide: SlideComponent
+		children?: Snippet
 		width?: number
 		height?: number
 	}
 
-	const { data, slide: Slide, width = 1280, height = 720 }: Props = $props()
+	const { children, width = 1280, height = 720 }: Props = $props()
 </script>
 
-<svelte:head>
-	<title>🌱 PDF {data.title}</title>
-</svelte:head>
-
-<section id="pdf-container" class="h-full w-full overflow-scroll bg-[#242424] dark:bg-black">
+<section class="h-full w-full overflow-scroll bg-[#242424] dark:bg-black">
 	<section
+		id="pdf-container"
 		style:width="{width}px"
 		style:--slide-height="{height}px"
 		class="mx-auto flex origin-top zoom-50 flex-col gap-1"
 	>
-		<Slide page={0} step={0} showAll />
+		{@render children?.()}
 	</section>
 </section>
 
@@ -37,7 +33,7 @@
 			width: 100%;
 			height: 100%;
 			inset: 0;
-			z-index: -1;
+			z-index: -2;
 			user-select: none;
 			top: 0;
 			left: 0;

@@ -112,7 +112,8 @@
 		"lz-string": "^1.5.0",
 		"magic-string": "^1.1.0",
 		"pele": "^1.13.0",
-		"shiki": "^4.3.1"
+		"shiki": "^4.3.1",
+		"tailwind-merge": "^3.7.1"
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"

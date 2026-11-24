@@ -1,0 +1,2416 @@
+<!doctype html>
+<html lang="th" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Decko · Context &amp; State Graph</title>
+<style>
+  :root {
+    --bg: #070b14;
+    --bg-2: #0a1120;
+    --panel: rgba(11, 18, 32, 0.92);
+    --card: #111b2e;
+    --card-hi: #16223a;
+    --text: #e8eefc;
+    --muted: #95a5c0;
+    --faint: #62718a;
+    --line: rgba(148, 163, 184, 0.16);
+    --line-strong: rgba(148, 163, 184, 0.28);
+    --lane: rgba(148, 163, 184, 0.035);
+    --lane-line: rgba(148, 163, 184, 0.12);
+    --halo: rgba(7, 11, 20, 0.94);
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    --radius: 16px;
+    --header-h: 74px;
+    color-scheme: dark;
+  }
+
+  html[data-theme="light"] {
+    --bg: #eef3fa;
+    --bg-2: #e6edf7;
+    --panel: rgba(255, 255, 255, 0.92);
+    --card: #ffffff;
+    --card-hi: #f8fafc;
+    --text: #0f172a;
+    --muted: #52627a;
+    --faint: #7b8aa1;
+    --line: rgba(15, 23, 42, 0.12);
+    --line-strong: rgba(15, 23, 42, 0.22);
+    --lane: rgba(15, 23, 42, 0.025);
+    --lane-line: rgba(15, 23, 42, 0.1);
+    --halo: rgba(238, 243, 250, 0.96);
+    --shadow: 0 20px 55px rgba(15, 23, 42, 0.14);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(34, 211, 238, 0.09), transparent 60%),
+      radial-gradient(900px 500px at 95% 0%, rgba(251, 113, 133, 0.08), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: "SF Pro Display", "Segoe UI", "Noto Sans Thai", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button, input { font: inherit; color: inherit; }
+
+  header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+    backdrop-filter: blur(16px);
+    z-index: 20;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 210px;
+  }
+
+  .logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: #07101e;
+    background: linear-gradient(135deg, #22d3ee, #a78bfa 55%, #fb7185);
+    box-shadow: 0 6px 24px rgba(34, 211, 238, 0.28);
+  }
+
+  .brand h1 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .brand p {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--faint);
+    letter-spacing: 0.04em;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 200px;
+    max-width: 340px;
+    flex: 1 1 240px;
+  }
+
+  .search svg {
+    position: absolute;
+    left: 11px;
+    width: 15px;
+    height: 15px;
+    color: var(--faint);
+    pointer-events: none;
+  }
+
+  .search input {
+    width: 100%;
+    height: 38px;
+    padding: 0 66px 0 34px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+
+  .search input:focus {
+    border-color: rgba(34, 211, 238, 0.65);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.14);
+  }
+
+  .search input::placeholder { color: var(--faint); }
+
+  .search .kbd {
+    position: absolute;
+    right: 9px;
+    font-size: 10px;
+    color: var(--faint);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 5px;
+    background: var(--bg-2);
+    pointer-events: none;
+  }
+
+  .search #search-count {
+    position: absolute;
+    right: 42px;
+    font-size: 10px;
+    color: var(--faint);
+    pointer-events: none;
+  }
+
+  .segmented {
+    display: flex;
+    padding: 3px;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--card);
+  }
+
+  .segmented button {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.16s, color 0.16s;
+  }
+
+  .segmented button:hover { color: var(--text); }
+
+  .segmented button.active {
+    background: var(--card-hi);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .segmented button[data-view="all"].active { color: #a78bfa; }
+  .segmented button[data-view="context"].active { color: #22d3ee; }
+  .segmented button[data-view="state"].active { color: #fbbf24; }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    transition: background 0.16s, color 0.16s, border-color 0.16s;
+  }
+
+  .icon-btn:hover { background: var(--card-hi); color: var(--text); }
+  .icon-btn.active {
+    color: #22d3ee;
+    border-color: rgba(34, 211, 238, 0.55);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+  }
+
+  main {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 370px;
+  }
+
+  #stage {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background-image: radial-gradient(rgba(148, 163, 184, 0.14) 0.7px, transparent 0.7px);
+    background-size: 22px 22px;
+  }
+
+  html[data-theme="light"] #stage {
+    background-image: radial-gradient(rgba(15, 23, 42, 0.13) 0.7px, transparent 0.7px);
+  }
+
+  #graph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  #stage.panning #graph { cursor: grabbing; }
+  #stage.dragging #graph { cursor: grabbing; }
+
+  .lane-rect {
+    fill: var(--lane);
+    stroke: var(--lane-line);
+    stroke-width: 1;
+  }
+
+  .lane-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.24em;
+    opacity: 0.85;
+  }
+
+  .lane-sub {
+    font-size: 10.5px;
+    fill: var(--faint);
+    letter-spacing: 0.02em;
+  }
+
+  .node { cursor: pointer; outline: none; }
+
+  .node-bg {
+    fill: var(--card);
+    stroke: var(--line);
+    stroke-width: 1;
+    transition: fill 0.18s, stroke 0.18s, opacity 0.18s;
+  }
+
+  .node-accent { opacity: 0.9; }
+
+  .node-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    opacity: 0;
+    transition: opacity 0.16s;
+  }
+
+  .node-group {
+    font-size: 8.5px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    opacity: 0.78;
+  }
+
+  .node-icon {
+    font-size: 18px;
+    font-weight: 700;
+    opacity: 0.95;
+  }
+
+  .node-title {
+    fill: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.005em;
+  }
+
+  .node-file {
+    fill: var(--faint);
+    font-size: 10.5px;
+    font-family: "SFMono-Regular", "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
+  }
+
+  .node:hover .node-bg,
+  .node.hover .node-bg {
+    fill: var(--card-hi);
+    stroke: var(--accent);
+    stroke-width: 1.4;
+  }
+
+  .node:hover .node-ring { opacity: 0.5; }
+
+  .node.selected .node-ring { opacity: 1; }
+  .node.selected .node-bg { fill: var(--card-hi); stroke: var(--accent); }
+
+  .node.connected .node-bg { stroke: var(--accent); stroke-opacity: 0.7; }
+
+  .node.dim {
+    opacity: 0.14;
+    pointer-events: none;
+  }
+
+  .edge-line {
+    fill: none;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    opacity: 0.55;
+    transition: opacity 0.18s, stroke-width 0.18s;
+  }
+
+  .edge-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 16;
+    pointer-events: stroke;
+    cursor: pointer;
+  }
+
+  .edge-label {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.16s;
+  }
+
+  .edge-label-text {
+    font-size: 10px;
+    font-weight: 600;
+    fill: var(--muted);
+    paint-order: stroke;
+    stroke: var(--halo);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+
+  .edge.connected .edge-label,
+  .edge:hover .edge-label,
+  .edge.selected .edge-label,
+  #graph.show-labels .edge-label {
+    opacity: 1;
+  }
+
+  .edge.connected .edge-line,
+  .edge:hover .edge-line { opacity: 1; stroke-width: 2.4; }
+
+  .edge.selected .edge-line {
+    opacity: 1;
+    stroke-width: 3;
+    stroke-dasharray: 8 5;
+    animation: dashflow 1.1s linear infinite;
+  }
+
+  .edge.dim { opacity: 0.09; pointer-events: none; }
+
+  @keyframes dashflow { to { stroke-dashoffset: -26; } }
+
+  .overlay {
+    position: absolute;
+    z-index: 5;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    backdrop-filter: blur(14px);
+    border-radius: 13px;
+    box-shadow: var(--shadow);
+  }
+
+  #stats {
+    top: 14px;
+    left: 14px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  #stats b { color: var(--text); font-weight: 700; }
+  #stats .dot { color: var(--faint); }
+
+  #legend {
+    left: 14px;
+    bottom: 14px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 10.5px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+
+  .legend-line {
+    width: 22px;
+    height: 0;
+    border-top: 2px solid currentColor;
+    position: relative;
+  }
+
+  .legend-line.dashed { border-top-style: dashed; }
+
+  .legend-line::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -3.5px;
+    border-left: 5px solid currentColor;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+  }
+
+  #zoom-controls {
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 4px;
+    gap: 2px;
+  }
+
+  #zoom-controls button {
+    width: 34px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    display: grid;
+    place-items: center;
+  }
+
+  #zoom-controls button:hover { background: var(--card-hi); color: var(--text); }
+  #zoom-controls .zoom-label {
+    font-size: 9px;
+    color: var(--faint);
+    text-align: center;
+    padding: 2px 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #hint {
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    padding: 7px 12px;
+    font-size: 10.5px;
+    color: var(--faint);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  #hint kbd {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 9.5px;
+    color: var(--muted);
+    background: var(--bg-2);
+  }
+
+  #tooltip {
+    position: absolute;
+    z-index: 30;
+    max-width: 280px;
+    padding: 9px 11px;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(0, 6px);
+    transition: opacity 0.12s, transform 0.12s;
+  }
+
+  #tooltip.show { opacity: 1; transform: translate(0, 0); }
+  #tooltip .tt-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  #tooltip .tt-meta { font-size: 10px; color: var(--faint); font-family: ui-monospace, monospace; }
+  #tooltip .tt-label { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
+
+  aside#panel {
+    min-width: 0;
+    min-height: 0;
+    border-left: 1px solid var(--line);
+    background: var(--panel);
+    backdrop-filter: blur(18px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-head {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .panel-head h2 {
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--faint);
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  .panel-head button {
+    border: 0;
+    background: transparent;
+    color: var(--faint);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
+
+  .panel-head button:hover { background: var(--card-hi); color: var(--text); }
+
+  #panel-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 18px 16px 28px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  #panel-body::-webkit-scrollbar { width: 8px; }
+  #panel-body::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 8px; }
+
+  .hero-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    color: #07101e;
+    background: linear-gradient(135deg, #22d3ee, #a78bfa 55%, #fb7185);
+    margin-bottom: 12px;
+  }
+
+  #panel-body h2 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  #panel-body p {
+    margin: 0 0 12px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  #panel-body h3 {
+    margin: 20px 0 9px;
+    font-size: 10.5px;
+    color: var(--faint);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 14px 0 4px;
+  }
+
+  .stat {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: var(--card);
+  }
+
+  .stat b {
+    display: block;
+    font-size: 20px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat span { font-size: 10.5px; color: var(--faint); }
+
+  .tips {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .tips li {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+  }
+
+  .tips li::before {
+    content: "›";
+    color: #22d3ee;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  .legend-list { display: flex; flex-direction: column; gap: 7px; }
+
+  .legend-list .legend-item { font-size: 11.5px; }
+
+  .group-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .group-chip {
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    background: var(--card);
+  }
+
+  .group-chip b { color: var(--text); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c);
+    border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+    background: color-mix(in srgb, var(--c) 10%, transparent);
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+
+  .file-path {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    margin: 0 0 8px;
+  }
+
+  .file-path code {
+    font-family: "SFMono-Regular", ui-monospace, monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    color: var(--muted);
+    word-break: break-all;
+    flex: 1;
+  }
+
+  .file-path button {
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: var(--faint);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 1px 3px;
+    border-radius: 4px;
+  }
+
+  .file-path button:hover { color: #22d3ee; background: var(--card-hi); }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .meta-chip {
+    font-size: 10px;
+    color: var(--faint);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-family: ui-monospace, monospace;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+  .chip {
+    font-size: 10.5px;
+    font-family: ui-monospace, monospace;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 6px;
+    padding: 3px 7px;
+    line-height: 1.4;
+  }
+
+  .note {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-left: 2px solid #22d3ee;
+    background: rgba(34, 211, 238, 0.06);
+    border-radius: 0 8px 8px 0;
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .connections { display: flex; flex-direction: column; gap: 5px; }
+
+  .conn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    text-align: left;
+    padding: 7px 9px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    background: var(--card);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .conn:hover { border-color: var(--line-strong); background: var(--card-hi); }
+
+  .conn .dir {
+    flex: 0 0 auto;
+    width: 18px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--faint);
+  }
+
+  .conn .conn-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .conn strong { font-size: 11.5px; font-weight: 600; }
+  .conn small {
+    font-size: 9.5px;
+    color: var(--faint);
+    font-family: ui-monospace, monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .back-btn {
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 5px 9px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+
+  .back-btn:hover { color: var(--text); border-color: var(--line-strong); }
+
+  .edge-hero {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    flex-wrap: wrap;
+  }
+
+  .edge-hero .arrow { color: var(--faint); font-weight: 400; }
+
+  .node-link {
+    border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line));
+    background: color-mix(in srgb, var(--c) 10%, var(--card));
+    color: var(--text);
+    border-radius: 8px;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .node-link:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 18%, var(--card)); }
+
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 18px);
+    z-index: 100;
+    background: var(--card-hi);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+  }
+
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 1180px) {
+    #hint { display: none; }
+  }
+
+  @media (max-width: 960px) {
+    main { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
+    aside#panel {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      max-height: 38vh;
+    }
+    .brand { min-width: 0; }
+    .brand p { display: none; }
+    header { gap: 10px; padding: 10px 12px; }
+    .toolbar { gap: 6px; }
+    .segmented button { padding: 6px 9px; font-size: 11px; }
+  }
+
+  @media (max-width: 640px) {
+    header { flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; }
+    .brand { flex: 1 1 auto; }
+    .brand h1 { font-size: 13px; }
+    .logo { width: 32px; height: 32px; font-size: 15px; }
+    .toolbar {
+      flex: 1 1 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+    }
+    .search {
+      grid-column: 1 / -1;
+      flex-basis: auto;
+      max-width: none;
+      min-width: 0;
+    }
+    .search .kbd { display: none; }
+    .segmented { grid-column: 1; justify-self: start; }
+    #labels-btn { display: none; }
+    #theme-btn { grid-column: 2; }
+    #stats, #legend { display: none; }
+    aside#panel { max-height: 42vh; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">D</div>
+      <div>
+        <h1>Context &amp; State</h1>
+        <p>decko · interactive dependency graph</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
+        <input id="search" type="search" placeholder="ค้นหาโหนด, ไฟล์, API…" autocomplete="off" spellcheck="false" />
+        <span id="search-count"></span>
+        <span class="kbd">/</span>
+      </label>
+
+      <div class="segmented" role="tablist" aria-label="เลือกมุมมอง">
+        <button type="button" data-view="all" class="active" role="tab" aria-selected="true">ทั้งหมด</button>
+        <button type="button" data-view="context" role="tab" aria-selected="false">Context</button>
+        <button type="button" data-view="state" role="tab" aria-selected="false">State</button>
+      </div>
+
+      <button id="labels-btn" class="icon-btn" type="button" title="แสดง/ซ่อนป้ายเส้นเชื่อม (L)" aria-pressed="false">🏷️</button>
+      <button id="theme-btn" class="icon-btn" type="button" title="สลับ theme">🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="stage" aria-label="กราฟความสัมพันธ์ของ context และ state">
+      <svg id="graph" role="application" aria-label="Interactive graph">
+        <defs>
+          <linearGradient id="sharedAccent" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22d3ee" />
+            <stop offset="50%" stop-color="#c084fc" />
+            <stop offset="100%" stop-color="#fb7185" />
+          </linearGradient>
+
+          <marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#a78bfa"></path>
+          </marker>
+          <marker id="arrow-context" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#22d3ee"></path>
+          </marker>
+          <marker id="arrow-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#fbbf24"></path>
+          </marker>
+          <marker id="arrow-sync" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#fb7185"></path>
+          </marker>
+          <marker id="arrow-storage" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#34d399"></path>
+          </marker>
+        </defs>
+
+        <g id="viewport">
+          <g id="lanes"></g>
+          <g id="edges"></g>
+          <g id="nodes"></g>
+        </g>
+      </svg>
+
+      <div id="stats" class="overlay"></div>
+
+      <div id="legend" class="overlay" aria-hidden="true">
+        <div class="legend-item" style="color:#a78bfa"><span class="legend-line"></span>สร้าง context</div>
+        <div class="legend-item" style="color:#22d3ee"><span class="legend-line"></span>ใช้ context</div>
+        <div class="legend-item" style="color:#fbbf24"><span class="legend-line"></span>อ่าน state</div>
+        <div class="legend-item" style="color:#fb7185"><span class="legend-line"></span>อ่าน / เขียน state</div>
+        <div class="legend-item" style="color:#34d399"><span class="legend-line dashed"></span>owns / persist</div>
+      </div>
+
+      <div id="zoom-controls" class="overlay">
+        <button type="button" id="zoom-in" title="ซูมเข้า (+)">+</button>
+        <button type="button" id="zoom-out" title="ซูมออก (−)">−</button>
+        <button type="button" id="fit-btn" title="พอดีหน้าจอ (F)">⛶</button>
+        <button type="button" id="reset-btn" title="รีเซ็ตตำแหน่ง (R)">↺</button>
+        <div class="zoom-label" id="zoom-label">100%</div>
+      </div>
+
+      <div id="hint" class="overlay">
+        ลากพื้นหลัง = เลื่อน · scroll = ซูม · คลิกโหนด = ดูรายละเอียด · <kbd>/</kbd> ค้นหา
+      </div>
+
+      <div id="tooltip" role="status" aria-live="polite"></div>
+    </section>
+
+    <aside id="panel" aria-label="รายละเอียด">
+      <div class="panel-head">
+        <h2>Inspector</h2>
+        <button type="button" id="panel-home" title="กลับหน้าภาพรวม">ภาพรวม</button>
+      </div>
+      <div id="panel-body"></div>
+    </aside>
+  </main>
+
+  <div id="toast" role="status"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const NS = "http://www.w3.org/2000/svg";
+  const NODE_W = 236;
+  const NODE_H = 68;
+
+  const COLORS = {
+    provider: "#a78bfa",
+    context: "#22d3ee",
+    consumer: "#60a5fa",
+    shared: "#c084fc",
+    state: "#fbbf24",
+    storage: "#34d399",
+    browser: "#4ade80",
+    stateConsumer: "#fb7185"
+  };
+
+  const GROUPS = {
+    provider: { label: "PROVIDER", color: COLORS.provider, icon: "▷" },
+    context: { label: "CONTEXT", color: COLORS.context, icon: "◈" },
+    consumer: { label: "CONSUMER", color: COLORS.consumer, icon: "▦" },
+    shared: { label: "SHARED", color: COLORS.shared, icon: "⇄" },
+    state: { label: "STATE", color: COLORS.state, icon: "⚙" },
+    storage: { label: "STORAGE", color: COLORS.storage, icon: "▤" },
+    browser: { label: "BROWSER", color: COLORS.browser, icon: "◍" },
+    stateConsumer: { label: "STATE USER", color: COLORS.stateConsumer, icon: "◈" }
+  };
+
+  const NODES = [
+    {
+      id: "slide-player",
+      title: "SlidePlayer",
+      file: "slide-player.svelte",
+      path: "packages/decko/src/lib/pages/slide-player.svelte",
+      lines: "17, 19, 21–27",
+      group: "provider",
+      systems: ["context"],
+      desc: "หน้าเล่นสไลด์ สร้าง SlideContext และ ViewContext ให้ทั้ง subtree พร้อม sync เลขหน้าลง URL hash และ bind page/step ให้ slide component",
+      apis: ["createSlideContext(data)", "createViewContext({ width, height })", "slideCtx.goto(page)", "slideCtx.page"]
+    },
+    {
+      id: "pdf-preview",
+      title: "PDFPreview",
+      file: "pdf-preview.svelte",
+      path: "packages/decko/src/lib/pages/pdf-preview.svelte",
+      lines: "16, 18",
+      group: "provider",
+      systems: ["context"],
+      desc: "หน้าพรีวิว/export PDF สร้าง context ชุดเดียวกับ SlidePlayer เพื่อให้ slide component และ CodeStepBlock ใช้งานได้",
+      apis: ["createSlideContext(data)", "createViewContext({ width, height })"]
+    },
+    {
+      id: "slide-context",
+      title: "SlideContext",
+      file: "slide.svelte.ts",
+      path: "packages/decko/src/lib/context/slide.svelte.ts",
+      lines: "88–93",
+      group: "context",
+      systems: ["context"],
+      desc: "context กลางของ deck เก็บ page, step, action และ slide data ใช้ createContext() ของ Svelte 5 โดยค่าภายในเป็น $state",
+      apis: ["createSlideContext(slide)", "useSlideContext()", "goto(page, step?, action?)", "next()", "previous()", "page / step / action / totalPage / maxStep"]
+    },
+    {
+      id: "view-context",
+      title: "ViewContext",
+      file: "view.svelte.ts",
+      path: "packages/decko/src/lib/context/view.svelte.ts",
+      lines: "31–36",
+      group: "context",
+      systems: ["context"],
+      desc: "context ของขนาดเวทีและ zoom เก็บ width, height, viewportWidth/Height, zoom โดย scale เป็น $derived จาก calScale()",
+      apis: ["createViewContext(source?)", "useViewContext()", "width / height", "viewportWidth / viewportHeight", "zoom", "scale ($derived)"]
+    },
+    {
+      id: "slide-container",
+      title: "SlideContainer",
+      file: "slide-container.svelte",
+      path: "packages/decko/src/lib/components/slide-container.svelte",
+      lines: "14–15, 23–24, 30–35",
+      group: "shared",
+      systems: ["context", "state"],
+      desc: "ตัวห่อสไลด์ ผูก viewport จาก DOM, scale เวที และอ่าน appearance เพื่อปรับ font/slide size — เป็นจุดเชื่อมของทั้งสองระบบ",
+      apis: ["useViewContext()", "useSlideContext()", "bind clientWidth/clientHeight", "appearance.slideScale", "appearance.fontScale"]
+    },
+    {
+      id: "navigation-control",
+      title: "NavigationControl",
+      file: "navigation-control.svelte",
+      path: "packages/decko/src/lib/components/navigation-control.svelte",
+      lines: "6, 10, 16, 21",
+      group: "consumer",
+      systems: ["context"],
+      desc: "ปุ่ม previous/next และเลขหน้า เรียก slide context โดยตรง",
+      apis: ["slideCtx.previous()", "slideCtx.next()", "slideCtx.page", "slideCtx.totalPage"]
+    },
+    {
+      id: "step-progress",
+      title: "StepProgress",
+      file: "step-progress.svelte",
+      path: "packages/decko/src/lib/components/step-progress.svelte",
+      lines: "4–6",
+      group: "consumer",
+      systems: ["context"],
+      desc: "แถบ progress ของ step ภายในหน้าปัจจุบัน คำนวณด้วย $derived จาก step และ maxStep",
+      apis: ["slideCtx.step", "slideCtx.maxStep", "$derived progress"]
+    },
+    {
+      id: "theme-selector",
+      title: "ThemeSelector",
+      file: "theme-selector.svelte",
+      path: "packages/decko/src/lib/components/theme-selector.svelte",
+      lines: "15, 17–19, 21–23, 38–44",
+      group: "shared",
+      systems: ["context", "state"],
+      desc: "เลือก theme โดยอ่าน slide.theme เป็นค่าเริ่มต้น แล้ว fallback ไป appearance.theme เมื่อเลือกจะเขียน appearance.theme",
+      apis: ["slideCtx.slide.themes", "slideCtx.slide.theme", "appearance.theme", "appearance.isDark", "appearance.theme = theme"]
+    },
+    {
+      id: "code-step-block",
+      title: "CodeStepBlock",
+      file: "code-step-block.svelte",
+      path: "packages/decko/src/lib/components/code-step-block.svelte",
+      lines: "16–17, 19–20, 23",
+      group: "consumer",
+      systems: ["context"],
+      desc: "code animation ตาม step ใช้ slide.step และ view.scale ส่งให้ ShikiMagicMovePrecompiled",
+      apis: ["slideCtx.step", "viewContext.scale", "ShikiMagicMovePrecompiled"]
+    },
+    {
+      id: "zoom-layout",
+      title: "ZoomLayout",
+      file: "zoom-layout.svelte",
+      path: "packages/decko/src/lib/components/zoom-layout.svelte",
+      lines: "20, 24, 34–42, 75, 89",
+      group: "consumer",
+      systems: ["context"],
+      desc: "จัดการ pan/zoom ด้วย pointer และ wheel อ่าน/เขียน viewContext.zoom และคำนวณขอบเขตการลาก",
+      apis: ["viewContext.zoom", "viewContext.zoom = ...", "$derived scale/translate"]
+    },
+    {
+      id: "view-control",
+      title: "ViewControl",
+      file: "view-control.svelte",
+      path: "packages/decko/src/lib/components/view-control.svelte",
+      lines: "12, 50–51",
+      group: "consumer",
+      systems: ["context"],
+      desc: "ปุ่ม fullscreen และ slider zoom ผูกค่ากับ viewContext.zoom",
+      apis: ["viewContext.zoom (bind)", "document.fullscreenElement"]
+    },
+    {
+      id: "stepper",
+      title: "Stepper",
+      file: "stepper.ts",
+      path: "packages/decko/src/lib/logic/stepper.ts",
+      lines: "42, 45, 50–53",
+      group: "consumer",
+      systems: ["context"],
+      desc: "ฟังก์ชัน @attach ที่ markup ที่ generate ขึ้นมาเรียก ใช้ slide context เพื่อ toggle class ตาม step และ action",
+      apis: ["useSlideContext()", "slideCtx.page", "slideCtx.action", "slideCtx.step"],
+      note: "เรียกจาก transforms/step.ts:54 → {@attach stepper(page, ...)} และ import ที่ transforms/templates.ts:66"
+    },
+    {
+      id: "appearance",
+      title: "appearance",
+      file: "appearance.svelte.ts",
+      path: "packages/decko/src/lib/state/appearance.svelte.ts",
+      lines: "4–7, 44",
+      group: "state",
+      systems: ["state"],
+      desc: "singleton ระดับ module ห่อ LocalStorage 4 ตัว: theme mode, theme, font scale, slide scale พร้อม getter/setter",
+      apis: ["appearance.isDark", "appearance.toggleDark()", "appearance.theme", "appearance.fontScale", "appearance.slideScale"]
+    },
+    {
+      id: "local-storage",
+      title: "LocalStorage",
+      file: "storage.svelte.ts",
+      path: "packages/decko/src/lib/state/storage.svelte.ts",
+      lines: "3–24",
+      group: "storage",
+      systems: ["state"],
+      desc: "wrapper ของ localStorage + Svelte $state; setter current จะอัปเดต state และเขียน localStorage ทันที",
+      apis: ["new LocalStorage(key, fallback)", "store.current (get/set)", "#value = $state", "localStorage.getItem/setItem"]
+    },
+    {
+      id: "browser-storage",
+      title: "localStorage",
+      file: "Web Storage",
+      path: "browser · window.localStorage",
+      lines: "4 keys",
+      group: "browser",
+      systems: ["state"],
+      desc: "Web Storage ของเบราว์เซอร์ เก็บ 4 keys ของ appearance และถูกอ่านตอน constructor ของ LocalStorage",
+      apis: ["decko-theme-mode", "deck-theme", "decko-font-scale", "decko-slide-scale"]
+    },
+    {
+      id: "theme-toggle",
+      title: "ThemeToggle",
+      file: "theme-toggle.svelte",
+      path: "packages/decko/src/lib/components/theme-toggle.svelte",
+      lines: "6, 14–16, 20, 24",
+      group: "stateConsumer",
+      systems: ["state"],
+      desc: "ปุ่มสลับ dark mode sync class 'dark' ที่ <html> และเรียก appearance.toggleDark()",
+      apis: ["appearance.isDark", "appearance.toggleDark()", "document.documentElement.classList.toggle('dark')"]
+    },
+    {
+      id: "appearance-control",
+      title: "AppearanceControl",
+      file: "appearance-control.svelte",
+      path: "packages/decko/src/lib/components/appearance-control.svelte",
+      lines: "4, 31–33, 38–41",
+      group: "stateConsumer",
+      systems: ["state"],
+      desc: "slider ปรับ font size / slide size พร้อมปุ่ม reset ค่าเป็น 1",
+      apis: ["bind:value={appearance.fontScale}", "appearance.fontScale = 1", "bind:value={appearance.slideScale}", "appearance.slideScale = 1"]
+    },
+    {
+      id: "light-or-dark",
+      title: "LightOrDark",
+      file: "light-or-dark.svelte",
+      path: "packages/decko/src/lib/builtin/light-or-dark.svelte",
+      lines: "4, 14",
+      group: "stateConsumer",
+      systems: ["state"],
+      desc: "builtin snippet เลือก render light หรือ dark ตาม appearance.isDark",
+      apis: ["appearance.isDark"]
+    },
+    {
+      id: "explorer",
+      title: "Explorer",
+      file: "explorer.svelte",
+      path: "packages/decko/src/lib/pages/explorer.svelte",
+      lines: "3, 19",
+      group: "stateConsumer",
+      systems: ["state"],
+      desc: "หน้า explorer แสดงรายการไฟล์ ใช้ appearance.isDark สำหรับ class dark",
+      apis: ["appearance.isDark"]
+    }
+  ];
+
+  const NODE_BY_ID = new Map(NODES.map((n) => [n.id, n]));
+
+  const EDGE_TYPES = {
+    create: { label: "สร้าง context", color: "#a78bfa", desc: "สร้าง context ด้วย createContext() แล้วส่งต่อผ่าน setter — ต้องเรียกในช่วง init ของ component" },
+    context: { label: "ใช้ context", color: "#22d3ee", desc: "เรียก use*Context() จาก descendant; ค่าที่อ่านเป็น reactive อัตโนมัติ" },
+    read: { label: "อ่าน state", color: "#fbbf24", desc: "อ่านค่าจาก appearance แบบ reactive โดยไม่เขียนกลับ" },
+    sync: { label: "อ่าน / เขียน state", color: "#fb7185", desc: "อ่านค่าจาก appearance และเขียนกลับผ่าน setter; LocalStorage จะ persist ลง localStorage" },
+    storage: { label: "owns / persist", color: "#34d399", desc: "appearance ถือ LocalStorage หลาย instance และ LocalStorage sync กับ Web Storage" }
+  };
+
+  const EDGES = [
+    { id: "e01", from: "slide-player", to: "slide-context", type: "create", label: "createSlideContext(data)" },
+    { id: "e02", from: "slide-player", to: "view-context", type: "create", label: "createViewContext(w, h)" },
+    { id: "e03", from: "pdf-preview", to: "slide-context", type: "create", label: "createSlideContext(data)" },
+    { id: "e04", from: "pdf-preview", to: "view-context", type: "create", label: "createViewContext(w, h)" },
+    { id: "e05", from: "slide-context", to: "slide-container", type: "context", label: "useSlideContext()" },
+    { id: "e06", from: "slide-context", to: "navigation-control", type: "context", label: "useSlideContext()" },
+    { id: "e07", from: "slide-context", to: "step-progress", type: "context", label: "useSlideContext()" },
+    { id: "e08", from: "slide-context", to: "theme-selector", type: "context", label: "useSlideContext()" },
+    { id: "e09", from: "slide-context", to: "code-step-block", type: "context", label: "useSlideContext()" },
+    { id: "e10", from: "slide-context", to: "stepper", type: "context", label: "useSlideContext()" },
+    { id: "e11", from: "view-context", to: "slide-container", type: "context", label: "useViewContext()" },
+    { id: "e12", from: "view-context", to: "code-step-block", type: "context", label: "useViewContext()" },
+    { id: "e13", from: "view-context", to: "zoom-layout", type: "context", label: "useViewContext()" },
+    { id: "e14", from: "view-context", to: "view-control", type: "context", label: "useViewContext()" },
+    { id: "e15", from: "appearance", to: "local-storage", type: "storage", label: "owns 4 LocalStorage keys" },
+    { id: "e16", from: "local-storage", to: "browser-storage", type: "storage", label: "getItem / setItem", bidirectional: true },
+    { id: "e17", from: "theme-toggle", to: "appearance", type: "sync", label: "isDark ↔ toggleDark()", bidirectional: true },
+    { id: "e18", from: "theme-selector", to: "appearance", type: "sync", label: "theme ↔ set theme", bidirectional: true },
+    { id: "e19", from: "appearance-control", to: "appearance", type: "sync", label: "fontScale / slideScale ↔ set", bidirectional: true },
+    { id: "e20", from: "slide-container", to: "appearance", type: "read", label: "slideScale / fontScale" },
+    { id: "e21", from: "explorer", to: "appearance", type: "read", label: "isDark" },
+    { id: "e22", from: "light-or-dark", to: "appearance", type: "read", label: "isDark" }
+  ];
+
+  const LAYOUTS = {
+    all: {
+      lanes: [
+        {
+          x: 20, y: 20, w: 1260, h: 660,
+          title: "CONTEXT",
+          subtitle: "component-scoped · createContext() + use*Context()",
+          color: "#22d3ee"
+        },
+        {
+          x: 20, y: 700, w: 1260, h: 350,
+          title: "STATE",
+          subtitle: "module-level singleton · persisted to localStorage",
+          color: "#fbbf24"
+        }
+      ],
+      fit: { x: 0, y: 0, w: 1300, h: 1070 },
+      nodes: {
+        "slide-player": [60, 110],
+        "pdf-preview": [60, 270],
+        "slide-context": [380, 110],
+        "view-context": [380, 290],
+        "slide-container": [720, 50],
+        "navigation-control": [720, 126],
+        "step-progress": [720, 202],
+        "theme-selector": [720, 278],
+        "code-step-block": [720, 354],
+        "zoom-layout": [720, 430],
+        "view-control": [720, 506],
+        "stepper": [720, 582],
+        "theme-toggle": [720, 720],
+        "appearance-control": [720, 796],
+        "light-or-dark": [720, 872],
+        "explorer": [720, 948],
+        "appearance": [1040, 730],
+        "local-storage": [1040, 850],
+        "browser-storage": [1040, 970]
+      }
+    },
+    context: {
+      lanes: [
+        {
+          x: 20, y: 20, w: 1120, h: 700,
+          title: "CONTEXT",
+          subtitle: "providers → createSlideContext / createViewContext → consumers",
+          color: "#22d3ee"
+        }
+      ],
+      fit: { x: 0, y: 0, w: 1160, h: 740 },
+      nodes: {
+        "slide-player": [60, 160],
+        "pdf-preview": [60, 340],
+        "slide-context": [420, 160],
+        "view-context": [420, 360],
+        "slide-container": [800, 50],
+        "navigation-control": [800, 130],
+        "step-progress": [800, 210],
+        "theme-selector": [800, 290],
+        "code-step-block": [800, 370],
+        "zoom-layout": [800, 450],
+        "view-control": [800, 530],
+        "stepper": [800, 610]
+      }
+    },
+    state: {
+      lanes: [
+        {
+          x: 20, y: 20, w: 1040, h: 560,
+          title: "STATE",
+          subtitle: "consumers → appearance (singleton) → LocalStorage → localStorage",
+          color: "#fbbf24"
+        }
+      ],
+      fit: { x: 0, y: 0, w: 1080, h: 600 },
+      nodes: {
+        "slide-container": [80, 120],
+        "theme-selector": [80, 200],
+        "theme-toggle": [80, 300],
+        "appearance-control": [80, 380],
+        "light-or-dark": [80, 460],
+        "explorer": [80, 540],
+        "appearance": [460, 340],
+        "local-storage": [800, 340],
+        "browser-storage": [800, 470]
+      }
+    }
+  };
+
+  const svg = document.getElementById("graph");
+  const stage = document.getElementById("stage");
+  const viewport = document.getElementById("viewport");
+  const lanesLayer = document.getElementById("lanes");
+  const edgesLayer = document.getElementById("edges");
+  const nodesLayer = document.getElementById("nodes");
+  const panelBody = document.getElementById("panel-body");
+  const tooltip = document.getElementById("tooltip");
+  const searchInput = document.getElementById("search");
+  const searchCount = document.getElementById("search-count");
+  const statsEl = document.getElementById("stats");
+  const zoomLabel = document.getElementById("zoom-label");
+  const toastEl = document.getElementById("toast");
+  const labelsBtn = document.getElementById("labels-btn");
+  const themeBtn = document.getElementById("theme-btn");
+
+  let view = "all";
+  let positions = {};
+  let basePositions = {};
+  let selected = null;
+  let hoverNode = null;
+  let hoverEdge = null;
+  let query = "";
+  let showLabels = false;
+  let transform = { x: 0, y: 0, k: 1 };
+  let autoFit = true;
+  let pointerState = null;
+  let animationFrame = 0;
+  let searchMatches = new Set();
+  let toastTimer = 0;
+  const activePointers = new Map();
+  let pinchState = null;
+
+  const nodeEls = new Map();
+  const edgeEls = new Map();
+
+  function el(tag, attrs) {
+    const node = document.createElementNS(NS, tag);
+    if (attrs) {
+      for (const key in attrs) {
+        const value = attrs[key];
+        if (value !== undefined && value !== null) node.setAttribute(key, value);
+      }
+    }
+    return node;
+  }
+
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+  }
+
+  function truncate(value, max) {
+    const text = String(value);
+    return text.length > max ? text.slice(0, max - 1) + "…" : text;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function visibleNodes() {
+    return NODES.filter((node) => positions[node.id]);
+  }
+
+  function visibleEdges() {
+    return EDGES.filter((edge) => positions[edge.from] && positions[edge.to]);
+  }
+
+  function applyLayout() {
+    positions = {};
+    basePositions = {};
+    const layout = LAYOUTS[view];
+    for (const id in layout.nodes) {
+      const [x, y] = layout.nodes[id];
+      positions[id] = { x, y };
+      basePositions[id] = { x, y };
+    }
+    rebuild();
+    requestAnimationFrame(() => fitView(false));
+  }
+
+  function rebuild() {
+    renderLanes();
+    buildNodes();
+    buildEdges();
+    updateEdgeGeometry();
+    applyHighlight();
+    updateStats();
+    renderPanel();
+    svg.classList.toggle("show-labels", showLabels);
+  }
+
+  function renderLanes() {
+    lanesLayer.innerHTML = "";
+    for (const lane of LAYOUTS[view].lanes) {
+      const group = el("g", { class: "lane" });
+      const rect = el("rect", {
+        class: "lane-rect",
+        x: lane.x, y: lane.y, width: lane.w, height: lane.h, rx: 28
+      });
+      const bar = el("rect", {
+        x: lane.x + 24, y: lane.y + 32, width: 3, height: lane.h - 64,
+        rx: 2, fill: lane.color, opacity: 0.35
+      });
+      const dot = el("circle", {
+        cx: lane.x + 38, cy: lane.y + 38, r: 4, fill: lane.color, opacity: 0.9
+      });
+      const title = el("text", {
+        class: "lane-title", x: lane.x + 50, y: lane.y + 42, fill: lane.color
+      });
+      title.textContent = lane.title;
+      const sub = el("text", {
+        class: "lane-sub", x: lane.x + 50, y: lane.y + 62
+      });
+      sub.textContent = lane.subtitle;
+      group.append(rect, bar, dot, title, sub);
+      lanesLayer.appendChild(group);
+    }
+  }
+
+  function buildNodes() {
+    nodesLayer.innerHTML = "";
+    nodeEls.clear();
+
+    for (const node of visibleNodes()) {
+      const group = GROUPS[node.group];
+      const position = positions[node.id];
+      const g = el("g", {
+        class: "node",
+        "data-id": node.id,
+        transform: `translate(${position.x},${position.y})`,
+        tabindex: "0",
+        role: "button",
+        "aria-label": `${node.title} — ${group.label}`
+      });
+      g.style.setProperty("--accent", group.color);
+
+      const bg = el("rect", { class: "node-bg", width: NODE_W, height: NODE_H, rx: 14 });
+      const accent = el("rect", {
+        class: "node-accent",
+        x: 0, y: 14, width: 4, height: NODE_H - 28, rx: 2,
+        fill: node.group === "shared" ? "url(#sharedAccent)" : group.color
+      });
+      const ring = el("rect", { class: "node-ring", width: NODE_W, height: NODE_H, rx: 14 });
+
+      const groupText = el("text", {
+        class: "node-group", x: NODE_W - 12, y: 18, "text-anchor": "end", fill: group.color
+      });
+      groupText.textContent = group.label;
+
+      const icon = el("text", {
+        class: "node-icon", x: 18, y: 44, fill: group.color
+      });
+      icon.textContent = group.icon;
+
+      const title = el("text", { class: "node-title", x: 44, y: 31 });
+      title.textContent = truncate(node.title, 22);
+
+      const file = el("text", { class: "node-file", x: 44, y: 50 });
+      file.textContent = truncate(node.file, 27);
+
+      g.append(bg, accent, ring, groupText, icon, title, file);
+
+      g.addEventListener("pointerdown", (event) => startNodeDrag(event, node.id));
+      g.addEventListener("pointerenter", (event) => {
+        hoverNode = node.id;
+        hoverEdge = null;
+        showNodeTooltip(node, event);
+        applyHighlight();
+      });
+      g.addEventListener("pointermove", positionTooltip);
+      g.addEventListener("pointerleave", () => {
+        hoverNode = null;
+        hideTooltip();
+        applyHighlight();
+      });
+      g.addEventListener("focus", () => {
+        hoverNode = node.id;
+        applyHighlight();
+      });
+      g.addEventListener("blur", () => {
+        hoverNode = null;
+        applyHighlight();
+      });
+      g.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          selectNode(node.id);
+        }
+      });
+
+      nodesLayer.appendChild(g);
+      nodeEls.set(node.id, g);
+    }
+  }
+
+  function updateStats() {
+    const nodes = visibleNodes().length;
+    const edges = visibleEdges().length;
+    const label = view === "all" ? "ทั้งสองระบบ" : view === "context" ? "เฉพาะ Context" : "เฉพาะ State";
+    statsEl.innerHTML = `<b>${nodes}</b> nodes <span class="dot">·</span> <b>${edges}</b> edges <span class="dot">·</span> ${label}`;
+  }
+
+  function buildEdges() {
+    edgesLayer.innerHTML = "";
+    edgeEls.clear();
+
+    for (const edge of visibleEdges()) {
+      const type = EDGE_TYPES[edge.type];
+      const g = el("g", {
+        class: "edge",
+        "data-id": edge.id,
+        "data-type": edge.type,
+        "aria-label": `${edge.label}: ${edge.from} → ${edge.to}`
+      });
+
+      const hit = el("path", { class: "edge-hit" });
+      const line = el("path", {
+        class: "edge-line",
+        stroke: type.color,
+        "marker-end": `url(#arrow-${edge.type})`
+      });
+      if (edge.bidirectional) {
+        line.setAttribute("marker-start", `url(#arrow-${edge.type})`);
+      }
+
+      const label = el("g", { class: "edge-label" });
+      const text = el("text", { class: "edge-label-text", "text-anchor": "middle" });
+      text.textContent = edge.label;
+      label.appendChild(text);
+
+      g.append(hit, line, label);
+
+      g.addEventListener("click", (event) => {
+        event.stopPropagation();
+        selectEdge(edge.id);
+      });
+      g.addEventListener("pointerenter", (event) => {
+        hoverEdge = edge.id;
+        hoverNode = null;
+        showEdgeTooltip(edge, event);
+        applyHighlight();
+      });
+      g.addEventListener("pointermove", positionTooltip);
+      g.addEventListener("pointerleave", () => {
+        hoverEdge = null;
+        hideTooltip();
+        applyHighlight();
+      });
+
+      edgesLayer.appendChild(g);
+      edgeEls.set(edge.id, { g, hit, line, label });
+    }
+  }
+
+  function updateEdgeGeometry() {
+    const edges = visibleEdges();
+    const outgoing = {};
+    const incoming = {};
+
+    for (const edge of edges) {
+      (outgoing[edge.from] || (outgoing[edge.from] = [])).push(edge.id);
+      (incoming[edge.to] || (incoming[edge.to] = [])).push(edge.id);
+    }
+
+    for (const edge of edges) {
+      const refs = edgeEls.get(edge.id);
+      const source = positions[edge.from];
+      const target = positions[edge.to];
+      if (!refs || !source || !target) continue;
+
+      const outList = outgoing[edge.from];
+      const inList = incoming[edge.to];
+      const outIndex = outList.indexOf(edge.id);
+      const inIndex = inList.indexOf(edge.id);
+
+      const sy = source.y + NODE_H * (outIndex + 1) / (outList.length + 1);
+      const ty = target.y + NODE_H * (inIndex + 1) / (inList.length + 1);
+
+      const sourceCenterX = source.x + NODE_W / 2;
+      const sourceCenterY = source.y + NODE_H / 2;
+      const targetCenterX = target.x + NODE_W / 2;
+      const targetCenterY = target.y + NODE_H / 2;
+
+      const vertical =
+        Math.abs(targetCenterX - sourceCenterX) < 40 &&
+        Math.abs(targetCenterY - sourceCenterY) > NODE_H;
+
+      let path;
+      let labelX;
+      let labelY;
+
+      if (vertical) {
+        const down = targetCenterY >= sourceCenterY;
+        const x1 = sourceCenterX;
+        const x2 = targetCenterX;
+        const y1 = down ? source.y + NODE_H : source.y;
+        const y2 = down ? target.y : target.y + NODE_H;
+        const curve = Math.max(36, Math.abs(y2 - y1) * 0.5);
+        const c1y = down ? y1 + curve : y1 - curve;
+        const c2y = down ? y2 - curve : y2 + curve;
+        path = `M ${x1} ${y1} C ${x1} ${c1y}, ${x2} ${c2y}, ${x2} ${y2}`;
+        labelX = (x1 + 3 * x1 + 3 * x2 + x2) / 8 + 12;
+        labelY = (y1 + 3 * c1y + 3 * c2y + y2) / 8;
+      } else {
+        const right = targetCenterX >= sourceCenterX;
+        const x1 = right ? source.x + NODE_W : source.x;
+        const x2 = right ? target.x : target.x + NODE_W;
+        const curve = Math.max(48, Math.abs(x2 - x1) * 0.5);
+        const c1x = right ? x1 + curve : x1 - curve;
+        const c2x = right ? x2 - curve : x2 + curve;
+        path = `M ${x1} ${sy} C ${c1x} ${sy}, ${c2x} ${ty}, ${x2} ${ty}`;
+        labelX = (x1 + 3 * c1x + 3 * c2x + x2) / 8;
+        labelY = (sy + 3 * sy + 3 * ty + ty) / 8 - 8;
+      }
+
+      refs.hit.setAttribute("d", path);
+      refs.line.setAttribute("d", path);
+      refs.label.setAttribute("transform", `translate(${labelX},${labelY})`);
+    }
+  }
+
+  function applyTransform() {
+    viewport.setAttribute(
+      "transform",
+      `translate(${transform.x},${transform.y}) scale(${transform.k})`
+    );
+    zoomLabel.textContent = `${Math.round(transform.k * 100)}%`;
+  }
+
+  function clientToWorld(clientX, clientY) {
+    const rect = svg.getBoundingClientRect();
+    return {
+      x: (clientX - rect.left - transform.x) / transform.k,
+      y: (clientY - rect.top - transform.y) / transform.k
+    };
+  }
+
+  function cancelAnimation() {
+    if (animationFrame) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+    }
+  }
+
+  function animateTo(target, duration) {
+    cancelAnimation();
+    const start = { x: transform.x, y: transform.y, k: transform.k };
+    const startedAt = performance.now();
+
+    function step(now) {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      transform = {
+        x: start.x + (target.x - start.x) * eased,
+        y: start.y + (target.y - start.y) * eased,
+        k: start.k + (target.k - start.k) * eased
+      };
+      applyTransform();
+      if (progress < 1) animationFrame = requestAnimationFrame(step);
+      else animationFrame = 0;
+    }
+
+    animationFrame = requestAnimationFrame(step);
+  }
+
+  function fitView(animate) {
+    const layout = LAYOUTS[view];
+    const rect = svg.getBoundingClientRect();
+    const padding = rect.width < 720 ? 16 : 26;
+    const k = clamp(
+      Math.min((rect.width - padding * 2) / layout.fit.w, (rect.height - padding * 2) / layout.fit.h),
+      0.2,
+      1.55
+    );
+    const target = {
+      x: (rect.width - layout.fit.w * k) / 2 - layout.fit.x * k,
+      y: (rect.height - layout.fit.h * k) / 2 - layout.fit.y * k,
+      k
+    };
+    autoFit = true;
+    if (animate) animateTo(target, 420);
+    else {
+      cancelAnimation();
+      transform = target;
+      applyTransform();
+    }
+  }
+
+  function zoomAt(factor, clientX, clientY) {
+    cancelAnimation();
+    const rect = svg.getBoundingClientRect();
+    const px = clientX === undefined ? rect.width / 2 : clientX;
+    const py = clientY === undefined ? rect.height / 2 : clientY;
+    const worldX = (px - transform.x) / transform.k;
+    const worldY = (py - transform.y) / transform.k;
+    const k = clamp(transform.k * factor, 0.2, 2.8);
+    transform = { x: px - worldX * k, y: py - worldY * k, k };
+    autoFit = false;
+    applyTransform();
+  }
+
+  function centerNode(id, zoom) {
+    const position = positions[id];
+    if (!position) return;
+    const rect = svg.getBoundingClientRect();
+    const k = clamp(zoom || Math.max(transform.k, 0.9), 0.4, 1.6);
+    autoFit = false;
+    animateTo({
+      x: rect.width / 2 - (position.x + NODE_W / 2) * k,
+      y: rect.height / 2 - (position.y + NODE_H / 2) * k,
+      k
+    }, 380);
+  }
+
+  function currentFocus() {
+    if (hoverNode) return { kind: "node", id: hoverNode };
+    if (hoverEdge) return { kind: "edge", id: hoverEdge };
+    return selected;
+  }
+
+  function applyHighlight() {
+    const focus = currentFocus();
+    const connectedNodes = new Set();
+    const connectedEdges = new Set();
+
+    if (focus && focus.kind === "node") {
+      connectedNodes.add(focus.id);
+      for (const edge of visibleEdges()) {
+        if (edge.from === focus.id || edge.to === focus.id) {
+          connectedEdges.add(edge.id);
+          connectedNodes.add(edge.from);
+          connectedNodes.add(edge.to);
+        }
+      }
+    } else if (focus && focus.kind === "edge") {
+      const edge = EDGES.find((item) => item.id === focus.id);
+      if (edge) {
+        connectedEdges.add(edge.id);
+        connectedNodes.add(edge.from);
+        connectedNodes.add(edge.to);
+      }
+    }
+
+    for (const [id, g] of nodeEls) {
+      const matchesQuery = !query || searchMatches.has(id);
+      const matchesFocus = !focus || connectedNodes.has(id);
+      g.classList.toggle("dim", !matchesQuery || !matchesFocus);
+      g.classList.toggle("connected", Boolean(focus) && connectedNodes.has(id));
+      g.classList.toggle("selected", Boolean(selected) && selected.kind === "node" && selected.id === id);
+      g.classList.toggle("hover", hoverNode === id);
+    }
+
+    for (const [id, refs] of edgeEls) {
+      const edge = EDGES.find((item) => item.id === id);
+      const matchesQuery = !query || searchMatches.has(edge.from) || searchMatches.has(edge.to);
+      const matchesFocus = !focus || connectedEdges.has(id);
+      refs.g.classList.toggle("dim", !matchesQuery || !matchesFocus);
+      refs.g.classList.toggle("connected", Boolean(focus) && connectedEdges.has(id));
+      refs.g.classList.toggle("selected", Boolean(selected) && selected.kind === "edge" && selected.id === id);
+    }
+  }
+
+  function selectNode(id, shouldCenter) {
+    if (!positions[id]) return;
+    selected = { kind: "node", id };
+    hideTooltip();
+    applyHighlight();
+    renderPanel();
+    if (shouldCenter) centerNode(id);
+  }
+
+  function selectEdge(id) {
+    const edge = EDGES.find((item) => item.id === id);
+    if (!edge || !positions[edge.from] || !positions[edge.to]) return;
+    selected = { kind: "edge", id };
+    hideTooltip();
+    applyHighlight();
+    renderPanel();
+  }
+
+  function clearSelection() {
+    selected = null;
+    applyHighlight();
+    renderPanel();
+  }
+
+  function showNodeTooltip(node, event) {
+    tooltip.innerHTML =
+      `<div class="tt-title">${esc(node.title)}</div>` +
+      `<div class="tt-meta">${esc(node.path)}:${esc(node.lines)}</div>` +
+      `<div class="tt-label">${esc(GROUPS[node.group].label)} · คลิกเพื่อดูรายละเอียด</div>`;
+    tooltip.classList.add("show");
+    positionTooltip(event);
+  }
+
+  function showEdgeTooltip(edge, event) {
+    const from = NODE_BY_ID.get(edge.from);
+    const to = NODE_BY_ID.get(edge.to);
+    tooltip.innerHTML =
+      `<div class="tt-title">${esc(edge.label)}</div>` +
+      `<div class="tt-meta">${esc(from.title)} → ${esc(to.title)}</div>` +
+      `<div class="tt-label">${esc(EDGE_TYPES[edge.type].label)} · คลิกเพื่อดูรายละเอียด</div>`;
+    tooltip.classList.add("show");
+    positionTooltip(event);
+  }
+
+  function positionTooltip(event) {
+    if (!tooltip.classList.contains("show")) return;
+    const rect = stage.getBoundingClientRect();
+    const width = tooltip.offsetWidth;
+    const height = tooltip.offsetHeight;
+    const x = clamp(event.clientX - rect.left + 16, 8, rect.width - width - 8);
+    const y = clamp(event.clientY - rect.top + 18, 8, rect.height - height - 8);
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${y}px`;
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove("show");
+  }
+
+  function startNodeDrag(event, id) {
+    if (event.button !== 0) return;
+    event.stopPropagation();
+    event.preventDefault();
+    cancelAnimation();
+
+    const g = nodeEls.get(id);
+    if (g && g.setPointerCapture) {
+      try { g.setPointerCapture(event.pointerId); } catch (error) { /* noop */ }
+    }
+
+    const point = clientToWorld(event.clientX, event.clientY);
+    const position = positions[id];
+    pointerState = {
+      kind: "node",
+      id,
+      offsetX: point.x - position.x,
+      offsetY: point.y - position.y,
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false
+    };
+    stage.classList.add("dragging");
+  }
+
+  function onPointerMove(event) {
+    if (activePointers.has(event.pointerId)) {
+      activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+
+    if (pinchState && activePointers.size >= 2) {
+      const points = Array.from(activePointers.values());
+      const [a, b] = points;
+      const distance = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      const midX = (a.x + b.x) / 2;
+      const midY = (a.y + b.y) / 2;
+      const rect = svg.getBoundingClientRect();
+      const px = midX - rect.left;
+      const py = midY - rect.top;
+      const k = clamp(pinchState.startK * (distance / pinchState.startDistance), 0.2, 2.8);
+      autoFit = false;
+      transform = {
+        x: px - pinchState.worldX * k,
+        y: py - pinchState.worldY * k,
+        k
+      };
+      applyTransform();
+      return;
+    }
+
+    if (!pointerState) return;
+    const dx = event.clientX - pointerState.startX;
+    const dy = event.clientY - pointerState.startY;
+    if (Math.abs(dx) + Math.abs(dy) > 3) pointerState.moved = true;
+
+    if (pointerState.kind === "pan") {
+      autoFit = false;
+      transform.x = pointerState.tx + dx;
+      transform.y = pointerState.ty + dy;
+      applyTransform();
+      return;
+    }
+
+    if (pointerState.kind === "node") {
+      autoFit = false;
+      const point = clientToWorld(event.clientX, event.clientY);
+      const position = positions[pointerState.id];
+      position.x = point.x - pointerState.offsetX;
+      position.y = point.y - pointerState.offsetY;
+      const g = nodeEls.get(pointerState.id);
+      if (g) g.setAttribute("transform", `translate(${position.x},${position.y})`);
+      updateEdgeGeometry();
+      if (pointerState.moved) hideTooltip();
+    }
+  }
+
+  function onPointerUp(event) {
+    if (event && event.pointerId !== undefined) activePointers.delete(event.pointerId);
+    if (activePointers.size < 2) pinchState = null;
+
+    if (!pointerState) return;
+    const state = pointerState;
+    pointerState = null;
+    stage.classList.remove("dragging", "panning");
+
+    if (state.kind === "node" && !state.moved) {
+      selectNode(state.id, transform.k < 0.72);
+    } else if (state.kind === "pan" && !state.moved) {
+      clearSelection();
+    }
+  }
+
+  svg.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0) return;
+    const target = event.target;
+    if (target.closest && (target.closest(".node") || target.closest(".edge"))) return;
+
+    cancelAnimation();
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    try { svg.setPointerCapture(event.pointerId); } catch (error) { /* noop */ }
+
+    if (activePointers.size === 2) {
+      pointerState = null;
+      stage.classList.remove("panning");
+      const points = Array.from(activePointers.values());
+      const [a, b] = points;
+      const rect = svg.getBoundingClientRect();
+      const midX = (a.x + b.x) / 2 - rect.left;
+      const midY = (a.y + b.y) / 2 - rect.top;
+      pinchState = {
+        startDistance: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+        startK: transform.k,
+        worldX: (midX - transform.x) / transform.k,
+        worldY: (midY - transform.y) / transform.k
+      };
+      return;
+    }
+
+    if (activePointers.size > 2) return;
+
+    pointerState = {
+      kind: "pan",
+      startX: event.clientX,
+      startY: event.clientY,
+      tx: transform.x,
+      ty: transform.y,
+      moved: false
+    };
+    stage.classList.add("panning");
+  });
+
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerUp);
+
+  svg.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    const factor = Math.exp(-event.deltaY * 0.0015);
+    zoomAt(factor, event.clientX - rect.left, event.clientY - rect.top);
+  }, { passive: false });
+
+  function renderPanel() {
+    if (!selected) {
+      renderOverview();
+      return;
+    }
+    if (selected.kind === "node") {
+      const node = NODE_BY_ID.get(selected.id);
+      if (node && positions[node.id]) {
+        renderNodePanel(node);
+        return;
+      }
+    }
+    if (selected.kind === "edge") {
+      const edge = EDGES.find((item) => item.id === selected.id);
+      if (edge && positions[edge.from] && positions[edge.to]) {
+        renderEdgePanel(edge);
+        return;
+      }
+    }
+    renderOverview();
+  }
+
+  function renderOverview() {
+    const nodes = visibleNodes();
+    const edges = visibleEdges();
+    const counts = {};
+    for (const node of nodes) counts[node.group] = (counts[node.group] || 0) + 1;
+
+    const groupList = Object.keys(counts)
+      .map((key) => {
+        const group = GROUPS[key];
+        return `<span class="group-chip" style="color:${group.color}">${group.label} <b>${counts[key]}</b></span>`;
+      })
+      .join("");
+
+    const edgeLegend = Object.keys(EDGE_TYPES)
+      .map((key) => {
+        const type = EDGE_TYPES[key];
+        return `<div class="legend-item" style="color:${type.color}"><span class="legend-line${key === "storage" ? " dashed" : ""}"></span>${type.label}</div>`;
+      })
+      .join("");
+
+    panelBody.innerHTML = `
+      <div class="hero-icon">⌘</div>
+      <h2>ภาพรวมกราฟ</h2>
+      <p>แผนที่การเรียกใช้ <b>context</b> และ <b>state</b> ของ decko — คลิกโหนดหรือเส้นเพื่อดูไฟล์ บรรทัด และ API ที่เกี่ยวข้อง</p>
+
+      <div class="stat-grid">
+        <div class="stat"><b>${nodes.length}</b><span>nodes ในมุมมองนี้</span></div>
+        <div class="stat"><b>${edges.length}</b><span>edges ในมุมมองนี้</span></div>
+        <div class="stat"><b>2</b><span>contexts</span></div>
+        <div class="stat"><b>1</b><span>state singleton</span></div>
+      </div>
+
+      <h3>วิธีใช้</h3>
+      <ul class="tips">
+        <li>ลากโหนดเพื่อจัดตำแหน่งใหม่</li>
+        <li>ลากพื้นหลังหรือ scroll เพื่อ pan / zoom</li>
+        <li>คลิกโหนดหรือเส้นเพื่อโฟกัสและเปิด inspector</li>
+        <li>กด <b>/</b> ค้นหา, <b>Esc</b> ล้าง selection, <b>F</b> fit, <b>R</b> reset</li>
+        <li>แท็บ Context / State ใช้แยกดูทีละระบบ</li>
+      </ul>
+
+      <h3>กลุ่มโหนด</h3>
+      <div class="group-list">${groupList}</div>
+
+      <h3>เส้นเชื่อม</h3>
+      <div class="legend-list">${edgeLegend}</div>
+
+      <h3>จุดเชื่อมสองระบบ</h3>
+      <p><b>SlideContainer</b> อ่านทั้ง view/slide context และ appearance — <b>ThemeSelector</b> อ่าน slide theme แล้ว fallback ไป appearance theme</p>
+    `;
+  }
+
+  function connectionHtml(edge, direction) {
+    const otherId = direction === "out" ? edge.to : edge.from;
+    const other = NODE_BY_ID.get(otherId);
+    return `
+      <button class="conn" type="button" data-node="${esc(otherId)}">
+        <span class="dir">${direction === "out" ? "→" : "←"}</span>
+        <span class="conn-main">
+          <strong>${esc(other.title)}</strong>
+          <small>${esc(edge.label)}</small>
+        </span>
+      </button>`;
+  }
+
+  function renderNodePanel(node) {
+    const group = GROUPS[node.group];
+    const outgoing = visibleEdges().filter((edge) => edge.from === node.id);
+    const incoming = visibleEdges().filter((edge) => edge.to === node.id);
+    const apis = node.apis.map((api) => `<span class="chip">${esc(api)}</span>`).join("");
+    const connections = [
+      ...outgoing.map((edge) => connectionHtml(edge, "out")),
+      ...incoming.map((edge) => connectionHtml(edge, "in"))
+    ].join("");
+
+    panelBody.innerHTML = `
+      <button class="back-btn" type="button" data-action="overview">← ภาพรวม</button>
+      <span class="pill" style="--c:${group.color}">${group.label}</span>
+      <h2>${esc(node.title)}</h2>
+      <div class="file-path">
+        <code>${esc(node.path)}</code>
+        <button type="button" data-copy="${esc(node.path)}" title="คัดลอก path">⧉</button>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">lines ${esc(node.lines)}</span>
+        <span class="meta-chip">${esc(node.systems.join(" + "))}</span>
+        ${node.group === "shared" ? '<span class="meta-chip">shared component</span>' : ""}
+      </div>
+      <p>${esc(node.desc)}</p>
+
+      <h3>API / ค่าที่ใช้</h3>
+      <div class="chips">${apis}</div>
+      ${node.note ? `<div class="note">${esc(node.note)}</div>` : ""}
+
+      <h3>เชื่อมต่อ (${outgoing.length + incoming.length})</h3>
+      <div class="connections">${connections || '<p style="font-size:11.5px">ไม่มีเส้นเชื่อมในมุมมองนี้</p>'}</div>
+    `;
+  }
+
+  function renderEdgePanel(edge) {
+    const from = NODE_BY_ID.get(edge.from);
+    const to = NODE_BY_ID.get(edge.to);
+    const type = EDGE_TYPES[edge.type];
+    const fromGroup = GROUPS[from.group];
+    const toGroup = GROUPS[to.group];
+
+    panelBody.innerHTML = `
+      <button class="back-btn" type="button" data-action="overview">← ภาพรวม</button>
+      <span class="pill" style="--c:${type.color}">${type.label}</span>
+      <h2>${esc(edge.label)}</h2>
+      <div class="edge-hero">
+        <button class="node-link" type="button" data-node="${esc(from.id)}" style="--c:${fromGroup.color}">${esc(from.title)}</button>
+        <span class="arrow">${edge.bidirectional ? "↔" : "→"}</span>
+        <button class="node-link" type="button" data-node="${esc(to.id)}" style="--c:${toGroup.color}">${esc(to.title)}</button>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">${esc(type.label)}</span>
+        <span class="meta-chip">${edge.bidirectional ? "bidirectional" : "one-way"}</span>
+      </div>
+      <p>${esc(type.desc)}</p>
+
+      <h3>ปลายทาง</h3>
+      <div class="connections">
+        <button class="conn" type="button" data-node="${esc(from.id)}">
+          <span class="dir">◉</span>
+          <span class="conn-main"><strong>${esc(from.title)}</strong><small>${esc(from.path)}</small></span>
+        </button>
+        <button class="conn" type="button" data-node="${esc(to.id)}">
+          <span class="dir">◎</span>
+          <span class="conn-main"><strong>${esc(to.title)}</strong><small>${esc(to.path)}</small></span>
+        </button>
+      </div>
+    `;
+  }
+
+  function showToast(message) {
+    toastEl.textContent = message;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+  }
+
+  panelBody.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!target.closest) return;
+
+    const copyButton = target.closest("[data-copy]");
+    if (copyButton) {
+      const value = copyButton.getAttribute("data-copy");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value)
+          .then(() => showToast("คัดลอก path แล้ว"))
+          .catch(() => showToast(value));
+      } else {
+        showToast(value);
+      }
+      return;
+    }
+
+    const nodeButton = target.closest("[data-node]");
+    if (nodeButton) {
+      selectNode(nodeButton.getAttribute("data-node"), true);
+      return;
+    }
+
+    const actionButton = target.closest("[data-action]");
+    if (actionButton && actionButton.getAttribute("data-action") === "overview") {
+      clearSelection();
+    }
+  });
+
+  function runSearch() {
+    searchMatches = new Set();
+    if (query) {
+      for (const node of visibleNodes()) {
+        const haystack = [
+          node.title, node.file, node.path, node.desc, node.group, ...node.apis
+        ].join(" ").toLowerCase();
+        if (haystack.includes(query)) searchMatches.add(node.id);
+      }
+    }
+    searchCount.textContent = query ? String(searchMatches.size) : "";
+  }
+
+  function setView(next) {
+    if (!LAYOUTS[next] || next === view) return;
+    view = next;
+    selected = null;
+    hoverNode = null;
+    hoverEdge = null;
+    hideTooltip();
+
+    document.querySelectorAll(".segmented button").forEach((button) => {
+      const active = button.getAttribute("data-view") === next;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+
+    applyLayout();
+    applyHighlight();
+  }
+
+  function setLabels(next) {
+    showLabels = next;
+    labelsBtn.classList.toggle("active", next);
+    labelsBtn.setAttribute("aria-pressed", String(next));
+    svg.classList.toggle("show-labels", next);
+  }
+
+  function setTheme(next) {
+    const theme = next === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    themeBtn.textContent = theme === "dark" ? "🌙" : "☀️";
+    try { localStorage.setItem("decko-graph-theme", theme); } catch (error) { /* noop */ }
+  }
+
+  function resetLayout() {
+    positions = {};
+    for (const id in basePositions) {
+      positions[id] = { x: basePositions[id].x, y: basePositions[id].y };
+    }
+    rebuild();
+    fitView(true);
+  }
+
+  searchInput.addEventListener("input", (event) => {
+    query = event.target.value.trim();
+    runSearch();
+    applyHighlight();
+  });
+
+  searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const first = visibleNodes().find((node) => searchMatches.has(node.id));
+      if (first) selectNode(first.id, true);
+    }
+    if (event.key === "Escape") {
+      searchInput.blur();
+      searchInput.value = "";
+      query = "";
+      runSearch();
+      applyHighlight();
+    }
+  });
+
+  document.querySelectorAll(".segmented button").forEach((button) => {
+    button.addEventListener("click", () => setView(button.getAttribute("data-view")));
+  });
+
+  labelsBtn.addEventListener("click", () => setLabels(!showLabels));
+
+  themeBtn.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    setTheme(next);
+  });
+
+  document.getElementById("zoom-in").addEventListener("click", () => zoomAt(1.22));
+  document.getElementById("zoom-out").addEventListener("click", () => zoomAt(1 / 1.22));
+  document.getElementById("fit-btn").addEventListener("click", () => fitView(true));
+  document.getElementById("reset-btn").addEventListener("click", resetLayout);
+  document.getElementById("panel-home").addEventListener("click", clearSelection);
+
+  svg.addEventListener("dblclick", (event) => {
+    if (event.target.closest && (event.target.closest(".node") || event.target.closest(".edge"))) return;
+    fitView(true);
+  });
+
+  window.addEventListener("keydown", (event) => {
+    const target = event.target;
+    const typing = target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      (target && target.isContentEditable);
+    if (typing && event.key !== "Escape") return;
+
+    if (event.key === "Escape") {
+      clearSelection();
+      hideTooltip();
+      if (typing && target.blur) target.blur();
+      return;
+    }
+    if (event.key === "/") {
+      event.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+      return;
+    }
+    if (event.key === "f" || event.key === "F") {
+      event.preventDefault();
+      fitView(true);
+      return;
+    }
+    if (event.key === "r" || event.key === "R") {
+      event.preventDefault();
+      resetLayout();
+      return;
+    }
+    if (event.key === "l" || event.key === "L") {
+      event.preventDefault();
+      setLabels(!showLabels);
+      return;
+    }
+    if (event.key === "1") { setView("all"); return; }
+    if (event.key === "2") { setView("context"); return; }
+    if (event.key === "3") { setView("state"); return; }
+    if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      zoomAt(1.18);
+      return;
+    }
+    if (event.key === "-") {
+      event.preventDefault();
+      zoomAt(1 / 1.18);
+    }
+  });
+
+  let resizeFrame = 0;
+  if (typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(() => {
+      if (!autoFit) return;
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => fitView(false));
+    }).observe(stage);
+  } else {
+    window.addEventListener("resize", () => {
+      if (autoFit) fitView(false);
+    });
+  }
+
+  let savedTheme = "dark";
+  try {
+    savedTheme = localStorage.getItem("decko-graph-theme") || "dark";
+  } catch (error) { /* noop */ }
+  setTheme(savedTheme);
+
+  setLabels(false);
+  applyLayout();
+  runSearch();
+  applyTransform();
+})();
+</script>
+</body>
+</html>
