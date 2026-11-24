@@ -43,11 +43,11 @@ describe('createSlideContext', () => {
 	it('should return the step of a page', () => {
 		const ctx = createContext()
 
-		expect(ctx.getStep()).toBe(2)
-		expect(ctx.getStep(2)).toBe(4)
-		expect(ctx.getStep(3)).toBe(0)
-		expect(ctx.getStep(0)).toBe(0)
-		expect(ctx.getStep(4)).toBe(0)
+		expect(ctx.pageStep()).toBe(2)
+		expect(ctx.pageStep(2)).toBe(4)
+		expect(ctx.pageStep(3)).toBe(0)
+		expect(ctx.pageStep(0)).toBe(0)
+		expect(ctx.pageStep(4)).toBe(0)
 	})
 
 	it('should clamp values and set the action on goto', () => {

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { useSlideContext, useViewContext } from '../context/index.js'
-	import { asString } from '../logic/utils.js'
+	import { useViewContext } from '../context/index.js'
 	import { appearance } from '../state/appearance.svelte.js'
 
 	interface Props {
@@ -12,9 +11,6 @@
 	let { children }: Props = $props()
 
 	const viewContext = useViewContext()
-	const slideContext = useSlideContext()
-
-	const fontSize = asString(slideContext.slide.fontSize, '16px')
 </script>
 
 <!-- backdrop -->
@@ -27,12 +23,12 @@
 	<section
 		id="slide-container"
 		class="bg-background relative top-1/2 left-1/2 grid origin-center -translate-1/2 overflow-hidden"
+		class:select-none={viewContext.zoom > 1}
+		class:rounded-xl={appearance.slideScale < 1}
 		style:width="{viewContext.width}px"
 		style:height="{viewContext.height}px"
-		class:select-none={viewContext.zoom > 1}
 		style:scale={viewContext.scale * appearance.slideScale}
-		class:rounded-xl={appearance.slideScale < 1}
-		style:font-size="calc({appearance.fontScale} * {fontSize})"
+		style:--font-scale={appearance.fontScale}
 	>
 		{@render children?.()}
 	</section>

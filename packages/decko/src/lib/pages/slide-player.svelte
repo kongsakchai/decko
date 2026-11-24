@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { SlideContainer, SlideControl, StepProgress, ZoomLayout } from '../components/index.js'
-	import { createSlideContext, createViewContext } from '../context/index.js'
+	import { createDeckContex } from '../context/index.js'
 	import { isBrowser } from '../logic/events.js'
+	import { getThemes } from '../logic/themes.js'
+	import { asString } from '../logic/utils.js'
+	import { appearance } from '../state/appearance.svelte.js'
 	import type { SlideComponent, SlideData } from '../types.js'
 
 	interface Props {
@@ -14,9 +17,10 @@
 	const { data, slide: Slide, width = 1280, height = 720 }: Props = $props()
 
 	// svelte-ignore state_referenced_locally
-	const slideCtx = createSlideContext(data)
+	const { slide: slideCtx } = createDeckContex(data, { width, height })
+
 	// svelte-ignore state_referenced_locally
-	createViewContext({ width, height })
+	appearance.setupThemes(asString(data.theme, ''), getThemes(data.themes) ?? [])
 
 	if (isBrowser() && window.location.hash) {
 		const page = Number.parseInt(window.location.hash.slice(1))

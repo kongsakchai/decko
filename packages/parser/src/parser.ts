@@ -59,7 +59,7 @@ function covertSlideResult(ctx: SlideContext, str: string): SlideResult {
 		return {
 			index,
 			content,
-			directive: { ...slide.directive, ...slide.global },
+			directive: { ...slide.global, ...slide.directive },
 			title: slide.title
 		}
 	})

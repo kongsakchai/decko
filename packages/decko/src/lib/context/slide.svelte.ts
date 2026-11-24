@@ -17,9 +17,8 @@ export interface SlideContext {
 	readonly step: number
 	readonly action: number
 	readonly totalPage: number
-	readonly maxStep: number
 
-	getStep(page?: number): number
+	pageStep(page?: number): number
 	goto(page: number, step?: number, action?: Action): void
 	next(): void
 	previous(): void
@@ -48,18 +47,15 @@ class Context implements SlideContext {
 	get totalPage() {
 		return this.slide.pages.length
 	}
-	get maxStep() {
-		return this.getStep()
-	}
 
-	getStep(page = this.page) {
+	pageStep(page = this.page) {
 		if (page < 1 || page > this.totalPage) return 0
 		return this.slide.pages[page - 1]?.step ?? 0
 	}
 
 	goto(page: number, step = 0, action = Action.JUMP) {
 		page = Math.max(1, Math.min(page, this.totalPage))
-		step = Math.max(0, Math.min(step, this.getStep(page)))
+		step = Math.max(0, Math.min(step, this.pageStep(page)))
 
 		if (page === this.page && step === this.step) return
 
@@ -69,7 +65,7 @@ class Context implements SlideContext {
 	}
 
 	next() {
-		if (this.step < this.maxStep) {
+		if (this.step < this.pageStep()) {
 			this.goto(this.page, this.step + 1, Action.NEXT)
 		} else if (this.page < this.totalPage) {
 			this.goto(this.page + 1, 0, Action.NEXT_PAGE)
@@ -80,15 +76,20 @@ class Context implements SlideContext {
 		if (this.step > 0) {
 			this.goto(this.page, this.step - 1, Action.PREVIOUS)
 		} else if (this.page > 1) {
-			this.goto(this.page - 1, this.getStep(this.page - 1), Action.PREV_PAGE)
+			this.goto(this.page - 1, this.pageStep(this.page - 1), Action.PREV_PAGE)
 		}
 	}
 }
 
-const [useSlideContext, setSlideContext] = createContext<SlideContext>()
+const [get, set, has] = createContext<SlideContext>()
 
-export { useSlideContext }
+export function useSlideContext() {
+	if (has()) return get()
+
+	console.error('❌ not found slide context. will use mock context')
+	return new Context({ title: 'no context', pages: [] })
+}
 
 export function createSlideContext(slide: SlideData) {
-	return setSlideContext(new Context(slide))
+	return set(new Context(slide))
 }

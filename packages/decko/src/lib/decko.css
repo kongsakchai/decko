@@ -352,9 +352,9 @@
 		@apply text-foreground font-primary;
 
 		position: relative;
-		font-size: var(--font-size, 1em);
-		width: var(--slide-width, 100%);
-		height: var(--slide-height, 100%);
+		width: 100%;
+		height: 100%;
+		font-size: calc(var(--font-size, 1em) * var(--font-scale, 1));
 
 		grid-column: 1;
 		grid-row: 1;

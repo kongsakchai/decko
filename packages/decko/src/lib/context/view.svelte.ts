@@ -28,10 +28,15 @@ class Context implements ViewContext {
 	}
 }
 
-const [useViewContext, setViewContext] = createContext<ViewContext>()
+const [get, set, has] = createContext<ViewContext>()
 
-export { useViewContext }
+export function useViewContext(): ViewContext {
+	if (has()) return get()
+
+	console.error('❌ not found view context. will use mock context')
+	return new Context()
+}
 
 export function createViewContext(source?: Partial<ViewContext>): ViewContext {
-	return setViewContext(new Context(source))
+	return set(new Context(source))
 }

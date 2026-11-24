@@ -1,35 +1,29 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import { twMerge } from 'tailwind-merge'
 
 	interface Props {
 		title: string
 		triggerClass?: string
 		contentClass?: string
-		position?: string
+		position?: 'top' | 'bottom'
 		trigger: Snippet
 		content: Snippet
 	}
 
-	let {
-		title,
-		triggerClass,
-		contentClass: popupClass,
-		trigger,
-		content: popup,
-		position = 'top center'
-	}: Props = $props()
+	let { title, triggerClass, contentClass: popupClass, trigger, content: popup, position = 'top' }: Props = $props()
 </script>
 
-<button {title} popovertarget="{title}-panel" class={[triggerClass]} style:anchor-name="--anchor-{title}">
+<button {title} popovertarget="{title}-panel" class={triggerClass} style:anchor-name="--anchor-{title}">
 	{@render trigger()}
 </button>
 
 <div
 	popover
 	id="{title}-panel"
-	class={['panel', popupClass]}
+	class={twMerge('panel', popupClass)}
 	style:position-anchor="--anchor-{title}"
-	style:position-area={position}
+	style:position-area={position == 'top' ? 'top center' : 'bottom center'}
 >
 	{@render popup()}
 </div>

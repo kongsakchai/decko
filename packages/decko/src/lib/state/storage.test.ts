@@ -23,8 +23,8 @@ describe('LocalStorage', () => {
 	it('should read the stored value', async () => {
 		stubBrowser(createStorage({ key: 'value' }))
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		expect(store.current).toBe('value')
 	})
@@ -32,8 +32,8 @@ describe('LocalStorage', () => {
 	it('should use the fallback when the stored value is missing', async () => {
 		stubBrowser()
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		expect(store.current).toBe('fallback')
 	})
@@ -41,8 +41,8 @@ describe('LocalStorage', () => {
 	it('should use the fallback outside a browser environment', async () => {
 		vi.stubGlobal('localStorage', createStorage({ key: 'value' }))
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		expect(store.current).toBe('fallback')
 	})
@@ -50,8 +50,8 @@ describe('LocalStorage', () => {
 	it('should fall back when the current value is cleared', async () => {
 		stubBrowser()
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		store.current = undefined as unknown as string
 
@@ -61,8 +61,8 @@ describe('LocalStorage', () => {
 	it('should persist changes in a browser environment', async () => {
 		const storage = stubBrowser()
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		store.current = 'next'
 
@@ -73,8 +73,8 @@ describe('LocalStorage', () => {
 		const storage = createStorage()
 		vi.stubGlobal('localStorage', storage)
 
-		const { LocalStorage } = await import('./storage.svelte.js')
-		const store = new LocalStorage<string>('key', 'fallback')
+		const { StateStorage } = await import('./storage.svelte.js')
+		const store = new StateStorage<string>('key', 'fallback')
 
 		store.current = 'next'
 

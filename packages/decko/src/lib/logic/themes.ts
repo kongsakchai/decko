@@ -4,9 +4,7 @@ export function getThemes(themes: unknown): string[] | undefined {
 	return asStringArray(themes, true)
 }
 
-// Deck theme policy: keep the requested theme when the deck allows it,
-// otherwise fall back to the deck's first theme, then to 'default'.
-export function resolveTheme(requested: string, available?: string[]): string {
+export function resolveTheme(requested: string, available?: string[]) {
 	if (available?.includes(requested)) return requested
 	return available?.[0] ?? 'default'
 }

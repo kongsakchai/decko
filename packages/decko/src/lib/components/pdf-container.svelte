@@ -2,12 +2,12 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		children?: Snippet
+		slide?: Snippet
 		width?: number
 		height?: number
 	}
 
-	const { children, width = 1280, height = 720 }: Props = $props()
+	const { slide, width = 1280, height = 720 }: Props = $props()
 </script>
 
 <section class="h-full w-full overflow-scroll bg-[#242424] dark:bg-black">
@@ -15,9 +15,9 @@
 		id="pdf-container"
 		style:width="{width}px"
 		style:--slide-height="{height}px"
-		class="mx-auto flex origin-top zoom-50 flex-col gap-1"
+		class="mx-auto flex origin-top flex-col gap-1"
 	>
-		{@render children?.()}
+		{@render slide?.()}
 	</section>
 </section>
 

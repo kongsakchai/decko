@@ -1,10 +1,14 @@
-import { LocalStorage } from './storage.svelte'
+import { resolveTheme } from '../logic/themes'
+import { StateStorage } from './storage.svelte'
 
 export class Appearance {
-	#mode = new LocalStorage<'light' | 'dark'>('decko-theme-mode', 'light')
-	#theme = new LocalStorage<string>('deck-theme', 'default')
-	#fontScale = new LocalStorage<string>('decko-font-scale', '1')
-	#slideScale = new LocalStorage<string>('decko-slide-scale', '1')
+	#mode = new StateStorage<'light' | 'dark'>('decko-theme-mode', 'light')
+	#theme = new StateStorage<string>('deck-theme', 'default')
+	#fontScale = new StateStorage<string>('decko-font-scale', '1')
+	#slideScale = new StateStorage<string>('decko-slide-scale', '1')
+
+	#themes = $state<string[]>([])
+	#defaultTheme = $state<string>()
 
 	get isDark() {
 		return this.#mode.current === 'dark'
@@ -15,10 +19,11 @@ export class Appearance {
 	}
 
 	get theme() {
-		return this.#theme.current
+		return this.#defaultTheme ?? this.#theme.current
 	}
 
 	set theme(val: string) {
+		this.#defaultTheme = undefined
 		this.#theme.current = val
 	}
 
@@ -38,6 +43,15 @@ export class Appearance {
 
 	set slideScale(val: number) {
 		this.#slideScale.current = val.toString()
+	}
+
+	get themes() {
+		return this.#themes
+	}
+
+	setupThemes(defaultTheme: string, themes: string[]) {
+		this.#themes = themes
+		this.#defaultTheme = resolveTheme(defaultTheme, themes)
 	}
 }
 

@@ -1053,11 +1053,11 @@
       title: "SlidePlayer",
       file: "slide-player.svelte",
       path: "packages/decko/src/lib/pages/slide-player.svelte",
-      lines: "17, 19, 21–27",
+      lines: "3, 20, 23, 25–32",
       group: "provider",
-      systems: ["context"],
-      desc: "หน้าเล่นสไลด์ สร้าง SlideContext และ ViewContext ให้ทั้ง subtree พร้อม sync เลขหน้าลง URL hash และ bind page/step ให้ slide component",
-      apis: ["createSlideContext(data)", "createViewContext({ width, height })", "slideCtx.goto(page)", "slideCtx.page"]
+      systems: ["context", "state"],
+      desc: "หน้าเล่นสไลด์ สร้าง deck context ด้วย createDeckContext() แล้วตั้ง theme เริ่มต้นของ deck ลง appearance พร้อม sync เลขหน้าลง URL hash",
+      apis: ["createDeckContext(data, { width, height })", "appearance.setupThemes(theme, themes)", "slideCtx.goto(page)", "slideCtx.page", "navigation.navigate('#page')"]
     },
     {
       id: "pdf-preview",
@@ -1068,40 +1068,56 @@
       group: "provider",
       systems: ["context"],
       desc: "หน้าพรีวิว/export PDF สร้าง context ชุดเดียวกับ SlidePlayer เพื่อให้ slide component และ CodeStepBlock ใช้งานได้",
-      apis: ["createSlideContext(data)", "createViewContext({ width, height })"]
+      apis: ["createSlideContext(data)", "createViewContext({ width, height })"],
+      note: "ยังเรียก createSlideContext/createViewContext แยกเอง ไม่ได้ใช้ createDeckContext และไม่เรียก setupThemes"
+    },
+    {
+      id: "deck",
+      title: "DeckContext",
+      file: "deck.svelte.ts",
+      path: "packages/decko/src/lib/context/deck.svelte.ts",
+      lines: "5–10",
+      group: "provider",
+      systems: ["context"],
+      desc: "factory รวมการสร้าง context ทั้งชุด เรียก createSlideContext() กับ createViewContext() แล้วคืน { slide, view } ให้หน้าอื่นใช้ต่อ",
+      apis: ["createDeckContext(data, view?)", "→ { slide: SlideContext, view: ViewContext }"],
+      note: "ชื่อที่ export สะกดว่า createDeckContex (ขาด t) — ควรแก้เป็น createDeckContext"
     },
     {
       id: "slide-context",
       title: "SlideContext",
       file: "slide.svelte.ts",
       path: "packages/decko/src/lib/context/slide.svelte.ts",
-      lines: "88–93",
+      lines: "13–25, 51–54, 84–95",
       group: "context",
       systems: ["context"],
-      desc: "context กลางของ deck เก็บ page, step, action และ slide data ใช้ createContext() ของ Svelte 5 โดยค่าภายในเป็น $state",
-      apis: ["createSlideContext(slide)", "useSlideContext()", "goto(page, step?, action?)", "next()", "previous()", "page / step / action / totalPage / maxStep"]
+      desc: "context กลางของ deck เก็บ page, step, action และ slide data ใช้ createContext() ของ Svelte 5 โดยค่าภายในเป็น $state — step สูงสุดต่อหน้าดูได้จาก getStep(page)",
+      apis: ["createSlideContext(slide)", "useSlideContext() → mock fallback", "getStep(page?)", "goto(page, step?, action?)", "next() / previous()", "page / step / action / totalPage"],
+      note: "useSlideContext() คืน mock Context({ title: 'no context', pages: [] }) + console.error เมื่อไม่พบ provider — maxStep ถูกลบแล้ว"
     },
     {
       id: "view-context",
       title: "ViewContext",
       file: "view.svelte.ts",
       path: "packages/decko/src/lib/context/view.svelte.ts",
-      lines: "31–36",
+      lines: "5–12, 20, 31–42",
       group: "context",
       systems: ["context"],
       desc: "context ของขนาดเวทีและ zoom เก็บ width, height, viewportWidth/Height, zoom โดย scale เป็น $derived จาก calScale()",
-      apis: ["createViewContext(source?)", "useViewContext()", "width / height", "viewportWidth / viewportHeight", "zoom", "scale ($derived)"]
+      apis: ["createViewContext(source?)", "useViewContext() → mock fallback", "width / height", "viewportWidth / viewportHeight", "zoom", "scale ($derived)"],
+      note: "useViewContext() คืน new Context() พร้อม console.error เมื่อไม่พบ provider"
     },
     {
       id: "slide-container",
       title: "SlideContainer",
-      file: "slide-container.svelte",
       path: "packages/decko/src/lib/components/slide-container.svelte",
-      lines: "14–15, 23–24, 30–35",
+      file: "slide-container.svelte",
+      lines: "4–5, 13, 19–20, 30–31",
       group: "shared",
       systems: ["context", "state"],
-      desc: "ตัวห่อสไลด์ ผูก viewport จาก DOM, scale เวที และอ่าน appearance เพื่อปรับ font/slide size — เป็นจุดเชื่อมของทั้งสองระบบ",
-      apis: ["useViewContext()", "useSlideContext()", "bind clientWidth/clientHeight", "appearance.slideScale", "appearance.fontScale"]
+      desc: "ตัวห่อสไลด์ ผูก viewport จาก DOM รวม view.scale กับ appearance.slideScale และพยายามปรับ font scale — ไม่ได้ใช้ slide context แล้ว",
+      apis: ["useViewContext()", "bind clientWidth/clientHeight", "viewContext.scale * appearance.slideScale", "appearance.slideScale", "appearance.fontScale"],
+      note: "style:size-adjust ไม่ใช่ CSS property (เป็น @font-face descriptor) จึงไม่มีผล — และ --font-scale ใน decko.css ก็ยังไม่มีใคร set ทำให้ font scale ไม่ทำงาน"
     },
     {
       id: "navigation-control",
@@ -1119,22 +1135,24 @@
       title: "StepProgress",
       file: "step-progress.svelte",
       path: "packages/decko/src/lib/components/step-progress.svelte",
-      lines: "4–6",
+      lines: "2, 4, 6",
       group: "consumer",
       systems: ["context"],
-      desc: "แถบ progress ของ step ภายในหน้าปัจจุบัน คำนวณด้วย $derived จาก step และ maxStep",
-      apis: ["slideCtx.step", "slideCtx.maxStep", "$derived progress"]
+      desc: "แถบ progress ของ step ภายในหน้าปัจจุบัน คำนวณด้วย $derived จาก step และ step สูงสุดของหน้า",
+      apis: ["slideCtx.step", "slideCtx.getStep()", "$derived progress"],
+      note: "ยังอ้าง slideCtx.maxStep ที่ถูกลบแล้ว → ค่าเป็น NaN ทำให้แถบไม่แสดง; ต้องเปลี่ยนไปใช้ getStep()"
     },
     {
       id: "theme-selector",
       title: "ThemeSelector",
       file: "theme-selector.svelte",
       path: "packages/decko/src/lib/components/theme-selector.svelte",
-      lines: "15, 17–19, 21–23, 38–44",
-      group: "shared",
-      systems: ["context", "state"],
-      desc: "เลือก theme โดยอ่าน slide.theme เป็นค่าเริ่มต้น แล้ว fallback ไป appearance.theme เมื่อเลือกจะเขียน appearance.theme",
-      apis: ["slideCtx.slide.themes", "slideCtx.slide.theme", "appearance.theme", "appearance.isDark", "appearance.theme = theme"]
+      lines: "3, 12–14, 27, 31–36",
+      group: "stateConsumer",
+      systems: ["state"],
+      desc: "เลือก theme จาก appearance.themes ล้วน ๆ (ไม่ผูกกับ slide แล้ว) และ sync appearance.theme ลง <html data-theme>",
+      apis: ["appearance.themes", "appearance.theme", "appearance.isDark", "appearance.theme = theme", "document.documentElement.dataset.theme"],
+      note: "appearance.themes จะว่างถ้าไม่มีใครเรียก setupThemes() — ตอนนี้มีแค่ SlidePlayer ที่เรียก"
     },
     {
       id: "code-step-block",
@@ -1186,22 +1204,24 @@
       title: "appearance",
       file: "appearance.svelte.ts",
       path: "packages/decko/src/lib/state/appearance.svelte.ts",
-      lines: "4–7, 44",
+      lines: "5–8, 10–11, 21–28, 48–55",
       group: "state",
       systems: ["state"],
-      desc: "singleton ระดับ module ห่อ LocalStorage 4 ตัว: theme mode, theme, font scale, slide scale พร้อม getter/setter",
-      apis: ["appearance.isDark", "appearance.toggleDark()", "appearance.theme", "appearance.fontScale", "appearance.slideScale"]
+      desc: "singleton ระดับ module ถือ StateStorage 4 ตัวที่ persist (theme mode, theme, font scale, slide scale) บวก themes/defaultTheme ที่อยู่ใน memory",
+      apis: ["appearance.isDark / toggleDark()", "appearance.theme (defaultTheme ?? stored)", "appearance.fontScale / slideScale", "appearance.themes", "appearance.setupThemes(theme, themes)"],
+      note: "theme getter คืน #defaultTheme ก่อนค่าที่ persist; setter จะล้าง defaultTheme — deck theme policy จึงเป็น state global ที่ไม่ persist"
     },
     {
-      id: "local-storage",
-      title: "LocalStorage",
+      id: "state-storage",
+      title: "StateStorage",
       file: "storage.svelte.ts",
       path: "packages/decko/src/lib/state/storage.svelte.ts",
-      lines: "3–24",
+      lines: "3–27",
       group: "storage",
       systems: ["state"],
-      desc: "wrapper ของ localStorage + Svelte $state; setter current จะอัปเดต state และเขียน localStorage ทันที",
-      apis: ["new LocalStorage(key, fallback)", "store.current (get/set)", "#value = $state", "localStorage.getItem/setItem"]
+      desc: "wrapper ของ Storage + Svelte $state; setter current จะอัปเดต state และเขียน storage ทันที (รับ storage inject ได้)",
+      apis: ["new StateStorage(key, fallback, storage?)", "store.current (get/set)", "#value = $state", "storage.getItem/setItem"],
+      note: "default parameter คือ localStorage ซึ่งถูกอ่านตอน construct = ตอน import โมดูล → บน SSR/Node ที่ไม่มี global นี้จะ ReferenceError"
     },
     {
       id: "browser-storage",
@@ -1211,7 +1231,7 @@
       lines: "4 keys",
       group: "browser",
       systems: ["state"],
-      desc: "Web Storage ของเบราว์เซอร์ เก็บ 4 keys ของ appearance และถูกอ่านตอน constructor ของ LocalStorage",
+      desc: "Web Storage ของเบราว์เซอร์ เก็บ 4 keys ของ appearance และถูกอ่านตอน constructor ของ StateStorage",
       apis: ["decko-theme-mode", "deck-theme", "decko-font-scale", "decko-slide-scale"]
     },
     {
@@ -1266,30 +1286,30 @@
     create: { label: "สร้าง context", color: "#a78bfa", desc: "สร้าง context ด้วย createContext() แล้วส่งต่อผ่าน setter — ต้องเรียกในช่วง init ของ component" },
     context: { label: "ใช้ context", color: "#22d3ee", desc: "เรียก use*Context() จาก descendant; ค่าที่อ่านเป็น reactive อัตโนมัติ" },
     read: { label: "อ่าน state", color: "#fbbf24", desc: "อ่านค่าจาก appearance แบบ reactive โดยไม่เขียนกลับ" },
-    sync: { label: "อ่าน / เขียน state", color: "#fb7185", desc: "อ่านค่าจาก appearance และเขียนกลับผ่าน setter; LocalStorage จะ persist ลง localStorage" },
-    storage: { label: "owns / persist", color: "#34d399", desc: "appearance ถือ LocalStorage หลาย instance และ LocalStorage sync กับ Web Storage" }
+    sync: { label: "อ่าน / เขียน state", color: "#fb7185", desc: "อ่านและ/หรือเขียนค่า appearance ผ่าน getter/setter; ตัวที่ persist จะถูกเขียนลง localStorage" },
+    storage: { label: "owns / persist", color: "#34d399", desc: "appearance ถือ StateStorage 4 ตัว และ StateStorage sync กับ Web Storage" }
   };
 
   const EDGES = [
-    { id: "e01", from: "slide-player", to: "slide-context", type: "create", label: "createSlideContext(data)" },
-    { id: "e02", from: "slide-player", to: "view-context", type: "create", label: "createViewContext(w, h)" },
-    { id: "e03", from: "pdf-preview", to: "slide-context", type: "create", label: "createSlideContext(data)" },
-    { id: "e04", from: "pdf-preview", to: "view-context", type: "create", label: "createViewContext(w, h)" },
-    { id: "e05", from: "slide-context", to: "slide-container", type: "context", label: "useSlideContext()" },
+    { id: "e01", from: "slide-player", to: "deck", type: "create", label: "createDeckContext(data, view)" },
+    { id: "e02", from: "deck", to: "slide-context", type: "create", label: "createSlideContext(data)" },
+    { id: "e03", from: "deck", to: "view-context", type: "create", label: "createViewContext(view)" },
+    { id: "e04", from: "pdf-preview", to: "slide-context", type: "create", label: "createSlideContext(data)" },
+    { id: "e05", from: "pdf-preview", to: "view-context", type: "create", label: "createViewContext(w, h)" },
     { id: "e06", from: "slide-context", to: "navigation-control", type: "context", label: "useSlideContext()" },
     { id: "e07", from: "slide-context", to: "step-progress", type: "context", label: "useSlideContext()" },
-    { id: "e08", from: "slide-context", to: "theme-selector", type: "context", label: "useSlideContext()" },
-    { id: "e09", from: "slide-context", to: "code-step-block", type: "context", label: "useSlideContext()" },
-    { id: "e10", from: "slide-context", to: "stepper", type: "context", label: "useSlideContext()" },
-    { id: "e11", from: "view-context", to: "slide-container", type: "context", label: "useViewContext()" },
-    { id: "e12", from: "view-context", to: "code-step-block", type: "context", label: "useViewContext()" },
-    { id: "e13", from: "view-context", to: "zoom-layout", type: "context", label: "useViewContext()" },
-    { id: "e14", from: "view-context", to: "view-control", type: "context", label: "useViewContext()" },
-    { id: "e15", from: "appearance", to: "local-storage", type: "storage", label: "owns 4 LocalStorage keys" },
-    { id: "e16", from: "local-storage", to: "browser-storage", type: "storage", label: "getItem / setItem", bidirectional: true },
-    { id: "e17", from: "theme-toggle", to: "appearance", type: "sync", label: "isDark ↔ toggleDark()", bidirectional: true },
-    { id: "e18", from: "theme-selector", to: "appearance", type: "sync", label: "theme ↔ set theme", bidirectional: true },
-    { id: "e19", from: "appearance-control", to: "appearance", type: "sync", label: "fontScale / slideScale ↔ set", bidirectional: true },
+    { id: "e08", from: "slide-context", to: "code-step-block", type: "context", label: "useSlideContext()" },
+    { id: "e09", from: "slide-context", to: "stepper", type: "context", label: "useSlideContext()" },
+    { id: "e10", from: "view-context", to: "slide-container", type: "context", label: "useViewContext()" },
+    { id: "e11", from: "view-context", to: "code-step-block", type: "context", label: "useViewContext()" },
+    { id: "e12", from: "view-context", to: "zoom-layout", type: "context", label: "useViewContext()" },
+    { id: "e13", from: "view-context", to: "view-control", type: "context", label: "useViewContext()" },
+    { id: "e14", from: "appearance", to: "state-storage", type: "storage", label: "owns 4 StateStorage keys" },
+    { id: "e15", from: "state-storage", to: "browser-storage", type: "storage", label: "getItem / setItem", bidirectional: true },
+    { id: "e16", from: "theme-toggle", to: "appearance", type: "sync", label: "isDark ↔ toggleDark()", bidirectional: true },
+    { id: "e17", from: "theme-selector", to: "appearance", type: "sync", label: "theme ↔ set theme", bidirectional: true },
+    { id: "e18", from: "appearance-control", to: "appearance", type: "sync", label: "fontScale / slideScale ↔ set", bidirectional: true },
+    { id: "e19", from: "slide-player", to: "appearance", type: "sync", label: "setupThemes(theme, themes)" },
     { id: "e20", from: "slide-container", to: "appearance", type: "read", label: "slideScale / fontScale" },
     { id: "e21", from: "explorer", to: "appearance", type: "read", label: "isDark" },
     { id: "e22", from: "light-or-dark", to: "appearance", type: "read", label: "isDark" }
@@ -1301,37 +1321,38 @@
         {
           x: 20, y: 20, w: 1260, h: 660,
           title: "CONTEXT",
-          subtitle: "component-scoped · createContext() + use*Context()",
+          subtitle: "provider → deck factory · createContext() + use*Context()",
           color: "#22d3ee"
         },
         {
-          x: 20, y: 700, w: 1260, h: 350,
+          x: 20, y: 700, w: 1260, h: 390,
           title: "STATE",
-          subtitle: "module-level singleton · persisted to localStorage",
+          subtitle: "module-level singleton · StateStorage → localStorage",
           color: "#fbbf24"
         }
       ],
-      fit: { x: 0, y: 0, w: 1300, h: 1070 },
+      fit: { x: 0, y: 0, w: 1300, h: 1110 },
       nodes: {
-        "slide-player": [60, 110],
-        "pdf-preview": [60, 270],
-        "slide-context": [380, 110],
-        "view-context": [380, 290],
-        "slide-container": [720, 50],
-        "navigation-control": [720, 126],
-        "step-progress": [720, 202],
-        "theme-selector": [720, 278],
-        "code-step-block": [720, 354],
-        "zoom-layout": [720, 430],
-        "view-control": [720, 506],
-        "stepper": [720, 582],
-        "theme-toggle": [720, 720],
-        "appearance-control": [720, 796],
-        "light-or-dark": [720, 872],
-        "explorer": [720, 948],
-        "appearance": [1040, 730],
-        "local-storage": [1040, 850],
-        "browser-storage": [1040, 970]
+        "slide-player": [60, 100],
+        "deck": [60, 240],
+        "pdf-preview": [60, 380],
+        "slide-context": [380, 100],
+        "view-context": [380, 300],
+        "slide-container": [720, 40],
+        "navigation-control": [720, 116],
+        "step-progress": [720, 192],
+        "code-step-block": [720, 268],
+        "zoom-layout": [720, 344],
+        "view-control": [720, 420],
+        "stepper": [720, 496],
+        "theme-selector": [720, 710],
+        "theme-toggle": [720, 786],
+        "appearance-control": [720, 862],
+        "light-or-dark": [720, 938],
+        "explorer": [720, 1014],
+        "appearance": [1040, 760],
+        "state-storage": [1040, 880],
+        "browser-storage": [1040, 1000]
       }
     },
     context: {
@@ -1339,46 +1360,46 @@
         {
           x: 20, y: 20, w: 1120, h: 700,
           title: "CONTEXT",
-          subtitle: "providers → createSlideContext / createViewContext → consumers",
+          subtitle: "providers → deck factory → createSlideContext / createViewContext → consumers",
           color: "#22d3ee"
         }
       ],
       fit: { x: 0, y: 0, w: 1160, h: 740 },
       nodes: {
-        "slide-player": [60, 160],
-        "pdf-preview": [60, 340],
-        "slide-context": [420, 160],
-        "view-context": [420, 360],
-        "slide-container": [800, 50],
-        "navigation-control": [800, 130],
-        "step-progress": [800, 210],
-        "theme-selector": [800, 290],
-        "code-step-block": [800, 370],
-        "zoom-layout": [800, 450],
-        "view-control": [800, 530],
-        "stepper": [800, 610]
+        "slide-player": [60, 120],
+        "deck": [60, 240],
+        "pdf-preview": [60, 380],
+        "slide-context": [420, 120],
+        "view-context": [420, 320],
+        "slide-container": [800, 40],
+        "navigation-control": [800, 120],
+        "step-progress": [800, 200],
+        "code-step-block": [800, 280],
+        "zoom-layout": [800, 360],
+        "view-control": [800, 440],
+        "stepper": [800, 520]
       }
     },
     state: {
       lanes: [
         {
-          x: 20, y: 20, w: 1040, h: 560,
+          x: 20, y: 20, w: 1040, h: 580,
           title: "STATE",
-          subtitle: "consumers → appearance (singleton) → LocalStorage → localStorage",
+          subtitle: "consumers → appearance (singleton) → StateStorage → localStorage",
           color: "#fbbf24"
         }
       ],
-      fit: { x: 0, y: 0, w: 1080, h: 600 },
+      fit: { x: 0, y: 0, w: 1080, h: 620 },
       nodes: {
-        "slide-container": [80, 120],
-        "theme-selector": [80, 200],
-        "theme-toggle": [80, 300],
-        "appearance-control": [80, 380],
-        "light-or-dark": [80, 460],
-        "explorer": [80, 540],
-        "appearance": [460, 340],
-        "local-storage": [800, 340],
-        "browser-storage": [800, 470]
+        "slide-container": [80, 80],
+        "theme-selector": [80, 160],
+        "theme-toggle": [80, 240],
+        "appearance-control": [80, 320],
+        "light-or-dark": [80, 400],
+        "explorer": [80, 480],
+        "appearance": [460, 300],
+        "state-storage": [800, 300],
+        "browser-storage": [800, 430]
       }
     }
   };
@@ -2099,7 +2120,7 @@
       <div class="stat-grid">
         <div class="stat"><b>${nodes.length}</b><span>nodes ในมุมมองนี้</span></div>
         <div class="stat"><b>${edges.length}</b><span>edges ในมุมมองนี้</span></div>
-        <div class="stat"><b>2</b><span>contexts</span></div>
+        <div class="stat"><b>2 + 1</b><span>contexts + factory</span></div>
         <div class="stat"><b>1</b><span>state singleton</span></div>
       </div>
 
@@ -2119,7 +2140,7 @@
       <div class="legend-list">${edgeLegend}</div>
 
       <h3>จุดเชื่อมสองระบบ</h3>
-      <p><b>SlideContainer</b> อ่านทั้ง view/slide context และ appearance — <b>ThemeSelector</b> อ่าน slide theme แล้ว fallback ไป appearance theme</p>
+      <p><b>SlideContainer</b> อ่าน ViewContext + appearance (slideScale / fontScale) — เป็นจุดเชื่อมเดียวที่เหลืออยู่ · <b>ThemeSelector</b> ย้ายมาฝั่ง state ล้วน (ไม่ใช้ slide context แล้ว)</p>
     `;
   }
 

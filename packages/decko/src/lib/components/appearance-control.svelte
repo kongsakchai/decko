@@ -35,7 +35,7 @@
 				</button>
 
 				<span class="text-sm">Slide Size</span>
-				<input type="range" min="0.1" max="1" step="0.01" bind:value={appearance.slideScale} />
+				<input type="range" min="0.5" max="1" step="0.01" bind:value={appearance.slideScale} />
 				<span class=" text-sm">{Math.round(appearance.slideScale * 100)}%</span>
 
 				<button title="reset-scale" class="menu-btn rounded-sm" onclick={() => (appearance.slideScale = 1)}>

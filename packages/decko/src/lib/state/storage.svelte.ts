@@ -1,14 +1,17 @@
 import { isBrowser } from '../logic/events'
 
-export class LocalStorage<T extends string = string> {
+export class StateStorage<T extends string = string> {
 	#key: string
 	#fallback: T
+	#storage: Storage
+
 	#value = $state<T>()
 
-	constructor(key: string, fallback: T) {
+	constructor(key: string, fallback: T, storage = localStorage) {
 		this.#key = key
 		this.#fallback = fallback
-		this.#value = (isBrowser() ? (localStorage.getItem(key) as T) : null) ?? fallback
+		this.#storage = storage
+		this.#value = (isBrowser() ? (storage.getItem(key) as T) : null) ?? fallback
 	}
 
 	get current() {
@@ -18,7 +21,7 @@ export class LocalStorage<T extends string = string> {
 	set current(val: T) {
 		this.#value = val
 		if (isBrowser()) {
-			localStorage.setItem(this.#key, val)
+			this.#storage.setItem(this.#key, val)
 		}
 	}
 }

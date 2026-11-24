@@ -3,7 +3,7 @@
 
 	const slideCtx = useSlideContext()
 
-	const progress = $derived(((slideCtx.step + 1) / (slideCtx.maxStep + 1)) * 100)
+	const progress = $derived(((slideCtx.step + 1) / (slideCtx.pageStep() + 1)) * 100)
 </script>
 
 <div class="absolute bottom-0 left-0 h-1 w-full">
