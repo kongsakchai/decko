@@ -4,20 +4,17 @@
 
 	import lz from 'lz-string'
 
-	import { useSlideContext, useViewContext } from '../context/index.js'
-
 	interface Props {
 		code: string
+		step: number
+		scale?: number
 		start?: number
 	}
 
-	const { code: baseCode, start = 0 }: Props = $props()
-
-	const viewContext = useViewContext()
-	const slideCtx = useSlideContext()
+	const { code: baseCode, start = 0, scale = 1, step }: Props = $props()
 
 	let steps = $derived(JSON.parse(lz.decompressFromBase64(baseCode)))
-	let step = $derived(Math.max(0, Math.min(slideCtx.step - start, steps.length)))
+	let codeStep = $derived(Math.max(0, Math.min(step - start, steps.length)))
 </script>
 
-<ShikiMagicMovePrecompiled class="code-block" {step} {steps} options={{ globalScale: viewContext.scale }} />
+<ShikiMagicMovePrecompiled class="code-block" step={codeStep} {steps} options={{ globalScale: scale }} />

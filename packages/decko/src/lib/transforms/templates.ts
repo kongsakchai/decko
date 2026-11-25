@@ -80,7 +80,7 @@ export function scriptContent(opts: ScriptOptions) {
 		`<script lang="ts">`,
 		...imports,
 		...runs,
-		`let { page=$bindable(),step=$bindable(),showAll } = $props()`,
+		`let { page=$bindable(),step=$bindable(),showAll,slideScale} = $props()`,
 		...opts.scripts,
 		'</script>'
 	]

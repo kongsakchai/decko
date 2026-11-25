@@ -129,7 +129,7 @@ export const codeHighlighter: CodeHighlighter = async (ctx) => {
 	return {
 		type: 'element',
 		tagName: 'CodeStepBlock',
-		properties: { code: lz.compressToBase64(codeTokenInfo), start: start },
+		properties: { code: lz.compressToBase64(codeTokenInfo), start: start, step: '{step}', scale: '{slideScale}' },
 		children: []
 	}
 }

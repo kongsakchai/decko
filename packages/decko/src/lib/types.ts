@@ -10,6 +10,7 @@ export interface SlideProps {
 	page: number
 	step: number
 	showAll?: boolean
+	slideScale?: number
 }
 
 // Slide
