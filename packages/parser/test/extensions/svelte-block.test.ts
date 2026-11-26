@@ -2,8 +2,8 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { addMicromarkExtensions } from '../../src/extensions/index'
-import { svelteBlock } from '../../src/extensions/svelte-block'
+import { addMicromarkExtensions } from '../../src/extensions/index.js'
+import { svelteBlock } from '../../src/extensions/svelte-block.js'
 
 const parser = unified()
 	.use(markdown)

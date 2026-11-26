@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { extractScriptTransformer } from '../../src/transformers/script'
-import { SlideContext } from '../../src/types'
+import { extractScriptTransformer } from '../../src/transformers/script.js'
+import { SlideContext } from '../../src/types.js'
 
 describe('script transformer', () => {
 	it('should extract script, style', async () => {

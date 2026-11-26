@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { asString } from '../src/utils'
+import { asString } from '../src/utils.js'
 
 describe('asString', () => {
 	it('should return value when it is a string', () => {

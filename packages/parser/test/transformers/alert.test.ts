@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { alertTransformer } from '../../src/transformers/alert'
-import { SlideContext } from '../../src/types'
+import { alertTransformer } from '../../src/transformers/alert.js'
+import { SlideContext } from '../../src/types.js'
 
 function createContext(): SlideContext {
 	return {
@@ -21,15 +21,11 @@ describe('alert transformer', () => {
 			children: [
 				{
 					type: 'blockquote',
-					children: [
-						{ type: 'paragraph', children: [{ type: 'text', value: '[!NOTE]\nBody text' }] }
-					]
+					children: [{ type: 'paragraph', children: [{ type: 'text', value: '[!NOTE]\nBody text' }] }]
 				},
 				{
 					type: 'blockquote',
-					children: [
-						{ type: 'paragraph', children: [{ type: 'text', value: '[!WARNING]\nCareful' }] }
-					]
+					children: [{ type: 'paragraph', children: [{ type: 'text', value: '[!WARNING]\nCareful' }] }]
 				}
 			]
 		}
@@ -50,10 +46,7 @@ describe('alert transformer', () => {
 					class: 'alert-title'
 				}
 			},
-			children: [
-				{ type: 'html' },
-				{ type: 'text', value: 'Note' }
-			]
+			children: [{ type: 'html' }, { type: 'text', value: 'Note' }]
 		})
 		expect(note.children[0].children[0].value).toContain('<svg')
 		expect(note.children[1].children[0].value).toBe('\nBody text')
@@ -69,9 +62,7 @@ describe('alert transformer', () => {
 				{
 					type: 'blockquote',
 					data: { hProperties: { class: 'quote' } },
-					children: [
-						{ type: 'paragraph', children: [{ type: 'text', value: '[!custom]Hello' }] }
-					]
+					children: [{ type: 'paragraph', children: [{ type: 'text', value: '[!custom]Hello' }] }]
 				}
 			]
 		}
@@ -97,9 +88,7 @@ describe('alert transformer', () => {
 				{ type: 'blockquote', children: [{ type: 'paragraph', children: [] }] },
 				{
 					type: 'blockquote',
-					children: [
-						{ type: 'paragraph', children: [{ type: 'emphasis', children: [] }] }
-					]
+					children: [{ type: 'paragraph', children: [{ type: 'emphasis', children: [] }] }]
 				},
 				{
 					type: 'blockquote',
@@ -107,9 +96,7 @@ describe('alert transformer', () => {
 				},
 				{
 					type: 'blockquote',
-					children: [
-						{ type: 'paragraph', children: [{ type: 'text', value: '[!unknown] body' }] }
-					]
+					children: [{ type: 'paragraph', children: [{ type: 'text', value: '[!unknown] body' }] }]
 				}
 			]
 		}
@@ -119,9 +106,7 @@ describe('alert transformer', () => {
 		const transform = alertTransformer()
 		await transform(node, vfile, () => {})
 
-		expect(node.children.map((blockquote: any) => blockquote.children.length)).toEqual([
-			0, 1, 1, 1, 1, 1
-		])
+		expect(node.children.map((blockquote: any) => blockquote.children.length)).toEqual([0, 1, 1, 1, 1, 1])
 		for (const blockquote of node.children as any[]) {
 			expect(blockquote.data).toBeUndefined()
 		}

@@ -1,4 +1,4 @@
-import { VirtualContent } from './types'
+import { VirtualContent } from './types.js'
 
 export const virtualMarkdown: VirtualContent = (ctx) => {
 	const markdown = ctx.single ?? ctx.data?.markdown ?? ''

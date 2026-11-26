@@ -1,11 +1,11 @@
 import { Command } from 'commander'
 import * as readline from 'node:readline'
 
-import { build } from './command/build'
-import { createServer } from './command/serv'
-import { bold, dim } from './console'
-import { version } from './const'
-import { pkgRoot } from './paths'
+import { build } from './command/build.js'
+import { createServer } from './command/serv.js'
+import { bold, dim } from './console.js'
+import { version } from './const.js'
+import { pkgRoot } from './paths.js'
 
 process.chdir(pkgRoot)
 const program = new Command('🚀 Decko')

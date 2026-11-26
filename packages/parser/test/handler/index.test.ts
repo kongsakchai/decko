@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import * as handler from '../../src/handler'
-import { imageHandler } from '../../src/handler/image'
-import { linkHandler } from '../../src/handler/link'
+import { imageHandler } from '../../src/handler/image.js'
+import * as handler from '../../src/handler/index.js'
+import { linkHandler } from '../../src/handler/link.js'
 
 describe('handler index', () => {
 	it('should export image and link handlers', () => {

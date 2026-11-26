@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { codeblockTransformer, extractAttributes } from '../../src/transformers/codeblock'
-import { CodeContainer, CodeContext, CodeHighlighter, SlideContext } from '../../src/types'
+import { codeblockTransformer, extractAttributes } from '../../src/transformers/codeblock.js'
+import { CodeContainer, CodeContext, CodeHighlighter, SlideContext } from '../../src/types.js'
 
 function createContext(): SlideContext {
 	return {

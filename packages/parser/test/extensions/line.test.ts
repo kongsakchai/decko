@@ -4,8 +4,8 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it, vi } from 'vitest'
 
-import { addMicromarkExtensions } from '../../src/extensions/index'
-import { nonLazyPartialTokenizer, partialBlankLineTokenizer } from '../../src/extensions/line'
+import { addMicromarkExtensions } from '../../src/extensions/index.js'
+import { nonLazyPartialTokenizer, partialBlankLineTokenizer } from '../../src/extensions/line.js'
 
 function createMockParser(construct: Construct) {
 	const result = vi.fn()

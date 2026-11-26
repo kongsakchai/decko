@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { initCopyCode } from './copy-code'
+import { initCopyCode } from './copy-code.js'
 
 function createButton(pre: { textContent: string } | null, hasParent = true) {
 	return {

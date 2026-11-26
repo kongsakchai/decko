@@ -2,7 +2,7 @@ import 'mdast'
 import 'mdast-util-from-markdown'
 import 'micromark-util-types'
 
-import { Attribute, SlideContext } from './types'
+import { Attribute, SlideContext } from './types.js'
 
 declare module 'micromark-util-types' {
 	interface TokenTypeMap {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { handleResolveAll } from '../../src/extensions/resolve'
+import { handleResolveAll } from '../../src/extensions/resolve.js'
 
 describe('resolve', () => {
 	it('should return [] when constructs is undefined', () => {

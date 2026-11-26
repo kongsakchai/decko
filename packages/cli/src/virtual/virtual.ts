@@ -1,4 +1,4 @@
-import { VirtualModule } from './types'
+import { VirtualModule } from './types.js'
 
 export function defineVirtualModule(opts: Partial<VirtualModule> & Pick<VirtualModule, 'content'>): VirtualModule {
 	const { staticId = '', prefix, suffix, params = '' } = opts

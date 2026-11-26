@@ -2,7 +2,7 @@ import type { Root } from 'mdast'
 import type { Transformer } from 'unified'
 import { visit } from 'unist-util-visit'
 
-import { SlideContext } from '../types'
+import { SlideContext } from '../types.js'
 
 export function alertTransformer(): Transformer {
 	return (tree, vfile) => {

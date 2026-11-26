@@ -2,8 +2,8 @@ import { Parent } from 'mdast'
 import { VFile } from 'vfile'
 import { describe, expect, it, vi } from 'vitest'
 
-import { directiveTransformer, parseYAML } from '../../src/transformers/directive'
-import { SlideContext } from '../../src/types'
+import { directiveTransformer, parseYAML } from '../../src/transformers/directive.js'
+import { SlideContext } from '../../src/types.js'
 
 describe('directive transformer', () => {
 	it('should merge directive into slide', async () => {

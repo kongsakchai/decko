@@ -2,8 +2,8 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { htmlText } from '../../src/extensions/html-text'
-import { addMicromarkExtensions } from '../../src/extensions/index'
+import { htmlText } from '../../src/extensions/html-text.js'
+import { addMicromarkExtensions } from '../../src/extensions/index.js'
 
 const parser = unified()
 	.use(markdown)

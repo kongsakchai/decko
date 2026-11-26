@@ -2,7 +2,7 @@ import { codes } from 'micromark-util-symbol'
 import { Code } from 'micromark-util-types'
 import { describe, expect, it } from 'vitest'
 
-import { SCOPE_ACTION, createScopeResolver } from '../../src/extensions/scope'
+import { SCOPE_ACTION, createScopeResolver } from '../../src/extensions/scope.js'
 
 const scope = createScopeResolver([codes.leftCurlyBrace])
 

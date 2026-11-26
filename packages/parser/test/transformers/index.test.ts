@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { applyTransformers, TransformOptions } from '../../src/transformers/index'
+import { TransformOptions, applyTransformers } from '../../src/transformers/index.js'
 
 describe('applyTransformers', () => {
 	it('should register all transformers with options', () => {

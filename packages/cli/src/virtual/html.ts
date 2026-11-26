@@ -1,7 +1,7 @@
-import { EXPLORER_ID } from './explorer'
-import { createPDFModuleId } from './pdf'
-import { createSlideModuleId } from './slide'
-import { VirtualContent } from './types'
+import { EXPLORER_ID } from './explorer.js'
+import { createPDFModuleId } from './pdf.js'
+import { createSlideModuleId } from './slide.js'
+import { VirtualContent } from './types.js'
 
 export const HTML_SUFFIX = '/index.html'
 

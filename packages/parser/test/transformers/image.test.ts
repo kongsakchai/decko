@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { imageTransformer } from '../../src/transformers/image'
-import { SlideContext } from '../../src/types'
+import { imageTransformer } from '../../src/transformers/image.js'
+import { SlideContext } from '../../src/types.js'
 
 function createContext(): SlideContext {
 	return {

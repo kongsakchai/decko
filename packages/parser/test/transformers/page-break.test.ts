@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { PAGE_BREAK_KEY, pageBreakTransformer } from '../../src/transformers/page-break'
-import { SlideContext } from '../../src/types'
+import { PAGE_BREAK_KEY, pageBreakTransformer } from '../../src/transformers/page-break.js'
+import { SlideContext } from '../../src/types.js'
 
 describe('page break transformer', () => {
 	it('should split slides by thematic break', async () => {

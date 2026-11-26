@@ -1,7 +1,7 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { containerTransformer } from '../../src/transformers/container'
+import { containerTransformer } from '../../src/transformers/container.js'
 
 describe('container transformer', () => {
 	it('should convert unknown container to div with class', async () => {

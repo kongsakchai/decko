@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises'
 import { chromium } from 'playwright'
 
-import { createServer } from './serv'
+import { createServer } from './serv.js'
 
 export async function pdf(root: string) {
 	const server = await createServer(root)

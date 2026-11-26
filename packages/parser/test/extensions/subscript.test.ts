@@ -3,8 +3,8 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { addFromMarkdownExtensions, addMicromarkExtensions } from '../../src/extensions/index'
-import { subscript, subscriptFromMarkdown } from '../../src/extensions/subscript'
+import { addFromMarkdownExtensions, addMicromarkExtensions } from '../../src/extensions/index.js'
+import { subscript, subscriptFromMarkdown } from '../../src/extensions/subscript.js'
 
 const parser = unified()
 	.use(markdown)

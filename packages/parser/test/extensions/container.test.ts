@@ -2,9 +2,9 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { attributeFromMarkdown } from '../../src/extensions/attribute'
-import { container, containerFromMarkdown } from '../../src/extensions/container'
-import { addFromMarkdownExtensions, addMicromarkExtensions } from '../../src/extensions/index'
+import { attributeFromMarkdown } from '../../src/extensions/attribute.js'
+import { container, containerFromMarkdown } from '../../src/extensions/container.js'
+import { addFromMarkdownExtensions, addMicromarkExtensions } from '../../src/extensions/index.js'
 
 const parser = unified()
 	.use(markdown)

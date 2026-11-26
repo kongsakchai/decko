@@ -1,4 +1,4 @@
-import { VirtualContent } from './types'
+import { VirtualContent } from './types.js'
 
 export const STYLE_ID = 'decko:app.css'
 

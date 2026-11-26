@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getCustomThemes, getThemes, resolveTheme } from './themes'
+import { getCustomThemes, getThemes, resolveTheme } from './themes.js'
 
 describe('getThemes', () => {
 	it('should return themes as string array', () => {

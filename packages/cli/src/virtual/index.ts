@@ -1,10 +1,10 @@
-import { EXPLORER_ID, virtualExplorer } from './explorer'
-import { virtualEntryHTML } from './html'
-import { virtualMarkdown } from './markdown'
-import { PDF_PREFIX, PDF_SUFFIX, virtualPDF } from './pdf'
-import { SLIDE_PREFIX, SLIDE_SUFFIX, virtualSlide } from './slide'
-import { STYLE_ID, virtualStyle } from './styles'
-import { defineVirtualModule } from './virtual'
+import { EXPLORER_ID, virtualExplorer } from './explorer.js'
+import { virtualEntryHTML } from './html.js'
+import { virtualMarkdown } from './markdown.js'
+import { PDF_PREFIX, PDF_SUFFIX, virtualPDF } from './pdf.js'
+import { SLIDE_PREFIX, SLIDE_SUFFIX, virtualSlide } from './slide.js'
+import { STYLE_ID, virtualStyle } from './styles.js'
+import { defineVirtualModule } from './virtual.js'
 
 export const virtualRoutes = [
 	defineVirtualModule({

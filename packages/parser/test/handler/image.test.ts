@@ -3,7 +3,7 @@ import remark2Rehype from 'remark-rehype'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { imageHandler } from '../../src/handler/image'
+import { imageHandler } from '../../src/handler/image.js'
 
 describe('rehype image handle', async () => {
 	it('should return raw src when src inside curly brace', async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { createSlideParser, extractFrontmatter } from '../src/parser'
+import { createSlideParser, extractFrontmatter } from '../src/parser.js'
 
 describe('createSlideParser', () => {
 	it('should parse markdown into a single slide', async () => {

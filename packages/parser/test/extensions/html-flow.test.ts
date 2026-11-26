@@ -2,8 +2,8 @@ import markdown from 'remark-parse'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { htmlFlow } from '../../src/extensions/html-flow'
-import { addMicromarkExtensions } from '../../src/extensions/index'
+import { htmlFlow } from '../../src/extensions/html-flow.js'
+import { addMicromarkExtensions } from '../../src/extensions/index.js'
 
 const parser = unified()
 	.use(markdown)
@@ -14,7 +14,7 @@ const parser = unified()
 describe('html flow extension', async () => {
 	describe('type 1 - raw', () => {
 		it('should return script tag', async () => {
-			const node = parser.parse('<script type="module">\n\nlet data = $state<string>(\"10\")\n\n</script>')
+			const node = parser.parse('<script type="module">\n\nlet data = $state<string>("10")\n\n</script>')
 
 			expect(node.children).toHaveLength(1)
 			expect(node.children[0]).toMatchObject({

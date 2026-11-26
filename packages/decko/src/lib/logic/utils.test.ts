@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { asNumber, asString, asStringArray, mergeStr } from './utils'
+import { asNumber, asString, asStringArray, mergeStr } from './utils.js'
 
 describe('asNumber', () => {
 	it('should return number when value is number', () => {

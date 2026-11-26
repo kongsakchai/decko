@@ -1,4 +1,4 @@
-import { Action, useSlideContext } from '../context/index.js'
+import { Action, SlideContext } from '../context/index.js'
 import type { Step } from '../transforms/step.js'
 
 export interface Stepper {
@@ -39,7 +39,7 @@ function prev(node: HTMLElement, stepper: Stepper, step: number) {
 const cache = new WeakMap<HTMLElement, Stepper>()
 
 export function stepper(page: number, steps: Step[]) {
-	const slideCtx = useSlideContext()
+	const slideCtx = SlideContext.get()
 
 	return (node: HTMLElement) => {
 		if (slideCtx.page !== page) return

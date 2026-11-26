@@ -1,8 +1,8 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { extensionsTransform } from '../../src/transformers/extensions'
-import { Extension, ExtensionContext, PostExtension, SlideContext } from '../../src/types'
+import { extensionsTransform } from '../../src/transformers/extensions.js'
+import { Extension, ExtensionContext, PostExtension, SlideContext } from '../../src/types.js'
 
 function createContext(): SlideContext {
 	return {
@@ -55,9 +55,7 @@ describe('extensions transform', () => {
 		const context = createContext()
 		const node: any = {
 			type: 'root',
-			children: [
-				{ type: 'text', value: 'hi', data: { hProperties: { class: 'existing' } } }
-			]
+			children: [{ type: 'text', value: 'hi', data: { hProperties: { class: 'existing' } } }]
 		}
 		const attrs: ExtensionContext['attrs'][] = []
 

@@ -3,7 +3,7 @@ import remark2Rehype from 'remark-rehype'
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import { linkHandler } from '../../src/handler/link'
+import { linkHandler } from '../../src/handler/link.js'
 
 describe('rehype link handle', async () => {
 	it('should return raw href when href inside curly brace', async () => {

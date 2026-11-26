@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { VirtualContent } from './types'
+import { VirtualContent } from './types.js'
 
 export const EXPLORER_ID = 'decko:explorer.svelte'
 

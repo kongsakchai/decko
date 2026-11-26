@@ -1,9 +1,9 @@
 import { existsSync, statSync } from 'node:fs'
 import path from 'node:path'
 
-import { findMarkdowns, readMarkdown } from './content'
-import { resolveInsideRoot, resolveUser } from './paths'
-import type { ResolvedPath as RootPath } from './paths'
+import { findMarkdowns, readMarkdown } from './content.js'
+import { resolveInsideRoot, resolveUser } from './paths.js'
+import type { ResolvedPath as RootPath } from './paths.js'
 
 export interface ResolvedPath extends RootPath {
 	isFile: boolean

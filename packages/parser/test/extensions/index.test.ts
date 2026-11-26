@@ -1,12 +1,8 @@
 import { unified } from 'unified'
 import { describe, expect, it } from 'vitest'
 
-import {
-	addFromMarkdownExtensions,
-	addMicromarkExtensions,
-	deckoExtension
-} from '../../src/extensions/index'
-import { highlight, highlightFromMarkdown } from '../../src/extensions/highlight'
+import { highlight, highlightFromMarkdown } from '../../src/extensions/highlight.js'
+import { addFromMarkdownExtensions, addMicromarkExtensions, deckoExtension } from '../../src/extensions/index.js'
 
 interface ExtensionData {
 	micromarkExtensions?: unknown[]
@@ -35,9 +31,6 @@ describe('extensions index', () => {
 		addFromMarkdownExtensions(processor, highlightFromMarkdown)
 
 		expect(getData(processor).micromarkExtensions).toEqual([highlight, highlight])
-		expect(getData(processor).fromMarkdownExtensions).toEqual([
-			highlightFromMarkdown,
-			highlightFromMarkdown
-		])
+		expect(getData(processor).fromMarkdownExtensions).toEqual([highlightFromMarkdown, highlightFromMarkdown])
 	})
 })

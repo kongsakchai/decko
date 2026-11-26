@@ -1,7 +1,7 @@
 import { VFile } from 'vfile'
 import { describe, expect, it } from 'vitest'
 
-import { svelteExpressionTransformer } from '../../src/html/index'
+import { svelteExpressionTransformer } from '../../src/html/index.js'
 
 describe('svelte expression transformer', () => {
 	it('should replace svelte expression with raw open tag and close tag', async () => {

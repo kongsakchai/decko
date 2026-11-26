@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Step } from '../transforms/step.js'
-import { stepper } from './stepper'
+import { stepper } from './stepper.js'
 
 const mocks = vi.hoisted(() => ({
 	context: {

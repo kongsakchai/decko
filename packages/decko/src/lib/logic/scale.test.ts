@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { calScale } from './scale'
+import { calScale } from './scale.js'
 
 describe('calScale', () => {
 	it('should scale to fit the viewport height', () => {
