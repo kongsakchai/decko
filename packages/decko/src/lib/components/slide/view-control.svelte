@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { scale } from 'svelte/transition'
 
-	import { useViewContext } from '../context/index.js'
-	import FullscreenIcon from '../icons/fullscreen-icon.svelte'
-	import NormalscreenIcon from '../icons/normalscreen-icon.svelte'
-	import ZoomIcon from '../icons/zoom-icon.svelte'
-	import Popover from './popover.svelte'
+	import { ViewContext } from '../../context/index.js'
+	import FullscreenIcon from '../../icons/fullscreen-icon.svelte'
+	import NormalscreenIcon from '../../icons/normalscreen-icon.svelte'
+	import ZoomIcon from '../../icons/zoom-icon.svelte'
+	import Popover from '../popover.svelte'
+
+	const view = ViewContext.get()
 
 	let fullscreen = $state(false)
 
-	const viewContext = useViewContext()
-
-	function onFullscreen() {
+	function toggleFullScreen() {
 		if (!document.fullscreenElement) {
 			fullscreen = true
 			document.documentElement.requestFullscreen()
@@ -23,7 +23,7 @@
 </script>
 
 <div class="menu">
-	<button onclick={onFullscreen} title="fullscreen" class="menu-btn rounded-l-sm">
+	<button onclick={toggleFullScreen} title="fullscreen" class="menu-btn rounded-l-sm">
 		{#if fullscreen}
 			<span class="absolute top-0 left-0 h-full w-full content-center" transition:scale={{ opacity: 80 }}>
 				<NormalscreenIcon />
@@ -47,8 +47,8 @@
 		{/snippet}
 
 		{#snippet content()}
-			<input type="range" class="w-40" min="1" max="3" step="0.01" bind:value={viewContext.zoom} />
-			<span class="w-10 text-right text-sm">{Math.round(viewContext.zoom * 100)}%</span>
+			<input type="range" class="w-40" min={view.minZoom} max={view.maxZoom} step="0.01" bind:value={view.zoom} />
+			<span class="w-10 text-right text-sm">{Math.round(view.zoom * 100)}%</span>
 		{/snippet}
 	</Popover>
 </div>

@@ -4,25 +4,22 @@
 	import { twMerge } from 'tailwind-merge'
 	import MoonIcon from '../icons/moon-icon.svelte'
 	import SunIcon from '../icons/sun-icon.svelte'
-	import { appearance } from '../state'
 
 	interface Props {
+		isDark: boolean
+		toggle: () => void
 		class?: string
 	}
 
-	let { class: className }: Props = $props()
-
-	$effect(() => {
-		document.documentElement.classList.toggle('dark', appearance.isDark)
-	})
+	let { class: className, isDark, toggle }: Props = $props()
 </script>
 
 <button
-	onclick={() => appearance.toggleDark()}
+	onclick={() => toggle()}
 	title="switch-theme"
 	class={twMerge('relative h-8.5 w-8.5 appearance-none overflow-hidden rounded-md', className)}
 >
-	{#if appearance.isDark}
+	{#if isDark}
 		<span class="absolute top-0 left-0 h-full w-full content-center" transition:fly={{ duration: 300, y: 300 }}>
 			<MoonIcon />
 		</span>

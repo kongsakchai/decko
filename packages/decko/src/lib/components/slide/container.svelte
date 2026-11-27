@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { useViewContext } from '../context/index.js'
-	import { appearance } from '../state/appearance.svelte.js'
+	import { ViewContext } from '@deckomd/decko/context/view.svelte.js'
+	import { fontScaleState, slideScaleState } from '@deckomd/decko/state'
 
 	interface Props {
 		children?: Snippet
@@ -10,25 +10,25 @@
 
 	let { children }: Props = $props()
 
-	const viewContext = useViewContext()
+	const view = ViewContext.get()
 </script>
 
 <!-- backdrop -->
 <section
 	class="relative h-full w-full overflow-hidden bg-[#242424] transition-all dark:bg-black"
-	bind:clientWidth={viewContext.viewportWidth}
-	bind:clientHeight={viewContext.viewportHeight}
+	bind:clientWidth={view.viewportWidth}
+	bind:clientHeight={view.viewportHeight}
 >
 	<!-- container -->
 	<section
 		id="slide-container"
 		class="bg-background relative top-1/2 left-1/2 grid origin-center -translate-1/2 overflow-hidden"
-		class:select-none={viewContext.zoom > 1}
-		class:rounded-xl={appearance.slideScale < 1}
-		style:width="{viewContext.width}px"
-		style:height="{viewContext.height}px"
-		style:scale={viewContext.scale * appearance.slideScale}
-		style:--font-scale={appearance.fontScale}
+		class:select-none={view.zoom > 1}
+		style:width="{view.width}px"
+		style:height="{view.height}px"
+		style:scale={view.scale * slideScaleState.current}
+		class:rounded-xl={slideScaleState.current < 1}
+		style:--font-scale={fontScaleState.current}
 	>
 		{@render children?.()}
 	</section>

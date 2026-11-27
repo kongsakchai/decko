@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte'
-
-	import { useViewContext } from '../context/index.js'
+	import { ViewContext } from '../../context/index.js'
 
 	interface Props {
 		children: Snippet
@@ -17,11 +16,11 @@
 
 	let { children }: Props = $props()
 
-	const viewContext = useViewContext()
+	const view = ViewContext.get()
 
 	let zoomEl: HTMLElement
 
-	let zoomActive = $derived(viewContext.zoom != 1)
+	let zoomActive = $derived(view.zoom != 1)
 
 	let zoom = $state<ZoomState>({
 		isDragging: false,
@@ -33,8 +32,8 @@
 
 	let layoutLimit = $derived.by(() => {
 		return {
-			x: ((zoomEl?.clientWidth || 0) * (viewContext.zoom - 1)) / 2,
-			y: ((zoomEl?.clientHeight || 0) * (viewContext.zoom - 1)) / 2
+			x: ((zoomEl?.clientWidth || 0) * (view.zoom - 1)) / 2,
+			y: ((zoomEl?.clientHeight || 0) * (view.zoom - 1)) / 2
 		}
 	})
 
@@ -72,7 +71,7 @@
 	function onWheel(e: WheelEvent) {
 		if (e.ctrlKey) {
 			e.preventDefault()
-			viewContext.zoom = Math.min(Math.max(viewContext.zoom - e.deltaY / 100, 1), 3)
+			view.zoom = view.zoom - e.deltaY / 100
 		} else if (zoomActive) {
 			e.preventDefault()
 			zoom.panX = clamp(zoom.panX - e.deltaX, -layoutLimit.x, layoutLimit.x)
@@ -86,7 +85,7 @@
 	id="zoom-contrainer"
 	role="presentation"
 	class="grid h-full w-full overflow-hidden"
-	style:scale={viewContext.zoom}
+	style:scale={view.zoom}
 	style:translate="{translateX}px {translateY}px"
 	onpointerdown={onPointerdown}
 	onpointermove={onPointermove}

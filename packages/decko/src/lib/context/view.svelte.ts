@@ -1,42 +1,47 @@
 import { createContext } from 'svelte'
 
-import { calScale } from '../logic/scale.js'
+const [get, set] = createContext<ViewContext>()
 
-export interface ViewContext {
-	width: number
-	height: number
-	viewportWidth: number
-	viewportHeight: number
-	zoom: number
-	readonly scale: number
-}
-
-class Context implements ViewContext {
+export class ViewContext {
 	width = $state<number>(1280)
 	height = $state<number>(720)
 	viewportWidth = $state<number>(1280)
 	viewportHeight = $state<number>(720)
-	zoom = $state<number>(1)
-	readonly scale = $derived(calScale(this.viewportWidth, this.viewportHeight, this.width, this.height))
 
-	constructor(source?: Partial<ViewContext>) {
-		this.width = source?.width || 1280
-		this.height = source?.height || 720
-		this.viewportWidth = source?.viewportWidth || 1280
-		this.viewportHeight = source?.viewportHeight || 720
-		this.zoom = source?.zoom || 1
+	minZoom = 1
+	maxZoom = 3
+	#zoom = $state<number>(1)
+
+	constructor(width: number, height: number) {
+		this.width = width
+		this.height = height
 	}
-}
 
-const [get, set, has] = createContext<ViewContext>()
+	static create(width: number, height: number) {
+		return set(new ViewContext(width, height))
+	}
 
-export function useViewContext(): ViewContext {
-	if (has()) return get()
+	static get() {
+		return get()
+	}
 
-	console.error('❌ not found view context. will use mock context')
-	return new Context()
-}
+	get zoom() {
+		return this.#zoom
+	}
 
-export function createViewContext(source?: Partial<ViewContext>): ViewContext {
-	return set(new Context(source))
+	set zoom(val: number) {
+		this.#zoom = Math.min(Math.max(val, this.minZoom), this.maxZoom)
+	}
+
+	get scale() {
+		if (this.viewportWidth <= 0 || this.viewportHeight <= 0 || this.width <= 0 || this.height <= 0) {
+			return 0
+		}
+
+		const aspect = this.width / this.height
+		const scaledHeight = this.viewportWidth / aspect
+		const finalWidth = scaledHeight > this.viewportHeight ? this.viewportHeight * aspect : this.viewportWidth
+
+		return finalWidth / this.width
+	}
 }

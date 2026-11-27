@@ -1,5 +1,6 @@
 import { createContext } from 'svelte'
 
+import { isBrowser } from '../logic/events.js'
 import type { SlideData } from '../types.js'
 
 export enum Action {
@@ -10,21 +11,9 @@ export enum Action {
 	JUMP
 }
 
-export interface SlideContext {
-	slide: SlideData
+const [get, set] = createContext<SlideContext>()
 
-	readonly page: number
-	readonly step: number
-	readonly action: number
-	readonly totalPage: number
-
-	pageStep(page?: number): number
-	goto(page: number, step?: number, action?: Action): void
-	next(): void
-	previous(): void
-}
-
-class Context implements SlideContext {
+export class SlideContext {
 	slide = $state<SlideData>({ title: '', pages: [] })
 
 	#page = $state(1)
@@ -33,6 +22,23 @@ class Context implements SlideContext {
 
 	constructor(slide: SlideData) {
 		this.slide = slide
+
+		if (isBrowser() && window.location.hash) {
+			const page = Number.parseInt(window.location.hash.slice(1))
+			if (!Number.isNaN(page)) this.goto(page)
+		}
+
+		$effect(() => {
+			navigation.navigate(`#${this.page}`, { history: 'replace' })
+		})
+	}
+
+	static create(slide: SlideData) {
+		return set(new SlideContext(slide))
+	}
+
+	static get() {
+		return get()
 	}
 
 	get page() {
@@ -79,17 +85,4 @@ class Context implements SlideContext {
 			this.goto(this.page - 1, this.pageStep(this.page - 1), Action.PREV_PAGE)
 		}
 	}
-}
-
-const [get, set, has] = createContext<SlideContext>()
-
-export function useSlideContext() {
-	if (has()) return get()
-
-	console.error('❌ not found slide context. will use mock context')
-	return new Context({ title: 'no context', pages: [] })
-}
-
-export function createSlideContext(slide: SlideData) {
-	return set(new Context(slide))
 }

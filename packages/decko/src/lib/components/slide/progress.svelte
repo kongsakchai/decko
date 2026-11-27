@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { useSlideContext } from '../context/index.js'
+	import { SlideContext } from '../../context/index.js'
 
-	const slideCtx = useSlideContext()
+	const slide = SlideContext.get()
 
-	const progress = $derived(((slideCtx.step + 1) / (slideCtx.pageStep() + 1)) * 100)
+	const progress = $derived(((slide.step + 1) / (slide.pageStep() + 1)) * 100)
 </script>
 
 <div class="absolute bottom-0 left-0 h-1 w-full">

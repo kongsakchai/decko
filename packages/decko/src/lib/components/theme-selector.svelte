@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { twMerge } from 'tailwind-merge'
 	import PalleteIcon from '../icons/pallete-icon.svelte'
-	import { appearance } from '../state/index.js'
 	import Popover from './popover.svelte'
 
 	interface Props {
 		class?: string
 		position?: 'top' | 'bottom'
+		isDark?: boolean
+		themes?: string[]
+		theme?: string
 	}
 
-	let { class: className, position }: Props = $props()
-
-	$effect(() => {
-		document.documentElement.dataset.theme = appearance.theme
-	})
+	let { class: className, position, theme = $bindable('default'), isDark, themes = [] }: Props = $props()
 </script>
 
 <Popover
@@ -27,16 +25,14 @@
 	{/snippet}
 
 	{#snippet content()}
-		{#each appearance.themes as theme (theme)}
+		{#each themes as t (t)}
 			<button
-				class:dark={appearance.isDark}
-				data-theme={theme}
-				class:bg-accent={theme === appearance.theme}
-				class:text-accent-foreground={theme === appearance.theme}
+				class:dark={isDark}
+				data-theme={t}
+				class:bg-accent={t === theme}
+				class:text-accent-foreground={t === theme}
 				class="hover:bg-accent hover:text-accent-foreground box-content flex min-w-30 items-center gap-2 rounded-md px-2 py-0.5"
-				onclick={() => {
-					appearance.theme = theme
-				}}
+				onclick={() => (theme = t)}
 			>
 				<div class="grid grid-cols-2 grid-rows-2 gap-px">
 					<div class="border-border bg-primary h-2 w-2 rounded-md border"></div>
@@ -44,7 +40,7 @@
 					<div class="border-border bg-accent h-2 w-2 rounded-md border"></div>
 					<div class="border-border bg-background h-2 w-2 rounded-md border"></div>
 				</div>
-				{theme}
+				{t}
 			</button>
 		{/each}
 	{/snippet}
