@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SlidePlayer } from '@deckomd/decko/pages'
+	import { SlidePlayer } from '@/pages'
 
 	import Slide, { data } from '../example/example.svelte.md'
 </script>

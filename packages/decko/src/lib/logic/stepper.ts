@@ -1,5 +1,5 @@
-import { Action, SlideContext } from '../context/index.js'
-import type { Step } from '../transforms/step.js'
+import { Action, SlideContext } from '@/context/index.js'
+import type { Step } from '@/transforms/step.js'
 
 export interface Stepper {
 	index: number

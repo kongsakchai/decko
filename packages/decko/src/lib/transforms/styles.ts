@@ -1,6 +1,6 @@
 import type { Directive } from '@deckomd/parser'
 
-import { asString, mergeStr } from '../logic/utils.js'
+import { asString, mergeStr } from '../utils.js'
 
 export function toStyles(directive: Directive): string {
 	const style = asString(directive.style)

@@ -1,4 +1,5 @@
-import { isBrowser } from '../logic/events.js'
+import { isBrowser } from '@/logic/events.js'
+
 import { PersistedState } from './persisted.svelte.js'
 
 export class Theme {

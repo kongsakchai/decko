@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { SlideContext } from '../../context/index.js'
-	import ArrowLeftIcon from '../../icons/arrow-left-icon.svelte'
-	import ArrowRightIcon from '../../icons/arrow-right-icon.svelte'
+	import { SlideContext } from '@/context/index.js'
+	import ArrowLeftIcon from '@/icons/arrow-left-icon.svelte'
+	import ArrowRightIcon from '@/icons/arrow-right-icon.svelte'
 
 	const slide = SlideContext.get()
 </script>

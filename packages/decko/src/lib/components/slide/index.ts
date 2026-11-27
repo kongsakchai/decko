@@ -1,7 +1,7 @@
 import AppearanceSetting from './appearance-setting.svelte'
 import Container from './container.svelte'
 import Content from './content.svelte'
-import ControlRoot from './control-root.svelte'
+import Control from './control.svelte'
 import Navigation from './navigation.svelte'
 import Progress from './progress.svelte'
 import Provider from './provider.svelte'
@@ -17,5 +17,5 @@ export const Slide = {
 	Progress,
 	ZoomContainer,
 	Content,
-	ControlRoot
+	Control
 }

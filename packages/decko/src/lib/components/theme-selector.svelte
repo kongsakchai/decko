@@ -1,6 +1,6 @@
 <script lang="ts">
+	import PalleteIcon from '@/icons/pallete-icon.svelte'
 	import { twMerge } from 'tailwind-merge'
-	import PalleteIcon from '../icons/pallete-icon.svelte'
 	import Popover from './popover.svelte'
 
 	interface Props {

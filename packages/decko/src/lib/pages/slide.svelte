@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Slide } from '../components/slide/index.js'
+	import { Slide } from '@/components/slide/index.js'
 	import type { SlideComponent, SlideData } from '../types.js'
 
 	interface Props {
@@ -26,10 +26,10 @@
 			<Slide.Progress />
 		</Slide.Container>
 
-		<Slide.ControlRoot>
+		<Slide.Control>
 			<Slide.Navigation />
 			<Slide.ViewControl />
 			<Slide.AppearanceSetting />
-		</Slide.ControlRoot>
+		</Slide.Control>
 	</Slide.Provider>
 </main>

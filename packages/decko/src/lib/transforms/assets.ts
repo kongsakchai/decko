@@ -2,7 +2,7 @@ import type { Directive, Extension } from '@deckomd/parser'
 
 import type { Html, Image, Link } from 'mdast'
 
-import { uniqueArray } from '../logic/utils.js'
+import { uniqueArray } from '../utils.js'
 
 const HTTP_REGEX = /^(https?:)?\/\//
 const HTML_SRC_REGEX = /<(?:img|video|source)\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/

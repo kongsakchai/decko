@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { ViewContext } from '@/context/index.js'
 	import { type Snippet } from 'svelte'
-	import { ViewContext } from '../../context/index.js'
 
 	interface Props {
 		children: Snippet

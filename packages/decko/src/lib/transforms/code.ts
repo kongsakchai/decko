@@ -15,7 +15,7 @@ import { render } from 'pele'
 import { type SpecialLanguage, createHighlighter } from 'shiki'
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript'
 
-import { asString } from '../logic/utils.js'
+import { asString } from '../utils.js'
 
 export const CODE_SPLIT_REGEX = /^>>>>>$/gm
 

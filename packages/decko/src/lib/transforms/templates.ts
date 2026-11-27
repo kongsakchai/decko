@@ -1,7 +1,7 @@
 import type { Directive } from '@deckomd/parser'
 
-import { mergeStr } from '../logic/utils.js'
 import type { SlideData } from '../types.js'
+import { mergeStr } from '../utils.js'
 
 export interface PageOptions {
 	layout?: string

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SlideContext } from '../../context/index.js'
+	import { SlideContext } from '@/context/index.js'
 
 	const slide = SlideContext.get()
 

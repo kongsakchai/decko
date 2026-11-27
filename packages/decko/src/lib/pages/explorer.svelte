@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { FileExplorer } from '../components/index.js'
+	import { FileExplorer } from '@/components/index.js'
 
 	interface Props {
 		title: string

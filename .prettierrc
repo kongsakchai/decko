@@ -14,7 +14,7 @@
 			}
 		}
 	],
-	"importOrder": ["^@\\w.*", "^\\w.*", "^\\..*"],
+	"importOrder": ["^@[\\\\/].*", "^@\\w.*", "^\\w.*", "^\\..*"],
 	"importOrderSeparation": true,
 	"importOrderSortSpecifiers": true
 }

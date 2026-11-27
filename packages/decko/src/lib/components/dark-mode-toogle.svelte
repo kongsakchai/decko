@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 
+	import MoonIcon from '@/icons/moon-icon.svelte'
+	import SunIcon from '@/icons/sun-icon.svelte'
 	import { twMerge } from 'tailwind-merge'
-	import MoonIcon from '../icons/moon-icon.svelte'
-	import SunIcon from '../icons/sun-icon.svelte'
 
 	interface Props {
 		isDark: boolean

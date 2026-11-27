@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { slideScaleState } from '@deckomd/decko/state/scale.svelte.js'
-	import { SlideContext, ViewContext } from '../../context/index.js'
-	import type { SlideComponent } from '../../types.js'
+	import { SlideContext, ViewContext } from '@/context/index.js'
+	import { slideScaleState } from '@/state/index.js'
+	import type { SlideComponent } from '@/types.js'
 
 	interface Props {
 		component: SlideComponent

@@ -29,7 +29,8 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'@deckomd/decko': path.resolve(import.meta.dirname, './src/lib')
+			'@deckomd/decko': path.resolve(import.meta.dirname, './src/lib'),
+			'@': path.resolve(import.meta.dirname, './src/lib')
 		},
 		conditions: process.env.VITEST ? ['browser'] : undefined
 	},

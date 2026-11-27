@@ -1,7 +1,7 @@
+import { isBrowser } from '@/logic/events.js'
+
 import { on } from 'svelte/events'
 import { createSubscriber } from 'svelte/reactivity'
-
-import { isBrowser } from '../logic/events'
 
 export class PersistedState<T> {
 	#key: string

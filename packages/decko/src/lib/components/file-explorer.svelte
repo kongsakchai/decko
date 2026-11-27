@@ -2,7 +2,7 @@
 	import { backIn, backOut } from 'svelte/easing'
 	import { slide } from 'svelte/transition'
 
-	import { buildTree, getChildrenSort, toggleFolder, type NodeTree } from '../logic/file-tree.js'
+	import { buildTree, getChildrenSort, toggleFolder, type NodeTree } from '@/logic/file-tree.js'
 
 	interface Props {
 		files: string[]

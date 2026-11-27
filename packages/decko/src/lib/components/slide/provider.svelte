@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { SlideContext, ViewContext } from '@deckomd/decko/context/index.js'
-	import { getThemes } from '@deckomd/decko/logic/themes'
-	import { asString } from '@deckomd/decko/logic/utils'
-	import { themeState } from '@deckomd/decko/state'
-	import type { SlideData } from '@deckomd/decko/types.js'
+	import { SlideContext, ViewContext } from '@/context/index.js'
+	import { themeState } from '@/state/index.js'
+	import type { SlideData } from '@/types.js'
+	import { asString, asStringArray } from '@/utils.js'
 	import { untrack, type Snippet } from 'svelte'
 
 	interface Props {
@@ -24,7 +23,7 @@
 
 	themeState.setup(
 		untrack(() => asString(data.theme, '')),
-		untrack(() => getThemes(data.themes) ?? [])
+		untrack(() => asStringArray(data.themes) ?? [])
 	)
 </script>
 

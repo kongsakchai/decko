@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { darkModeState, fontScaleState, slideScaleState, themeState } from '@deckomd/decko/state/index.js'
-	import { BurgerIcon, ResetIcon } from '../../icons/index.js'
+	import { BurgerIcon, ResetIcon } from '@/icons/index.js'
+	import { darkModeState, fontScaleState, slideScaleState, themeState } from '@/state/index.js'
 	import DarkModeToogle from '../dark-mode-toogle.svelte'
 	import Popover from '../popover.svelte'
 	import ThemeSelector from '../theme-selector.svelte'

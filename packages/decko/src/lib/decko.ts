@@ -2,7 +2,6 @@ import { createSlideParser, extractFrontmatter } from '@deckomd/parser'
 
 import type { PreprocessorGroup } from 'svelte/compiler'
 
-import { asNumber, asString } from './logic/utils.js'
 import { alerts } from './transforms/alerts.js'
 import { assetsLinkExtension, getAssetImports } from './transforms/assets.js'
 import { toBackgroundStyles } from './transforms/background.js'
@@ -15,6 +14,7 @@ import { pageContent, scriptContent, styleContent } from './transforms/templates
 import { getCSSImports, getThemeImports } from './transforms/themes.js'
 import { hoistExtension } from './transforms/tree.js'
 import type { Options, SlideData } from './types.js'
+import { asNumber, asString } from './utils.js'
 
 export function decko(options?: Options): PreprocessorGroup {
 	const parser = createSlideParser({

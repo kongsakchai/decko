@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	import { ViewContext } from '@deckomd/decko/context/view.svelte.js'
-	import { fontScaleState, slideScaleState } from '@deckomd/decko/state'
+	import { ViewContext } from '@/context/index.js'
+	import { fontScaleState, slideScaleState } from '@/state/index.js'
 
 	interface Props {
 		children?: Snippet

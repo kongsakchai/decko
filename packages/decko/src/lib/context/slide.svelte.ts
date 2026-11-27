@@ -1,7 +1,7 @@
-import { createContext } from 'svelte'
+import { isBrowser } from '@/logic/events.js'
+import type { SlideData } from '@/types.js'
 
-import { isBrowser } from '../logic/events.js'
-import type { SlideData } from '../types.js'
+import { createContext } from 'svelte'
 
 export enum Action {
 	NEXT,

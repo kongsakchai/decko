@@ -1,8 +1,7 @@
 import type { Directive } from '@deckomd/parser'
 
-import { getCustomThemes, getThemes } from '../logic/themes.js'
-import { asStringArray, uniqueArray } from '../logic/utils.js'
 import type { SlideData } from '../types.js'
+import { asStringArray, uniqueArray } from '../utils.js'
 
 const DEFAULT_THEME = 'default'
 
@@ -14,7 +13,8 @@ const builtinPath = (name: string) => toImport(`@deckomd/decko/themes/${name}.cs
 
 export function getThemeImports(directive: Directive): string[] {
 	const customThemes = getCustomThemes(directive.customThemes) ?? {}
-	const names = getThemes(directive.themes) ?? uniqueArray([...BUILTIN_THEMES, ...Object.keys(customThemes)])
+	const names =
+		asStringArray(directive.themes, true) ?? uniqueArray([...BUILTIN_THEMES, ...Object.keys(customThemes)])
 
 	directive.themes = names
 	delete directive.customThemes
@@ -30,4 +30,12 @@ export function getThemeImports(directive: Directive): string[] {
 export function getCSSImports(data: SlideData): string[] {
 	const { css } = data
 	return asStringArray(css, true)?.map(toImport) ?? []
+}
+
+export function getCustomThemes(customThemes: unknown): Record<string, string> | undefined {
+	if (typeof customThemes !== 'object' || customThemes === null || Array.isArray(customThemes)) {
+		return undefined
+	}
+	const filtered = Object.entries(customThemes).filter(([, value]) => typeof value === 'string')
+	return Object.fromEntries(filtered)
 }

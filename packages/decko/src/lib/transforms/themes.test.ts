@@ -2,7 +2,7 @@ import type { Directive } from '@deckomd/parser'
 
 import { describe, expect, it } from 'vitest'
 
-import { getCSSImports, getThemeImports } from './themes.js'
+import { getCSSImports, getCustomThemes, getThemeImports } from './themes.js'
 
 const themePath = (name: string) => `import '@deckomd/decko/themes/${name}.css'`
 
@@ -89,5 +89,17 @@ describe('getCSSImports', () => {
 
 	it('should deduplicate css imports', () => {
 		expect(getCSSImports({ title: 'Test', pages: [], css: ['a.css', 'a.css'] })).toEqual(["import 'a.css'"])
+	})
+})
+
+describe('getCustomThemes', () => {
+	it('should return custom themes', () => {
+		expect(getCustomThemes({ blue: 'blue.css', red: 10 })).toEqual({ blue: 'blue.css' })
+	})
+
+	it('should return undefined', () => {
+		expect(getCustomThemes(null)).toBeUndefined()
+		expect(getCustomThemes([])).toBeUndefined()
+		expect(getCustomThemes(10)).toBeUndefined()
 	})
 })
