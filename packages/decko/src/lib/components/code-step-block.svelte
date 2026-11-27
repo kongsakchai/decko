@@ -7,14 +7,14 @@
 	interface Props {
 		code: string
 		step: number
-		scale?: number
+		globalScale?: number
 		start?: number
 	}
 
-	const { code: baseCode, start = 0, scale = 1, step }: Props = $props()
+	const { code: baseCode, start = 0, globalScale = 1, step }: Props = $props()
 
 	let steps = $derived(JSON.parse(lz.decompressFromBase64(baseCode)))
 	let codeStep = $derived(Math.max(0, Math.min(step - start, steps.length)))
 </script>
 
-<ShikiMagicMovePrecompiled class="code-block" step={codeStep} {steps} options={{ globalScale: scale }} />
+<ShikiMagicMovePrecompiled class="code-block" step={codeStep} {steps} options={{ globalScale: globalScale }} />

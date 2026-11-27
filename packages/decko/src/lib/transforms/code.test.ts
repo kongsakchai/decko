@@ -56,7 +56,8 @@ function createContext(overrides: Partial<CodeContext> = {}): CodeContext {
 		slides: [{ breakIndex: 0, global: {} }],
 		style: [],
 		script: [],
-		extra: {}
+		extra: {},
+		heading: []
 	}
 
 	return {

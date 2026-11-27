@@ -42,10 +42,13 @@ function extractSteps(data: Attribute): { steps: Step[]; maxStep: number } {
 }
 
 export const stepExtension: Extension = (ctx) => {
+	// set default for overwrite global
+	ctx.currentSlide.directive ??= { step: 0 }
+	ctx.currentSlide.directive.step ??= 0
+
 	const stepData = extractSteps(ctx.attrs)
 	if (stepData.steps.length === 0) return
 
-	ctx.currentSlide.directive ??= {}
 	ctx.currentSlide.directive.step = Math.max(asNumber(ctx.currentSlide.directive?.step, 0), stepData.maxStep)
 
 	const stepEntries = JSON.stringify(stepData.steps)

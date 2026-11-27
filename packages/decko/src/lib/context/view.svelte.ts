@@ -44,4 +44,8 @@ export class ViewContext {
 
 		return finalWidth / this.width
 	}
+
+	get effectiveScale() {
+		return this.#zoom * this.scale
+	}
 }

@@ -18,49 +18,41 @@ function isExternalURL(url: string): boolean {
 	}
 }
 
-function resolveURL(assets: Record<string, string>, counter: number, url: string): [string, number] {
-	if (!url || isExternalURL(url) || url.endsWith('.md')) return [url, counter]
+function resolveURL(assets: Record<string, string>, url: string): string {
+	if (!url || isExternalURL(url) || url.endsWith('.md')) return url
 	if (!assets[url]) {
-		assets[url] = `__assets${counter}`
-		counter++
+		assets[url] = `__assets${Object.keys(assets).length}`
 	}
-	return [`{${assets[url]}}`, counter]
+	return `{${assets[url]}}`
 }
 
 export const assetsLinkExtension: Extension = (ctx) => {
 	const extra = ctx.slideCtx.extra
 	const assets = (extra.assets ?? {}) as Record<string, string>
-	const counter = (extra.assetCounter ?? 0) as number
 
 	switch (ctx.node.type) {
 		case 'image': {
 			const image = ctx.node as Image
-			const [url, newCounter] = resolveURL(assets, counter, image.url)
-			image.url = url
-			ctx.slideCtx.extra.assetCounter = newCounter
+			image.url = resolveURL(assets, image.url)
 			break
 		}
 		case 'link': {
 			const link = ctx.node as Link
-			const [url, newCounter] = resolveURL(assets, counter, link.url)
-			link.url = url
-			ctx.slideCtx.extra.assetCounter = newCounter
+			link.url = resolveURL(assets, link.url)
 			break
 		}
 		case 'html': {
 			const html = ctx.node as Html
 			const src = HTML_SRC_REGEX.exec(html.value)
 			if (src) {
-				const [url, newCounter] = resolveURL(assets, counter, src[1])
+				const url = resolveURL(assets, src[1])
 				html.value = html.value.replace(src[1], url)
-				ctx.slideCtx.extra.assetCounter = newCounter
 				break
 			}
 			const href = HTML_HREF_REGEX.exec(html.value)
 			if (href) {
-				const [url, newCounter] = resolveURL(assets, counter, href[1])
+				const url = resolveURL(assets, href[1])
 				html.value = html.value.replace(href[1], url)
-				ctx.slideCtx.extra.assetCounter = newCounter
 				break
 			}
 			break

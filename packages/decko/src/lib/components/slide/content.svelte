@@ -10,8 +10,6 @@
 	const { component: SlideContent }: Props = $props()
 	const slide = SlideContext.get()
 	const view = ViewContext.get()
-
-	const scale = $derived(view.scale * view.zoom * slideScaleState.current)
 </script>
 
-<SlideContent page={slide.page} step={slide.step} slideScale={scale} />
+<SlideContent page={slide.page} step={slide.step} slideScale={view.effectiveScale * slideScaleState.current} />
